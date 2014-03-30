@@ -9,9 +9,9 @@ use Symfony\Component\Console\Input\InputArgument,
 
 
 /**
- * Task for executing projects serve
+ * Task for executing Cerberus build
  *
- * @copyright Copyright 2012 Erik Amaru Ortiz
+ * @copyright Copyright 2014 Erik Amaru Ortiz
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  * @link    http://github.com/phpalchemy/cerberus
  * @since   1.0
@@ -120,7 +120,7 @@ class BuildCommand extends Command
 
             // prepare Data Base
             $dbh = new \PDO("$dbEngineConf:host=$dbHost", $dbUser, $dbPassword);
-            $dbh->exec("CREATE DATABASE IF NOT EXISTS $dbName") or die(print_r($dbh->errorInfo(), true));
+            $dbh->exec("CREATE DATABASE IF NOT EXISTS $dbName");
         }
 
         $output->writeln("Propel input dir: " . $schemaDir);
@@ -133,6 +133,5 @@ class BuildCommand extends Command
             $output->writeln("<info>DONE</info>");
         }
     }
-
 }
 

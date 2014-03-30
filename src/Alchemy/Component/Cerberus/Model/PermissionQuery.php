@@ -6,7 +6,7 @@ use Alchemy\Component\Cerberus\Model\Base\PermissionQuery as BasePermissionQuery
 
 
 /**
- * Skeleton subclass for performing query and update operations on the 'permission' table.
+ * Skeleton subclass for performing query and update operations on the 'PERMISSION' table.
  *
  *
  *

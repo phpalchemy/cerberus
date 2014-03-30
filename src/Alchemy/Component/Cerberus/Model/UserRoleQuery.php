@@ -2,11 +2,11 @@
 
 namespace Alchemy\Component\Cerberus\Model;
 
-use Alchemy\Component\Cerberus\Model\Base\RolQuery as BaseRolQuery;
+use Alchemy\Component\Cerberus\Model\Base\UserRoleQuery as BaseUserRoleQuery;
 
 
 /**
- * Skeleton subclass for performing query and update operations on the 'rol' table.
+ * Skeleton subclass for performing query and update operations on the 'USER_ROLE' table.
  *
  *
  *
@@ -15,7 +15,7 @@ use Alchemy\Component\Cerberus\Model\Base\RolQuery as BaseRolQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class RolQuery extends BaseRolQuery
+class UserRoleQuery extends BaseUserRoleQuery
 {
 
-} // RolQuery
+} // UserRoleQuery

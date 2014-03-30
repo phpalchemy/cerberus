@@ -4,12 +4,12 @@ namespace Alchemy\Component\Cerberus\Model\Base;
 
 use \Exception;
 use \PDO;
-use Alchemy\Component\Cerberus\Model\Rol as ChildRol;
-use Alchemy\Component\Cerberus\Model\RolQuery as ChildRolQuery;
+use Alchemy\Component\Cerberus\Model\Role as ChildRole;
+use Alchemy\Component\Cerberus\Model\RoleQuery as ChildRoleQuery;
 use Alchemy\Component\Cerberus\Model\User as ChildUser;
 use Alchemy\Component\Cerberus\Model\UserQuery as ChildUserQuery;
-use Alchemy\Component\Cerberus\Model\UserRolQuery as ChildUserRolQuery;
-use Alchemy\Component\Cerberus\Model\Map\UserRolTableMap;
+use Alchemy\Component\Cerberus\Model\UserRoleQuery as ChildUserRoleQuery;
+use Alchemy\Component\Cerberus\Model\Map\UserRoleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -22,12 +22,12 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
-abstract class UserRol implements ActiveRecordInterface
+abstract class UserRole implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Alchemy\\Component\\Cerberus\\Model\\Map\\UserRolTableMap';
+    const TABLE_MAP = '\\Alchemy\\Component\\Cerberus\\Model\\Map\\UserRoleTableMap';
 
 
     /**
@@ -57,16 +57,16 @@ abstract class UserRol implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the usr_id field.
+     * The value for the user_id field.
      * @var        int
      */
-    protected $usr_id;
+    protected $user_id;
 
     /**
-     * The value for the rol_id field.
+     * The value for the role_id field.
      * @var        int
      */
-    protected $rol_id;
+    protected $role_id;
 
     /**
      * @var        ChildUser
@@ -74,9 +74,9 @@ abstract class UserRol implements ActiveRecordInterface
     protected $aUser;
 
     /**
-     * @var        ChildRol
+     * @var        ChildRole
      */
-    protected $aRol;
+    protected $aRole;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -87,7 +87,7 @@ abstract class UserRol implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Alchemy\Component\Cerberus\Model\Base\UserRol object.
+     * Initializes internal state of Alchemy\Component\Cerberus\Model\Base\UserRole object.
      */
     public function __construct()
     {
@@ -182,9 +182,9 @@ abstract class UserRol implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>UserRol</code> instance.  If
-     * <code>obj</code> is an instance of <code>UserRol</code>, delegates to
-     * <code>equals(UserRol)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>UserRole</code> instance.  If
+     * <code>obj</code> is an instance of <code>UserRole</code>, delegates to
+     * <code>equals(UserRole)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -250,7 +250,7 @@ abstract class UserRol implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|UserRol The current object, for fluid interface
+     * @return $this|UserRole The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -304,72 +304,72 @@ abstract class UserRol implements ActiveRecordInterface
     }
 
     /**
-     * Get the [usr_id] column value.
+     * Get the [user_id] column value.
      *
      * @return   int
      */
-    public function getUsrId()
+    public function getUserId()
     {
-        return $this->usr_id;
+        return $this->user_id;
     }
 
     /**
-     * Get the [rol_id] column value.
+     * Get the [role_id] column value.
      *
      * @return   int
      */
-    public function getRolId()
+    public function getRoleId()
     {
-        return $this->rol_id;
+        return $this->role_id;
     }
 
     /**
-     * Set the value of [usr_id] column.
+     * Set the value of [user_id] column.
      *
      * @param      int $v new value
-     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRol The current object (for fluent API support)
+     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRole The current object (for fluent API support)
      */
-    public function setUsrId($v)
+    public function setUserId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->usr_id !== $v) {
-            $this->usr_id = $v;
-            $this->modifiedColumns[UserRolTableMap::COL_USR_ID] = true;
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[UserRoleTableMap::COL_USER_ID] = true;
         }
 
-        if ($this->aUser !== null && $this->aUser->getUsrId() !== $v) {
+        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
             $this->aUser = null;
         }
 
         return $this;
-    } // setUsrId()
+    } // setUserId()
 
     /**
-     * Set the value of [rol_id] column.
+     * Set the value of [role_id] column.
      *
      * @param      int $v new value
-     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRol The current object (for fluent API support)
+     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRole The current object (for fluent API support)
      */
-    public function setRolId($v)
+    public function setRoleId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->rol_id !== $v) {
-            $this->rol_id = $v;
-            $this->modifiedColumns[UserRolTableMap::COL_ROL_ID] = true;
+        if ($this->role_id !== $v) {
+            $this->role_id = $v;
+            $this->modifiedColumns[UserRoleTableMap::COL_ROLE_ID] = true;
         }
 
-        if ($this->aRol !== null && $this->aRol->getRolId() !== $v) {
-            $this->aRol = null;
+        if ($this->aRole !== null && $this->aRole->getId() !== $v) {
+            $this->aRole = null;
         }
 
         return $this;
-    } // setRolId()
+    } // setRoleId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -407,11 +407,11 @@ abstract class UserRol implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserRolTableMap::translateFieldName('UsrId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->usr_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserRoleTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserRolTableMap::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->rol_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserRoleTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->role_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -420,10 +420,10 @@ abstract class UserRol implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 2; // 2 = UserRolTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = UserRoleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Alchemy\\Component\\Cerberus\\Model\\UserRol'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Alchemy\\Component\\Cerberus\\Model\\UserRole'), 0, $e);
         }
     }
 
@@ -442,11 +442,11 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUser !== null && $this->usr_id !== $this->aUser->getUsrId()) {
+        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
             $this->aUser = null;
         }
-        if ($this->aRol !== null && $this->rol_id !== $this->aRol->getRolId()) {
-            $this->aRol = null;
+        if ($this->aRole !== null && $this->role_id !== $this->aRole->getId()) {
+            $this->aRole = null;
         }
     } // ensureConsistency
 
@@ -471,13 +471,13 @@ abstract class UserRol implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(UserRoleTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildUserRolQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildUserRoleQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -488,7 +488,7 @@ abstract class UserRol implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aUser = null;
-            $this->aRol = null;
+            $this->aRole = null;
         } // if (deep)
     }
 
@@ -498,8 +498,8 @@ abstract class UserRol implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see UserRol::setDeleted()
-     * @see UserRol::isDeleted()
+     * @see UserRole::setDeleted()
+     * @see UserRole::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -508,11 +508,11 @@ abstract class UserRol implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserRoleTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildUserRolQuery::create()
+            $deleteQuery = ChildUserRoleQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -543,7 +543,7 @@ abstract class UserRol implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserRoleTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -562,7 +562,7 @@ abstract class UserRol implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                UserRolTableMap::addInstanceToPool($this);
+                UserRoleTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -600,11 +600,11 @@ abstract class UserRol implements ActiveRecordInterface
                 $this->setUser($this->aUser);
             }
 
-            if ($this->aRol !== null) {
-                if ($this->aRol->isModified() || $this->aRol->isNew()) {
-                    $affectedRows += $this->aRol->save($con);
+            if ($this->aRole !== null) {
+                if ($this->aRole->isModified() || $this->aRole->isNew()) {
+                    $affectedRows += $this->aRole->save($con);
                 }
-                $this->setRol($this->aRol);
+                $this->setRole($this->aRole);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -640,15 +640,15 @@ abstract class UserRol implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserRolTableMap::COL_USR_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_ID';
+        if ($this->isColumnModified(UserRoleTableMap::COL_USER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'USER_ID';
         }
-        if ($this->isColumnModified(UserRolTableMap::COL_ROL_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'ROL_ID';
+        if ($this->isColumnModified(UserRoleTableMap::COL_ROLE_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'ROLE_ID';
         }
 
         $sql = sprintf(
-            'INSERT INTO user_rol (%s) VALUES (%s)',
+            'INSERT INTO USER_ROLE (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -657,11 +657,11 @@ abstract class UserRol implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'USR_ID':
-                        $stmt->bindValue($identifier, $this->usr_id, PDO::PARAM_INT);
+                    case 'USER_ID':
+                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'ROL_ID':
-                        $stmt->bindValue($identifier, $this->rol_id, PDO::PARAM_INT);
+                    case 'ROLE_ID':
+                        $stmt->bindValue($identifier, $this->role_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -702,7 +702,7 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserRolTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UserRoleTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -719,10 +719,10 @@ abstract class UserRol implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getUsrId();
+                return $this->getUserId();
                 break;
             case 1:
-                return $this->getRolId();
+                return $this->getRoleId();
                 break;
             default:
                 return null;
@@ -747,14 +747,14 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['UserRol'][serialize($this->getPrimaryKey())])) {
+        if (isset($alreadyDumpedObjects['UserRole'][serialize($this->getPrimaryKey())])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['UserRol'][serialize($this->getPrimaryKey())] = true;
-        $keys = UserRolTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['UserRole'][serialize($this->getPrimaryKey())] = true;
+        $keys = UserRoleTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getUsrId(),
-            $keys[1] => $this->getRolId(),
+            $keys[0] => $this->getUserId(),
+            $keys[1] => $this->getRoleId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -765,8 +765,8 @@ abstract class UserRol implements ActiveRecordInterface
             if (null !== $this->aUser) {
                 $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aRol) {
-                $result['Rol'] = $this->aRol->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aRole) {
+                $result['Role'] = $this->aRole->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -782,11 +782,11 @@ abstract class UserRol implements ActiveRecordInterface
      *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                     Defaults to TableMap::TYPE_PHPNAME.
-     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRol
+     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRole
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserRolTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UserRoleTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -797,16 +797,16 @@ abstract class UserRol implements ActiveRecordInterface
      *
      * @param      int $pos position in xml schema
      * @param      mixed $value field value
-     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRol
+     * @return     $this|\Alchemy\Component\Cerberus\Model\UserRole
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setUsrId($value);
+                $this->setUserId($value);
                 break;
             case 1:
-                $this->setRolId($value);
+                $this->setRoleId($value);
                 break;
         } // switch()
 
@@ -832,13 +832,13 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = UserRolTableMap::getFieldNames($keyType);
+        $keys = UserRoleTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setUsrId($arr[$keys[0]]);
+            $this->setUserId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setRolId($arr[$keys[1]]);
+            $this->setRoleId($arr[$keys[1]]);
         }
     }
 
@@ -853,7 +853,7 @@ abstract class UserRol implements ActiveRecordInterface
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return $this|\Alchemy\Component\Cerberus\Model\UserRol The current object, for fluid interface
+     * @return $this|\Alchemy\Component\Cerberus\Model\UserRole The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -873,13 +873,13 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(UserRolTableMap::DATABASE_NAME);
+        $criteria = new Criteria(UserRoleTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserRolTableMap::COL_USR_ID)) {
-            $criteria->add(UserRolTableMap::COL_USR_ID, $this->usr_id);
+        if ($this->isColumnModified(UserRoleTableMap::COL_USER_ID)) {
+            $criteria->add(UserRoleTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(UserRolTableMap::COL_ROL_ID)) {
-            $criteria->add(UserRolTableMap::COL_ROL_ID, $this->rol_id);
+        if ($this->isColumnModified(UserRoleTableMap::COL_ROLE_ID)) {
+            $criteria->add(UserRoleTableMap::COL_ROLE_ID, $this->role_id);
         }
 
         return $criteria;
@@ -897,9 +897,9 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(UserRolTableMap::DATABASE_NAME);
-        $criteria->add(UserRolTableMap::COL_USR_ID, $this->usr_id);
-        $criteria->add(UserRolTableMap::COL_ROL_ID, $this->rol_id);
+        $criteria = new Criteria(UserRoleTableMap::DATABASE_NAME);
+        $criteria->add(UserRoleTableMap::COL_USER_ID, $this->user_id);
+        $criteria->add(UserRoleTableMap::COL_ROLE_ID, $this->role_id);
 
         return $criteria;
     }
@@ -912,21 +912,21 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getUsrId() &&
-            null !== $this->getRolId();
+        $validPk = null !== $this->getUserId() &&
+            null !== $this->getRoleId();
 
         $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
 
-        //relation user_rol_FK_1 to table user
+        //relation USER_ROLE_FK_1 to table USER
         if ($this->aUser && $hash = spl_object_hash($this->aUser)) {
             $primaryKeyFKs[] = $hash;
         } else {
             $validPrimaryKeyFKs = false;
         }
 
-        //relation user_rol_FK_2 to table rol
-        if ($this->aRol && $hash = spl_object_hash($this->aRol)) {
+        //relation USER_ROLE_FK_2 to table ROLE
+        if ($this->aRole && $hash = spl_object_hash($this->aRole)) {
             $primaryKeyFKs[] = $hash;
         } else {
             $validPrimaryKeyFKs = false;
@@ -949,8 +949,8 @@ abstract class UserRol implements ActiveRecordInterface
     public function getPrimaryKey()
     {
         $pks = array();
-        $pks[0] = $this->getUsrId();
-        $pks[1] = $this->getRolId();
+        $pks[0] = $this->getUserId();
+        $pks[1] = $this->getRoleId();
 
         return $pks;
     }
@@ -963,8 +963,8 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function setPrimaryKey($keys)
     {
-        $this->setUsrId($keys[0]);
-        $this->setRolId($keys[1]);
+        $this->setUserId($keys[0]);
+        $this->setRoleId($keys[1]);
     }
 
     /**
@@ -973,7 +973,7 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return (null === $this->getUsrId()) && (null === $this->getRolId());
+        return (null === $this->getUserId()) && (null === $this->getRoleId());
     }
 
     /**
@@ -982,15 +982,15 @@ abstract class UserRol implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Alchemy\Component\Cerberus\Model\UserRol (or compatible) type.
+     * @param      object $copyObj An object of \Alchemy\Component\Cerberus\Model\UserRole (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setUsrId($this->getUsrId());
-        $copyObj->setRolId($this->getRolId());
+        $copyObj->setUserId($this->getUserId());
+        $copyObj->setRoleId($this->getRoleId());
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -1005,7 +1005,7 @@ abstract class UserRol implements ActiveRecordInterface
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \Alchemy\Component\Cerberus\Model\UserRol Clone of current object.
+     * @return                 \Alchemy\Component\Cerberus\Model\UserRole Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1022,15 +1022,15 @@ abstract class UserRol implements ActiveRecordInterface
      * Declares an association between this object and a ChildUser object.
      *
      * @param                  ChildUser $v
-     * @return                 $this|\Alchemy\Component\Cerberus\Model\UserRol The current object (for fluent API support)
+     * @return                 $this|\Alchemy\Component\Cerberus\Model\UserRole The current object (for fluent API support)
      * @throws PropelException
      */
     public function setUser(ChildUser $v = null)
     {
         if ($v === null) {
-            $this->setUsrId(NULL);
+            $this->setUserId(NULL);
         } else {
-            $this->setUsrId($v->getUsrId());
+            $this->setUserId($v->getId());
         }
 
         $this->aUser = $v;
@@ -1038,7 +1038,7 @@ abstract class UserRol implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildUser object, it will not be re-added.
         if ($v !== null) {
-            $v->addUserRol($this);
+            $v->addUserRole($this);
         }
 
 
@@ -1055,14 +1055,14 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function getUser(ConnectionInterface $con = null)
     {
-        if ($this->aUser === null && ($this->usr_id !== null)) {
-            $this->aUser = ChildUserQuery::create()->findPk($this->usr_id, $con);
+        if ($this->aUser === null && ($this->user_id !== null)) {
+            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aUser->addUserRols($this);
+                $this->aUser->addUserRoles($this);
              */
         }
 
@@ -1070,26 +1070,26 @@ abstract class UserRol implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildRol object.
+     * Declares an association between this object and a ChildRole object.
      *
-     * @param                  ChildRol $v
-     * @return                 $this|\Alchemy\Component\Cerberus\Model\UserRol The current object (for fluent API support)
+     * @param                  ChildRole $v
+     * @return                 $this|\Alchemy\Component\Cerberus\Model\UserRole The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setRol(ChildRol $v = null)
+    public function setRole(ChildRole $v = null)
     {
         if ($v === null) {
-            $this->setRolId(NULL);
+            $this->setRoleId(NULL);
         } else {
-            $this->setRolId($v->getRolId());
+            $this->setRoleId($v->getId());
         }
 
-        $this->aRol = $v;
+        $this->aRole = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildRol object, it will not be re-added.
+        // If this object has already been added to the ChildRole object, it will not be re-added.
         if ($v !== null) {
-            $v->addUserRol($this);
+            $v->addUserRole($this);
         }
 
 
@@ -1098,26 +1098,26 @@ abstract class UserRol implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildRol object
+     * Get the associated ChildRole object
      *
      * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildRol The associated ChildRol object.
+     * @return                 ChildRole The associated ChildRole object.
      * @throws PropelException
      */
-    public function getRol(ConnectionInterface $con = null)
+    public function getRole(ConnectionInterface $con = null)
     {
-        if ($this->aRol === null && ($this->rol_id !== null)) {
-            $this->aRol = ChildRolQuery::create()->findPk($this->rol_id, $con);
+        if ($this->aRole === null && ($this->role_id !== null)) {
+            $this->aRole = ChildRoleQuery::create()->findPk($this->role_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aRol->addUserRols($this);
+                $this->aRole->addUserRoles($this);
              */
         }
 
-        return $this->aRol;
+        return $this->aRole;
     }
 
     /**
@@ -1128,13 +1128,13 @@ abstract class UserRol implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aUser) {
-            $this->aUser->removeUserRol($this);
+            $this->aUser->removeUserRole($this);
         }
-        if (null !== $this->aRol) {
-            $this->aRol->removeUserRol($this);
+        if (null !== $this->aRole) {
+            $this->aRole->removeUserRole($this);
         }
-        $this->usr_id = null;
-        $this->rol_id = null;
+        $this->user_id = null;
+        $this->role_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1156,7 +1156,7 @@ abstract class UserRol implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aUser = null;
-        $this->aRol = null;
+        $this->aRole = null;
     }
 
     /**
@@ -1166,7 +1166,7 @@ abstract class UserRol implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(UserRolTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(UserRoleTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

@@ -16,59 +16,59 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'user' table.
+ * Base class that represents a query for the 'USER' table.
  *
  *
  *
- * @method     ChildUserQuery orderByUsrId($order = Criteria::ASC) Order by the usr_id column
- * @method     ChildUserQuery orderByUsrUsername($order = Criteria::ASC) Order by the usr_username column
- * @method     ChildUserQuery orderByUsrPassword($order = Criteria::ASC) Order by the usr_password column
- * @method     ChildUserQuery orderByUsrFirstName($order = Criteria::ASC) Order by the usr_first_name column
- * @method     ChildUserQuery orderByUsrLastName($order = Criteria::ASC) Order by the usr_last_name column
- * @method     ChildUserQuery orderByUsrCreateDate($order = Criteria::ASC) Order by the usr_create_date column
- * @method     ChildUserQuery orderByUsrUpdateDate($order = Criteria::ASC) Order by the usr_update_date column
- * @method     ChildUserQuery orderByUsrStatus($order = Criteria::ASC) Order by the usr_status column
+ * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildUserQuery orderByUsername($order = Criteria::ASC) Order by the username column
+ * @method     ChildUserQuery orderByPassword($order = Criteria::ASC) Order by the password column
+ * @method     ChildUserQuery orderByFirstName($order = Criteria::ASC) Order by the first_name column
+ * @method     ChildUserQuery orderByLastName($order = Criteria::ASC) Order by the last_name column
+ * @method     ChildUserQuery orderByCreateDate($order = Criteria::ASC) Order by the create_date column
+ * @method     ChildUserQuery orderByUpdateDate($order = Criteria::ASC) Order by the update_date column
+ * @method     ChildUserQuery orderByStatus($order = Criteria::ASC) Order by the status column
  *
- * @method     ChildUserQuery groupByUsrId() Group by the usr_id column
- * @method     ChildUserQuery groupByUsrUsername() Group by the usr_username column
- * @method     ChildUserQuery groupByUsrPassword() Group by the usr_password column
- * @method     ChildUserQuery groupByUsrFirstName() Group by the usr_first_name column
- * @method     ChildUserQuery groupByUsrLastName() Group by the usr_last_name column
- * @method     ChildUserQuery groupByUsrCreateDate() Group by the usr_create_date column
- * @method     ChildUserQuery groupByUsrUpdateDate() Group by the usr_update_date column
- * @method     ChildUserQuery groupByUsrStatus() Group by the usr_status column
+ * @method     ChildUserQuery groupById() Group by the id column
+ * @method     ChildUserQuery groupByUsername() Group by the username column
+ * @method     ChildUserQuery groupByPassword() Group by the password column
+ * @method     ChildUserQuery groupByFirstName() Group by the first_name column
+ * @method     ChildUserQuery groupByLastName() Group by the last_name column
+ * @method     ChildUserQuery groupByCreateDate() Group by the create_date column
+ * @method     ChildUserQuery groupByUpdateDate() Group by the update_date column
+ * @method     ChildUserQuery groupByStatus() Group by the status column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildUserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildUserQuery leftJoinUserRol($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserRol relation
- * @method     ChildUserQuery rightJoinUserRol($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserRol relation
- * @method     ChildUserQuery innerJoinUserRol($relationAlias = null) Adds a INNER JOIN clause to the query using the UserRol relation
+ * @method     ChildUserQuery leftJoinUserRole($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserRole relation
+ * @method     ChildUserQuery rightJoinUserRole($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserRole relation
+ * @method     ChildUserQuery innerJoinUserRole($relationAlias = null) Adds a INNER JOIN clause to the query using the UserRole relation
  *
- * @method     \Alchemy\Component\Cerberus\Model\UserRolQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Alchemy\Component\Cerberus\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
  *
- * @method     ChildUser findOneByUsrId(int $usr_id) Return the first ChildUser filtered by the usr_id column
- * @method     ChildUser findOneByUsrUsername(string $usr_username) Return the first ChildUser filtered by the usr_username column
- * @method     ChildUser findOneByUsrPassword(string $usr_password) Return the first ChildUser filtered by the usr_password column
- * @method     ChildUser findOneByUsrFirstName(string $usr_first_name) Return the first ChildUser filtered by the usr_first_name column
- * @method     ChildUser findOneByUsrLastName(string $usr_last_name) Return the first ChildUser filtered by the usr_last_name column
- * @method     ChildUser findOneByUsrCreateDate(string $usr_create_date) Return the first ChildUser filtered by the usr_create_date column
- * @method     ChildUser findOneByUsrUpdateDate(string $usr_update_date) Return the first ChildUser filtered by the usr_update_date column
- * @method     ChildUser findOneByUsrStatus(string $usr_status) Return the first ChildUser filtered by the usr_status column
+ * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
+ * @method     ChildUser findOneByUsername(string $username) Return the first ChildUser filtered by the username column
+ * @method     ChildUser findOneByPassword(string $password) Return the first ChildUser filtered by the password column
+ * @method     ChildUser findOneByFirstName(string $first_name) Return the first ChildUser filtered by the first_name column
+ * @method     ChildUser findOneByLastName(string $last_name) Return the first ChildUser filtered by the last_name column
+ * @method     ChildUser findOneByCreateDate(string $create_date) Return the first ChildUser filtered by the create_date column
+ * @method     ChildUser findOneByUpdateDate(string $update_date) Return the first ChildUser filtered by the update_date column
+ * @method     ChildUser findOneByStatus(string $status) Return the first ChildUser filtered by the status column
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
- * @method     ChildUser[]|ObjectCollection findByUsrId(int $usr_id) Return ChildUser objects filtered by the usr_id column
- * @method     ChildUser[]|ObjectCollection findByUsrUsername(string $usr_username) Return ChildUser objects filtered by the usr_username column
- * @method     ChildUser[]|ObjectCollection findByUsrPassword(string $usr_password) Return ChildUser objects filtered by the usr_password column
- * @method     ChildUser[]|ObjectCollection findByUsrFirstName(string $usr_first_name) Return ChildUser objects filtered by the usr_first_name column
- * @method     ChildUser[]|ObjectCollection findByUsrLastName(string $usr_last_name) Return ChildUser objects filtered by the usr_last_name column
- * @method     ChildUser[]|ObjectCollection findByUsrCreateDate(string $usr_create_date) Return ChildUser objects filtered by the usr_create_date column
- * @method     ChildUser[]|ObjectCollection findByUsrUpdateDate(string $usr_update_date) Return ChildUser objects filtered by the usr_update_date column
- * @method     ChildUser[]|ObjectCollection findByUsrStatus(string $usr_status) Return ChildUser objects filtered by the usr_status column
+ * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
+ * @method     ChildUser[]|ObjectCollection findByUsername(string $username) Return ChildUser objects filtered by the username column
+ * @method     ChildUser[]|ObjectCollection findByPassword(string $password) Return ChildUser objects filtered by the password column
+ * @method     ChildUser[]|ObjectCollection findByFirstName(string $first_name) Return ChildUser objects filtered by the first_name column
+ * @method     ChildUser[]|ObjectCollection findByLastName(string $last_name) Return ChildUser objects filtered by the last_name column
+ * @method     ChildUser[]|ObjectCollection findByCreateDate(string $create_date) Return ChildUser objects filtered by the create_date column
+ * @method     ChildUser[]|ObjectCollection findByUpdateDate(string $update_date) Return ChildUser objects filtered by the update_date column
+ * @method     ChildUser[]|ObjectCollection findByStatus(string $status) Return ChildUser objects filtered by the status column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -158,7 +158,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT USR_ID, USR_USERNAME, USR_PASSWORD, USR_FIRST_NAME, USR_LAST_NAME, USR_CREATE_DATE, USR_UPDATE_DATE, USR_STATUS FROM user WHERE USR_ID = :p0';
+        $sql = 'SELECT ID, USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, CREATE_DATE, UPDATE_DATE, STATUS FROM USER WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -231,7 +231,7 @@ abstract class UserQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
-        return $this->addUsingAlias(UserTableMap::COL_USR_ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(UserTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -243,20 +243,20 @@ abstract class UserQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
-        return $this->addUsingAlias(UserTableMap::COL_USR_ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(UserTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
-     * Filter the query on the usr_id column
+     * Filter the query on the id column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrId(1234); // WHERE usr_id = 1234
-     * $query->filterByUsrId(array(12, 34)); // WHERE usr_id IN (12, 34)
-     * $query->filterByUsrId(array('min' => 12)); // WHERE usr_id > 12
+     * $query->filterById(1234); // WHERE id = 1234
+     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterById(array('min' => 12)); // WHERE id > 12
      * </code>
      *
-     * @param     mixed $usrId The value to use as filter.
+     * @param     mixed $id The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -264,16 +264,16 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrId($usrId = null, $comparison = null)
+    public function filterById($id = null, $comparison = null)
     {
-        if (is_array($usrId)) {
+        if (is_array($id)) {
             $useMinMax = false;
-            if (isset($usrId['min'])) {
-                $this->addUsingAlias(UserTableMap::COL_USR_ID, $usrId['min'], Criteria::GREATER_EQUAL);
+            if (isset($id['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($usrId['max'])) {
-                $this->addUsingAlias(UserTableMap::COL_USR_ID, $usrId['max'], Criteria::LESS_EQUAL);
+            if (isset($id['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -284,136 +284,136 @@ abstract class UserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_ID, $usrId, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_ID, $id, $comparison);
     }
 
     /**
-     * Filter the query on the usr_username column
+     * Filter the query on the username column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrUsername('fooValue');   // WHERE usr_username = 'fooValue'
-     * $query->filterByUsrUsername('%fooValue%'); // WHERE usr_username LIKE '%fooValue%'
+     * $query->filterByUsername('fooValue');   // WHERE username = 'fooValue'
+     * $query->filterByUsername('%fooValue%'); // WHERE username LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $usrUsername The value to use as filter.
+     * @param     string $username The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrUsername($usrUsername = null, $comparison = null)
+    public function filterByUsername($username = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($usrUsername)) {
+            if (is_array($username)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $usrUsername)) {
-                $usrUsername = str_replace('*', '%', $usrUsername);
+            } elseif (preg_match('/[\%\*]/', $username)) {
+                $username = str_replace('*', '%', $username);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_USERNAME, $usrUsername, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_USERNAME, $username, $comparison);
     }
 
     /**
-     * Filter the query on the usr_password column
+     * Filter the query on the password column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrPassword('fooValue');   // WHERE usr_password = 'fooValue'
-     * $query->filterByUsrPassword('%fooValue%'); // WHERE usr_password LIKE '%fooValue%'
+     * $query->filterByPassword('fooValue');   // WHERE password = 'fooValue'
+     * $query->filterByPassword('%fooValue%'); // WHERE password LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $usrPassword The value to use as filter.
+     * @param     string $password The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrPassword($usrPassword = null, $comparison = null)
+    public function filterByPassword($password = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($usrPassword)) {
+            if (is_array($password)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $usrPassword)) {
-                $usrPassword = str_replace('*', '%', $usrPassword);
+            } elseif (preg_match('/[\%\*]/', $password)) {
+                $password = str_replace('*', '%', $password);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_PASSWORD, $usrPassword, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_PASSWORD, $password, $comparison);
     }
 
     /**
-     * Filter the query on the usr_first_name column
+     * Filter the query on the first_name column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrFirstName('fooValue');   // WHERE usr_first_name = 'fooValue'
-     * $query->filterByUsrFirstName('%fooValue%'); // WHERE usr_first_name LIKE '%fooValue%'
+     * $query->filterByFirstName('fooValue');   // WHERE first_name = 'fooValue'
+     * $query->filterByFirstName('%fooValue%'); // WHERE first_name LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $usrFirstName The value to use as filter.
+     * @param     string $firstName The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrFirstName($usrFirstName = null, $comparison = null)
+    public function filterByFirstName($firstName = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($usrFirstName)) {
+            if (is_array($firstName)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $usrFirstName)) {
-                $usrFirstName = str_replace('*', '%', $usrFirstName);
+            } elseif (preg_match('/[\%\*]/', $firstName)) {
+                $firstName = str_replace('*', '%', $firstName);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_FIRST_NAME, $usrFirstName, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_FIRST_NAME, $firstName, $comparison);
     }
 
     /**
-     * Filter the query on the usr_last_name column
+     * Filter the query on the last_name column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrLastName('fooValue');   // WHERE usr_last_name = 'fooValue'
-     * $query->filterByUsrLastName('%fooValue%'); // WHERE usr_last_name LIKE '%fooValue%'
+     * $query->filterByLastName('fooValue');   // WHERE last_name = 'fooValue'
+     * $query->filterByLastName('%fooValue%'); // WHERE last_name LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $usrLastName The value to use as filter.
+     * @param     string $lastName The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrLastName($usrLastName = null, $comparison = null)
+    public function filterByLastName($lastName = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($usrLastName)) {
+            if (is_array($lastName)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $usrLastName)) {
-                $usrLastName = str_replace('*', '%', $usrLastName);
+            } elseif (preg_match('/[\%\*]/', $lastName)) {
+                $lastName = str_replace('*', '%', $lastName);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_LAST_NAME, $usrLastName, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_LAST_NAME, $lastName, $comparison);
     }
 
     /**
-     * Filter the query on the usr_create_date column
+     * Filter the query on the create_date column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrCreateDate('2011-03-14'); // WHERE usr_create_date = '2011-03-14'
-     * $query->filterByUsrCreateDate('now'); // WHERE usr_create_date = '2011-03-14'
-     * $query->filterByUsrCreateDate(array('max' => 'yesterday')); // WHERE usr_create_date > '2011-03-13'
+     * $query->filterByCreateDate('2011-03-14'); // WHERE create_date = '2011-03-14'
+     * $query->filterByCreateDate('now'); // WHERE create_date = '2011-03-14'
+     * $query->filterByCreateDate(array('max' => 'yesterday')); // WHERE create_date > '2011-03-13'
      * </code>
      *
-     * @param     mixed $usrCreateDate The value to use as filter.
+     * @param     mixed $createDate The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -423,16 +423,16 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrCreateDate($usrCreateDate = null, $comparison = null)
+    public function filterByCreateDate($createDate = null, $comparison = null)
     {
-        if (is_array($usrCreateDate)) {
+        if (is_array($createDate)) {
             $useMinMax = false;
-            if (isset($usrCreateDate['min'])) {
-                $this->addUsingAlias(UserTableMap::COL_USR_CREATE_DATE, $usrCreateDate['min'], Criteria::GREATER_EQUAL);
+            if (isset($createDate['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_CREATE_DATE, $createDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($usrCreateDate['max'])) {
-                $this->addUsingAlias(UserTableMap::COL_USR_CREATE_DATE, $usrCreateDate['max'], Criteria::LESS_EQUAL);
+            if (isset($createDate['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_CREATE_DATE, $createDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -443,20 +443,20 @@ abstract class UserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_CREATE_DATE, $usrCreateDate, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_CREATE_DATE, $createDate, $comparison);
     }
 
     /**
-     * Filter the query on the usr_update_date column
+     * Filter the query on the update_date column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrUpdateDate('2011-03-14'); // WHERE usr_update_date = '2011-03-14'
-     * $query->filterByUsrUpdateDate('now'); // WHERE usr_update_date = '2011-03-14'
-     * $query->filterByUsrUpdateDate(array('max' => 'yesterday')); // WHERE usr_update_date > '2011-03-13'
+     * $query->filterByUpdateDate('2011-03-14'); // WHERE update_date = '2011-03-14'
+     * $query->filterByUpdateDate('now'); // WHERE update_date = '2011-03-14'
+     * $query->filterByUpdateDate(array('max' => 'yesterday')); // WHERE update_date > '2011-03-13'
      * </code>
      *
-     * @param     mixed $usrUpdateDate The value to use as filter.
+     * @param     mixed $updateDate The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -466,16 +466,16 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrUpdateDate($usrUpdateDate = null, $comparison = null)
+    public function filterByUpdateDate($updateDate = null, $comparison = null)
     {
-        if (is_array($usrUpdateDate)) {
+        if (is_array($updateDate)) {
             $useMinMax = false;
-            if (isset($usrUpdateDate['min'])) {
-                $this->addUsingAlias(UserTableMap::COL_USR_UPDATE_DATE, $usrUpdateDate['min'], Criteria::GREATER_EQUAL);
+            if (isset($updateDate['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_UPDATE_DATE, $updateDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($usrUpdateDate['max'])) {
-                $this->addUsingAlias(UserTableMap::COL_USR_UPDATE_DATE, $usrUpdateDate['max'], Criteria::LESS_EQUAL);
+            if (isset($updateDate['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_UPDATE_DATE, $updateDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -486,73 +486,73 @@ abstract class UserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_UPDATE_DATE, $usrUpdateDate, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_UPDATE_DATE, $updateDate, $comparison);
     }
 
     /**
-     * Filter the query on the usr_status column
+     * Filter the query on the status column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrStatus('fooValue');   // WHERE usr_status = 'fooValue'
-     * $query->filterByUsrStatus('%fooValue%'); // WHERE usr_status LIKE '%fooValue%'
+     * $query->filterByStatus('fooValue');   // WHERE status = 'fooValue'
+     * $query->filterByStatus('%fooValue%'); // WHERE status LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $usrStatus The value to use as filter.
+     * @param     string $status The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUsrStatus($usrStatus = null, $comparison = null)
+    public function filterByStatus($status = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($usrStatus)) {
+            if (is_array($status)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $usrStatus)) {
-                $usrStatus = str_replace('*', '%', $usrStatus);
+            } elseif (preg_match('/[\%\*]/', $status)) {
+                $status = str_replace('*', '%', $status);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_USR_STATUS, $usrStatus, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_STATUS, $status, $comparison);
     }
 
     /**
-     * Filter the query by a related \Alchemy\Component\Cerberus\Model\UserRol object
+     * Filter the query by a related \Alchemy\Component\Cerberus\Model\UserRole object
      *
-     * @param \Alchemy\Component\Cerberus\Model\UserRol|ObjectCollection $userRol  the related object to use as filter
+     * @param \Alchemy\Component\Cerberus\Model\UserRole|ObjectCollection $userRole  the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUserRol($userRol, $comparison = null)
+    public function filterByUserRole($userRole, $comparison = null)
     {
-        if ($userRol instanceof \Alchemy\Component\Cerberus\Model\UserRol) {
+        if ($userRole instanceof \Alchemy\Component\Cerberus\Model\UserRole) {
             return $this
-                ->addUsingAlias(UserTableMap::COL_USR_ID, $userRol->getUsrId(), $comparison);
-        } elseif ($userRol instanceof ObjectCollection) {
+                ->addUsingAlias(UserTableMap::COL_ID, $userRole->getUserId(), $comparison);
+        } elseif ($userRole instanceof ObjectCollection) {
             return $this
-                ->useUserRolQuery()
-                ->filterByPrimaryKeys($userRol->getPrimaryKeys())
+                ->useUserRoleQuery()
+                ->filterByPrimaryKeys($userRole->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByUserRol() only accepts arguments of type \Alchemy\Component\Cerberus\Model\UserRol or Collection');
+            throw new PropelException('filterByUserRole() only accepts arguments of type \Alchemy\Component\Cerberus\Model\UserRole or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the UserRol relation
+     * Adds a JOIN clause to the query using the UserRole relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function joinUserRol($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinUserRole($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('UserRol');
+        $relationMap = $tableMap->getRelation('UserRole');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -567,14 +567,14 @@ abstract class UserQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'UserRol');
+            $this->addJoinObject($join, 'UserRole');
         }
 
         return $this;
     }
 
     /**
-     * Use the UserRol relation UserRol object
+     * Use the UserRole relation UserRole object
      *
      * @see useQuery()
      *
@@ -582,13 +582,13 @@ abstract class UserQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   \Alchemy\Component\Cerberus\Model\UserRolQuery A secondary query class using the current class as primary query
+     * @return   \Alchemy\Component\Cerberus\Model\UserRoleQuery A secondary query class using the current class as primary query
      */
-    public function useUserRolQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useUserRoleQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinUserRol($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'UserRol', '\Alchemy\Component\Cerberus\Model\UserRolQuery');
+            ->joinUserRole($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserRole', '\Alchemy\Component\Cerberus\Model\UserRoleQuery');
     }
 
     /**
@@ -601,14 +601,14 @@ abstract class UserQuery extends ModelCriteria
     public function prune($user = null)
     {
         if ($user) {
-            $this->addUsingAlias(UserTableMap::COL_USR_ID, $user->getUsrId(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(UserTableMap::COL_ID, $user->getId(), Criteria::NOT_EQUAL);
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the user table.
+     * Deletes all rows from the USER table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).

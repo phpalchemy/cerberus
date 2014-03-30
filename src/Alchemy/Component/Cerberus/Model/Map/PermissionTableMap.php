@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'permission' table.
+ * This class defines the structure of the 'PERMISSION' table.
  *
  *
  *
@@ -44,7 +44,7 @@ class PermissionTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'permission';
+    const TABLE_NAME = 'PERMISSION';
 
     /**
      * The related Propel class for this table
@@ -59,7 +59,7 @@ class PermissionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,32 +69,37 @@ class PermissionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
-     * the column name for the PRM_ID field
+     * the column name for the ID field
      */
-    const COL_PRM_ID = 'permission.PRM_ID';
+    const COL_ID = 'PERMISSION.ID';
 
     /**
-     * the column name for the PRM_NAME field
+     * the column name for the NAME field
      */
-    const COL_PRM_NAME = 'permission.PRM_NAME';
+    const COL_NAME = 'PERMISSION.NAME';
 
     /**
-     * the column name for the PRM_CREATE_DATE field
+     * the column name for the CREATE_DATE field
      */
-    const COL_PRM_CREATE_DATE = 'permission.PRM_CREATE_DATE';
+    const COL_CREATE_DATE = 'PERMISSION.CREATE_DATE';
 
     /**
-     * the column name for the PRM_UPDATE_DATE field
+     * the column name for the DESCRIPTION field
      */
-    const COL_PRM_UPDATE_DATE = 'permission.PRM_UPDATE_DATE';
+    const COL_DESCRIPTION = 'PERMISSION.DESCRIPTION';
 
     /**
-     * the column name for the PRM_STATUS field
+     * the column name for the UPDATE_DATE field
      */
-    const COL_PRM_STATUS = 'permission.PRM_STATUS';
+    const COL_UPDATE_DATE = 'PERMISSION.UPDATE_DATE';
+
+    /**
+     * the column name for the STATUS field
+     */
+    const COL_STATUS = 'PERMISSION.STATUS';
 
     /**
      * The default string format for model objects of the related table
@@ -108,12 +113,12 @@ class PermissionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('PrmId', 'PrmName', 'PrmCreateDate', 'PrmUpdateDate', 'PrmStatus', ),
-        self::TYPE_STUDLYPHPNAME => array('prmId', 'prmName', 'prmCreateDate', 'prmUpdateDate', 'prmStatus', ),
-        self::TYPE_COLNAME       => array(PermissionTableMap::COL_PRM_ID, PermissionTableMap::COL_PRM_NAME, PermissionTableMap::COL_PRM_CREATE_DATE, PermissionTableMap::COL_PRM_UPDATE_DATE, PermissionTableMap::COL_PRM_STATUS, ),
-        self::TYPE_RAW_COLNAME   => array('COL_PRM_ID', 'COL_PRM_NAME', 'COL_PRM_CREATE_DATE', 'COL_PRM_UPDATE_DATE', 'COL_PRM_STATUS', ),
-        self::TYPE_FIELDNAME     => array('prm_id', 'prm_name', 'prm_create_date', 'prm_update_date', 'prm_status', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'CreateDate', 'Description', 'UpdateDate', 'Status', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'name', 'createDate', 'description', 'updateDate', 'status', ),
+        self::TYPE_COLNAME       => array(PermissionTableMap::COL_ID, PermissionTableMap::COL_NAME, PermissionTableMap::COL_CREATE_DATE, PermissionTableMap::COL_DESCRIPTION, PermissionTableMap::COL_UPDATE_DATE, PermissionTableMap::COL_STATUS, ),
+        self::TYPE_RAW_COLNAME   => array('COL_ID', 'COL_NAME', 'COL_CREATE_DATE', 'COL_DESCRIPTION', 'COL_UPDATE_DATE', 'COL_STATUS', ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'create_date', 'description', 'update_date', 'status', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -123,12 +128,12 @@ class PermissionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('PrmId' => 0, 'PrmName' => 1, 'PrmCreateDate' => 2, 'PrmUpdateDate' => 3, 'PrmStatus' => 4, ),
-        self::TYPE_STUDLYPHPNAME => array('prmId' => 0, 'prmName' => 1, 'prmCreateDate' => 2, 'prmUpdateDate' => 3, 'prmStatus' => 4, ),
-        self::TYPE_COLNAME       => array(PermissionTableMap::COL_PRM_ID => 0, PermissionTableMap::COL_PRM_NAME => 1, PermissionTableMap::COL_PRM_CREATE_DATE => 2, PermissionTableMap::COL_PRM_UPDATE_DATE => 3, PermissionTableMap::COL_PRM_STATUS => 4, ),
-        self::TYPE_RAW_COLNAME   => array('COL_PRM_ID' => 0, 'COL_PRM_NAME' => 1, 'COL_PRM_CREATE_DATE' => 2, 'COL_PRM_UPDATE_DATE' => 3, 'COL_PRM_STATUS' => 4, ),
-        self::TYPE_FIELDNAME     => array('prm_id' => 0, 'prm_name' => 1, 'prm_create_date' => 2, 'prm_update_date' => 3, 'prm_status' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'CreateDate' => 2, 'Description' => 3, 'UpdateDate' => 4, 'Status' => 5, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'name' => 1, 'createDate' => 2, 'description' => 3, 'updateDate' => 4, 'status' => 5, ),
+        self::TYPE_COLNAME       => array(PermissionTableMap::COL_ID => 0, PermissionTableMap::COL_NAME => 1, PermissionTableMap::COL_CREATE_DATE => 2, PermissionTableMap::COL_DESCRIPTION => 3, PermissionTableMap::COL_UPDATE_DATE => 4, PermissionTableMap::COL_STATUS => 5, ),
+        self::TYPE_RAW_COLNAME   => array('COL_ID' => 0, 'COL_NAME' => 1, 'COL_CREATE_DATE' => 2, 'COL_DESCRIPTION' => 3, 'COL_UPDATE_DATE' => 4, 'COL_STATUS' => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'create_date' => 2, 'description' => 3, 'update_date' => 4, 'status' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -141,17 +146,18 @@ class PermissionTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('permission');
+        $this->setName('PERMISSION');
         $this->setPhpName('Permission');
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\Permission');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('PRM_ID', 'PrmId', 'INTEGER', true, null, null);
-        $this->addColumn('PRM_NAME', 'PrmName', 'VARCHAR', true, 256, null);
-        $this->addColumn('PRM_CREATE_DATE', 'PrmCreateDate', 'TIMESTAMP', false, null, null);
-        $this->addColumn('PRM_UPDATE_DATE', 'PrmUpdateDate', 'TIMESTAMP', false, null, null);
-        $this->addColumn('PRM_STATUS', 'PrmStatus', 'VARCHAR', false, 64, 'ACTIVE');
+        $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+        $this->addColumn('NAME', 'Name', 'VARCHAR', true, 256, null);
+        $this->addColumn('CREATE_DATE', 'CreateDate', 'TIMESTAMP', false, null, null);
+        $this->addColumn('DESCRIPTION', 'Description', 'VARCHAR', true, 256, null);
+        $this->addColumn('UPDATE_DATE', 'UpdateDate', 'TIMESTAMP', false, null, null);
+        $this->addColumn('STATUS', 'Status', 'VARCHAR', false, 64, 'ACTIVE');
     } // initialize()
 
     /**
@@ -159,16 +165,16 @@ class PermissionTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('RolPermission', '\\Alchemy\\Component\\Cerberus\\Model\\RolPermission', RelationMap::ONE_TO_MANY, array('prm_id' => 'prm_id', ), 'CASCADE', null, 'RolPermissions');
+        $this->addRelation('RolePermission', '\\Alchemy\\Component\\Cerberus\\Model\\RolePermission', RelationMap::ONE_TO_MANY, array('id' => 'permission_id', ), 'CASCADE', null, 'RolePermissions');
     } // buildRelations()
     /**
-     * Method to invalidate the instance pool of all tables related to permission     * by a foreign key with ON DELETE CASCADE
+     * Method to invalidate the instance pool of all tables related to PERMISSION     * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        RolPermissionTableMap::clearInstancePool();
+        RolePermissionTableMap::clearInstancePool();
     }
 
     /**
@@ -187,11 +193,11 @@ class PermissionTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)];
+        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -211,7 +217,7 @@ class PermissionTableMap extends TableMap
         return (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 0 + $offset
-                : self::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
     }
 
@@ -312,17 +318,19 @@ class PermissionTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(PermissionTableMap::COL_PRM_ID);
-            $criteria->addSelectColumn(PermissionTableMap::COL_PRM_NAME);
-            $criteria->addSelectColumn(PermissionTableMap::COL_PRM_CREATE_DATE);
-            $criteria->addSelectColumn(PermissionTableMap::COL_PRM_UPDATE_DATE);
-            $criteria->addSelectColumn(PermissionTableMap::COL_PRM_STATUS);
+            $criteria->addSelectColumn(PermissionTableMap::COL_ID);
+            $criteria->addSelectColumn(PermissionTableMap::COL_NAME);
+            $criteria->addSelectColumn(PermissionTableMap::COL_CREATE_DATE);
+            $criteria->addSelectColumn(PermissionTableMap::COL_DESCRIPTION);
+            $criteria->addSelectColumn(PermissionTableMap::COL_UPDATE_DATE);
+            $criteria->addSelectColumn(PermissionTableMap::COL_STATUS);
         } else {
-            $criteria->addSelectColumn($alias . '.PRM_ID');
-            $criteria->addSelectColumn($alias . '.PRM_NAME');
-            $criteria->addSelectColumn($alias . '.PRM_CREATE_DATE');
-            $criteria->addSelectColumn($alias . '.PRM_UPDATE_DATE');
-            $criteria->addSelectColumn($alias . '.PRM_STATUS');
+            $criteria->addSelectColumn($alias . '.ID');
+            $criteria->addSelectColumn($alias . '.NAME');
+            $criteria->addSelectColumn($alias . '.CREATE_DATE');
+            $criteria->addSelectColumn($alias . '.DESCRIPTION');
+            $criteria->addSelectColumn($alias . '.UPDATE_DATE');
+            $criteria->addSelectColumn($alias . '.STATUS');
         }
     }
 
@@ -374,7 +382,7 @@ class PermissionTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(PermissionTableMap::DATABASE_NAME);
-            $criteria->add(PermissionTableMap::COL_PRM_ID, (array) $values, Criteria::IN);
+            $criteria->add(PermissionTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
         $query = PermissionQuery::create()->mergeWith($criteria);
@@ -391,7 +399,7 @@ class PermissionTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the permission table.
+     * Deletes all rows from the PERMISSION table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -422,8 +430,8 @@ class PermissionTableMap extends TableMap
             $criteria = $criteria->buildCriteria(); // build Criteria from Permission object
         }
 
-        if ($criteria->containsKey(PermissionTableMap::COL_PRM_ID) && $criteria->keyContainsValue(PermissionTableMap::COL_PRM_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PermissionTableMap::COL_PRM_ID.')');
+        if ($criteria->containsKey(PermissionTableMap::COL_ID) && $criteria->keyContainsValue(PermissionTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PermissionTableMap::COL_ID.')');
         }
 
 

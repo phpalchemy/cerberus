@@ -2,8 +2,8 @@
 
 namespace Alchemy\Component\Cerberus\Model\Map;
 
-use Alchemy\Component\Cerberus\Model\RolPermission;
-use Alchemy\Component\Cerberus\Model\RolPermissionQuery;
+use Alchemy\Component\Cerberus\Model\Role;
+use Alchemy\Component\Cerberus\Model\RoleQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'rol_permission' table.
+ * This class defines the structure of the 'ROLE' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class RolPermissionTableMap extends TableMap
+class RoleTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class RolPermissionTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Alchemy.Component.Cerberus.Model.Map.RolPermissionTableMap';
+    const CLASS_NAME = 'Alchemy.Component.Cerberus.Model.Map.RoleTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class RolPermissionTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'rol_permission';
+    const TABLE_NAME = 'ROLE';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Alchemy\\Component\\Cerberus\\Model\\RolPermission';
+    const OM_CLASS = '\\Alchemy\\Component\\Cerberus\\Model\\Role';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Alchemy.Component.Cerberus.Model.RolPermission';
+    const CLASS_DEFAULT = 'Alchemy.Component.Cerberus.Model.Role';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 2;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,17 +69,37 @@ class RolPermissionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 2;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
-     * the column name for the ROL_ID field
+     * the column name for the ID field
      */
-    const COL_ROL_ID = 'rol_permission.ROL_ID';
+    const COL_ID = 'ROLE.ID';
 
     /**
-     * the column name for the PRM_ID field
+     * the column name for the NAME field
      */
-    const COL_PRM_ID = 'rol_permission.PRM_ID';
+    const COL_NAME = 'ROLE.NAME';
+
+    /**
+     * the column name for the DESCRIPTION field
+     */
+    const COL_DESCRIPTION = 'ROLE.DESCRIPTION';
+
+    /**
+     * the column name for the CREATE_DATE field
+     */
+    const COL_CREATE_DATE = 'ROLE.CREATE_DATE';
+
+    /**
+     * the column name for the UPDATE_DATE field
+     */
+    const COL_UPDATE_DATE = 'ROLE.UPDATE_DATE';
+
+    /**
+     * the column name for the STATUS field
+     */
+    const COL_STATUS = 'ROLE.STATUS';
 
     /**
      * The default string format for model objects of the related table
@@ -93,12 +113,12 @@ class RolPermissionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('RolId', 'PrmId', ),
-        self::TYPE_STUDLYPHPNAME => array('rolId', 'prmId', ),
-        self::TYPE_COLNAME       => array(RolPermissionTableMap::COL_ROL_ID, RolPermissionTableMap::COL_PRM_ID, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ROL_ID', 'COL_PRM_ID', ),
-        self::TYPE_FIELDNAME     => array('rol_id', 'prm_id', ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'CreateDate', 'UpdateDate', 'Status', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'name', 'description', 'createDate', 'updateDate', 'status', ),
+        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID, RoleTableMap::COL_NAME, RoleTableMap::COL_DESCRIPTION, RoleTableMap::COL_CREATE_DATE, RoleTableMap::COL_UPDATE_DATE, RoleTableMap::COL_STATUS, ),
+        self::TYPE_RAW_COLNAME   => array('COL_ID', 'COL_NAME', 'COL_DESCRIPTION', 'COL_CREATE_DATE', 'COL_UPDATE_DATE', 'COL_STATUS', ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'create_date', 'update_date', 'status', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -108,12 +128,12 @@ class RolPermissionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('RolId' => 0, 'PrmId' => 1, ),
-        self::TYPE_STUDLYPHPNAME => array('rolId' => 0, 'prmId' => 1, ),
-        self::TYPE_COLNAME       => array(RolPermissionTableMap::COL_ROL_ID => 0, RolPermissionTableMap::COL_PRM_ID => 1, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ROL_ID' => 0, 'COL_PRM_ID' => 1, ),
-        self::TYPE_FIELDNAME     => array('rol_id' => 0, 'prm_id' => 1, ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'CreateDate' => 3, 'UpdateDate' => 4, 'Status' => 5, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'name' => 1, 'description' => 2, 'createDate' => 3, 'updateDate' => 4, 'status' => 5, ),
+        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID => 0, RoleTableMap::COL_NAME => 1, RoleTableMap::COL_DESCRIPTION => 2, RoleTableMap::COL_CREATE_DATE => 3, RoleTableMap::COL_UPDATE_DATE => 4, RoleTableMap::COL_STATUS => 5, ),
+        self::TYPE_RAW_COLNAME   => array('COL_ID' => 0, 'COL_NAME' => 1, 'COL_DESCRIPTION' => 2, 'COL_CREATE_DATE' => 3, 'COL_UPDATE_DATE' => 4, 'COL_STATUS' => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'create_date' => 3, 'update_date' => 4, 'status' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -126,14 +146,18 @@ class RolPermissionTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('rol_permission');
-        $this->setPhpName('RolPermission');
-        $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\RolPermission');
+        $this->setName('ROLE');
+        $this->setPhpName('Role');
+        $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\Role');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
-        $this->addForeignPrimaryKey('ROL_ID', 'RolId', 'INTEGER' , 'rol', 'ROL_ID', true, null, null);
-        $this->addForeignPrimaryKey('PRM_ID', 'PrmId', 'INTEGER' , 'permission', 'PRM_ID', true, null, null);
+        $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+        $this->addColumn('NAME', 'Name', 'VARCHAR', true, 128, null);
+        $this->addColumn('DESCRIPTION', 'Description', 'VARCHAR', true, 256, null);
+        $this->addColumn('CREATE_DATE', 'CreateDate', 'TIMESTAMP', false, null, null);
+        $this->addColumn('UPDATE_DATE', 'UpdateDate', 'TIMESTAMP', false, null, null);
+        $this->addColumn('STATUS', 'Status', 'VARCHAR', false, 64, 'ACTIVE');
     } // initialize()
 
     /**
@@ -141,61 +165,18 @@ class RolPermissionTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Rol', '\\Alchemy\\Component\\Cerberus\\Model\\Rol', RelationMap::MANY_TO_ONE, array('rol_id' => 'rol_id', ), 'CASCADE', null);
-        $this->addRelation('Permission', '\\Alchemy\\Component\\Cerberus\\Model\\Permission', RelationMap::MANY_TO_ONE, array('prm_id' => 'prm_id', ), 'CASCADE', null);
+        $this->addRelation('UserRole', '\\Alchemy\\Component\\Cerberus\\Model\\UserRole', RelationMap::ONE_TO_MANY, array('id' => 'role_id', ), 'CASCADE', null, 'UserRoles');
+        $this->addRelation('RolePermission', '\\Alchemy\\Component\\Cerberus\\Model\\RolePermission', RelationMap::ONE_TO_MANY, array('id' => 'role_id', ), 'CASCADE', null, 'RolePermissions');
     } // buildRelations()
-
     /**
-     * Adds an object to the instance pool.
-     *
-     * Propel keeps cached copies of objects in an instance pool when they are retrieved
-     * from the database. In some cases you may need to explicitly add objects
-     * to the cache in order to ensure that the same objects are always returned by find*()
-     * and findPk*() calls.
-     *
-     * @param \Alchemy\Component\Cerberus\Model\RolPermission $obj A \Alchemy\Component\Cerberus\Model\RolPermission object.
-     * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
+     * Method to invalidate the instance pool of all tables related to ROLE     * by a foreign key with ON DELETE CASCADE
      */
-    public static function addInstanceToPool($obj, $key = null)
+    public static function clearRelatedInstancePool()
     {
-        if (Propel::isInstancePoolingEnabled()) {
-            if (null === $key) {
-                $key = serialize(array((string) $obj->getRolId(), (string) $obj->getPrmId()));
-            } // if key === null
-            self::$instances[$key] = $obj;
-        }
-    }
-
-    /**
-     * Removes an object from the instance pool.
-     *
-     * Propel keeps cached copies of objects in an instance pool when they are retrieved
-     * from the database.  In some cases -- especially when you override doDelete
-     * methods in your stub classes -- you may need to explicitly remove objects
-     * from the cache in order to prevent returning objects that no longer exist.
-     *
-     * @param mixed $value A \Alchemy\Component\Cerberus\Model\RolPermission object or a primary key value.
-     */
-    public static function removeInstanceFromPool($value)
-    {
-        if (Propel::isInstancePoolingEnabled() && null !== $value) {
-            if (is_object($value) && $value instanceof \Alchemy\Component\Cerberus\Model\RolPermission) {
-                $key = serialize(array((string) $value->getRolId(), (string) $value->getPrmId()));
-
-            } elseif (is_array($value) && count($value) === 2) {
-                // assume we've been passed a primary key";
-                $key = serialize(array((string) $value[0], (string) $value[1]));
-            } elseif ($value instanceof Criteria) {
-                self::$instances = [];
-
-                return;
-            } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or \Alchemy\Component\Cerberus\Model\RolPermission object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
-                throw $e;
-            }
-
-            unset(self::$instances[$key]);
-        }
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        UserRoleTableMap::clearInstancePool();
+        RolePermissionTableMap::clearInstancePool();
     }
 
     /**
@@ -214,11 +195,11 @@ class RolPermissionTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)]));
+        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -235,20 +216,11 @@ class RolPermissionTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-            $pks = [];
-
-        $pks[] = (int) $row[
+        return (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 0 + $offset
-                : self::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
-        $pks[] = (int) $row[
-            $indexType == TableMap::TYPE_NUM
-                ? 1 + $offset
-                : self::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)
-        ];
-
-        return $pks;
     }
 
     /**
@@ -264,7 +236,7 @@ class RolPermissionTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? RolPermissionTableMap::CLASS_DEFAULT : RolPermissionTableMap::OM_CLASS;
+        return $withPrefix ? RoleTableMap::CLASS_DEFAULT : RoleTableMap::OM_CLASS;
     }
 
     /**
@@ -278,22 +250,22 @@ class RolPermissionTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return array (RolPermission object, last column rank)
+     * @return array (Role object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = RolPermissionTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = RolPermissionTableMap::getInstanceFromPool($key))) {
+        $key = RoleTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = RoleTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + RolPermissionTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + RoleTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = RolPermissionTableMap::OM_CLASS;
-            /** @var RolPermission $obj */
+            $cls = RoleTableMap::OM_CLASS;
+            /** @var Role $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            RolPermissionTableMap::addInstanceToPool($obj, $key);
+            RoleTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -316,18 +288,18 @@ class RolPermissionTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = RolPermissionTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = RolPermissionTableMap::getInstanceFromPool($key))) {
+            $key = RoleTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = RoleTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var RolPermission $obj */
+                /** @var Role $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                RolPermissionTableMap::addInstanceToPool($obj, $key);
+                RoleTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -348,11 +320,19 @@ class RolPermissionTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(RolPermissionTableMap::COL_ROL_ID);
-            $criteria->addSelectColumn(RolPermissionTableMap::COL_PRM_ID);
+            $criteria->addSelectColumn(RoleTableMap::COL_ID);
+            $criteria->addSelectColumn(RoleTableMap::COL_NAME);
+            $criteria->addSelectColumn(RoleTableMap::COL_DESCRIPTION);
+            $criteria->addSelectColumn(RoleTableMap::COL_CREATE_DATE);
+            $criteria->addSelectColumn(RoleTableMap::COL_UPDATE_DATE);
+            $criteria->addSelectColumn(RoleTableMap::COL_STATUS);
         } else {
-            $criteria->addSelectColumn($alias . '.ROL_ID');
-            $criteria->addSelectColumn($alias . '.PRM_ID');
+            $criteria->addSelectColumn($alias . '.ID');
+            $criteria->addSelectColumn($alias . '.NAME');
+            $criteria->addSelectColumn($alias . '.DESCRIPTION');
+            $criteria->addSelectColumn($alias . '.CREATE_DATE');
+            $criteria->addSelectColumn($alias . '.UPDATE_DATE');
+            $criteria->addSelectColumn($alias . '.STATUS');
         }
     }
 
@@ -365,7 +345,7 @@ class RolPermissionTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(RolPermissionTableMap::DATABASE_NAME)->getTable(RolPermissionTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(RoleTableMap::DATABASE_NAME)->getTable(RoleTableMap::TABLE_NAME);
     }
 
     /**
@@ -373,16 +353,16 @@ class RolPermissionTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(RolPermissionTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(RolPermissionTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new RolPermissionTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(RoleTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(RoleTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new RoleTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a RolPermission or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Role or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or RolPermission object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Role object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -393,37 +373,27 @@ class RolPermissionTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(RolPermissionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Alchemy\Component\Cerberus\Model\RolPermission) { // it's a model object
+        } elseif ($values instanceof \Alchemy\Component\Cerberus\Model\Role) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(RolPermissionTableMap::DATABASE_NAME);
-            // primary key is composite; we therefore, expect
-            // the primary key passed to be an array of pkey values
-            if (count($values) == count($values, COUNT_RECURSIVE)) {
-                // array is not multi-dimensional
-                $values = array($values);
-            }
-            foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(RolPermissionTableMap::COL_ROL_ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(RolPermissionTableMap::COL_PRM_ID, $value[1]));
-                $criteria->addOr($criterion);
-            }
+            $criteria = new Criteria(RoleTableMap::DATABASE_NAME);
+            $criteria->add(RoleTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = RolPermissionQuery::create()->mergeWith($criteria);
+        $query = RoleQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            RolPermissionTableMap::clearInstancePool();
+            RoleTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                RolPermissionTableMap::removeInstanceFromPool($singleval);
+                RoleTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -431,20 +401,20 @@ class RolPermissionTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the rol_permission table.
+     * Deletes all rows from the ROLE table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return RolPermissionQuery::create()->doDeleteAll($con);
+        return RoleQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a RolPermission or Criteria object.
+     * Performs an INSERT on the database, given a Role or Criteria object.
      *
-     * @param mixed               $criteria Criteria or RolPermission object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Role object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -453,18 +423,22 @@ class RolPermissionTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(RolPermissionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from RolPermission object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Role object
+        }
+
+        if ($criteria->containsKey(RoleTableMap::COL_ID) && $criteria->keyContainsValue(RoleTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.RoleTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = RolPermissionQuery::create()->mergeWith($criteria);
+        $query = RoleQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -473,7 +447,7 @@ class RolPermissionTableMap extends TableMap
         });
     }
 
-} // RolPermissionTableMap
+} // RoleTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-RolPermissionTableMap::buildTableMap();
+RoleTableMap::buildTableMap();

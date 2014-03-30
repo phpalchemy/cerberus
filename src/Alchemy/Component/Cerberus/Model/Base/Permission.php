@@ -7,8 +7,8 @@ use \Exception;
 use \PDO;
 use Alchemy\Component\Cerberus\Model\Permission as ChildPermission;
 use Alchemy\Component\Cerberus\Model\PermissionQuery as ChildPermissionQuery;
-use Alchemy\Component\Cerberus\Model\RolPermission as ChildRolPermission;
-use Alchemy\Component\Cerberus\Model\RolPermissionQuery as ChildRolPermissionQuery;
+use Alchemy\Component\Cerberus\Model\RolePermission as ChildRolePermission;
+use Alchemy\Component\Cerberus\Model\RolePermissionQuery as ChildRolePermissionQuery;
 use Alchemy\Component\Cerberus\Model\Map\PermissionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -59,41 +59,47 @@ abstract class Permission implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the prm_id field.
+     * The value for the id field.
      * @var        int
      */
-    protected $prm_id;
+    protected $id;
 
     /**
-     * The value for the prm_name field.
+     * The value for the name field.
      * @var        string
      */
-    protected $prm_name;
+    protected $name;
 
     /**
-     * The value for the prm_create_date field.
+     * The value for the create_date field.
      * @var        \DateTime
      */
-    protected $prm_create_date;
+    protected $create_date;
 
     /**
-     * The value for the prm_update_date field.
+     * The value for the description field.
+     * @var        string
+     */
+    protected $description;
+
+    /**
+     * The value for the update_date field.
      * @var        \DateTime
      */
-    protected $prm_update_date;
+    protected $update_date;
 
     /**
-     * The value for the prm_status field.
+     * The value for the status field.
      * Note: this column has a database default value of: 'ACTIVE'
      * @var        string
      */
-    protected $prm_status;
+    protected $status;
 
     /**
-     * @var        ObjectCollection|ChildRolPermission[] Collection to store aggregation of ChildRolPermission objects.
+     * @var        ObjectCollection|ChildRolePermission[] Collection to store aggregation of ChildRolePermission objects.
      */
-    protected $collRolPermissions;
-    protected $collRolPermissionsPartial;
+    protected $collRolePermissions;
+    protected $collRolePermissionsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -105,9 +111,9 @@ abstract class Permission implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildRolPermission[]
+     * @var ObjectCollection|ChildRolePermission[]
      */
-    protected $rolPermissionsScheduledForDeletion = null;
+    protected $rolePermissionsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -117,7 +123,7 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
-        $this->prm_status = 'ACTIVE';
+        $this->status = 'ACTIVE';
     }
 
     /**
@@ -340,27 +346,27 @@ abstract class Permission implements ActiveRecordInterface
     }
 
     /**
-     * Get the [prm_id] column value.
+     * Get the [id] column value.
      *
      * @return   int
      */
-    public function getPrmId()
+    public function getId()
     {
-        return $this->prm_id;
+        return $this->id;
     }
 
     /**
-     * Get the [prm_name] column value.
+     * Get the [name] column value.
      *
      * @return   string
      */
-    public function getPrmName()
+    public function getName()
     {
-        return $this->prm_name;
+        return $this->name;
     }
 
     /**
-     * Get the [optionally formatted] temporal [prm_create_date] column value.
+     * Get the [optionally formatted] temporal [create_date] column value.
      *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
@@ -370,17 +376,27 @@ abstract class Permission implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getPrmCreateDate($format = NULL)
+    public function getCreateDate($format = NULL)
     {
         if ($format === null) {
-            return $this->prm_create_date;
+            return $this->create_date;
         } else {
-            return $this->prm_create_date instanceof \DateTime ? $this->prm_create_date->format($format) : null;
+            return $this->create_date instanceof \DateTime ? $this->create_date->format($format) : null;
         }
     }
 
     /**
-     * Get the [optionally formatted] temporal [prm_update_date] column value.
+     * Get the [description] column value.
+     *
+     * @return   string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [update_date] column value.
      *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
@@ -390,124 +406,144 @@ abstract class Permission implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getPrmUpdateDate($format = NULL)
+    public function getUpdateDate($format = NULL)
     {
         if ($format === null) {
-            return $this->prm_update_date;
+            return $this->update_date;
         } else {
-            return $this->prm_update_date instanceof \DateTime ? $this->prm_update_date->format($format) : null;
+            return $this->update_date instanceof \DateTime ? $this->update_date->format($format) : null;
         }
     }
 
     /**
-     * Get the [prm_status] column value.
+     * Get the [status] column value.
      *
      * @return   string
      */
-    public function getPrmStatus()
+    public function getStatus()
     {
-        return $this->prm_status;
+        return $this->status;
     }
 
     /**
-     * Set the value of [prm_id] column.
+     * Set the value of [id] column.
      *
      * @param      int $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
      */
-    public function setPrmId($v)
+    public function setId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->prm_id !== $v) {
-            $this->prm_id = $v;
-            $this->modifiedColumns[PermissionTableMap::COL_PRM_ID] = true;
+        if ($this->id !== $v) {
+            $this->id = $v;
+            $this->modifiedColumns[PermissionTableMap::COL_ID] = true;
         }
 
         return $this;
-    } // setPrmId()
+    } // setId()
 
     /**
-     * Set the value of [prm_name] column.
+     * Set the value of [name] column.
      *
      * @param      string $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
      */
-    public function setPrmName($v)
+    public function setName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->prm_name !== $v) {
-            $this->prm_name = $v;
-            $this->modifiedColumns[PermissionTableMap::COL_PRM_NAME] = true;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[PermissionTableMap::COL_NAME] = true;
         }
 
         return $this;
-    } // setPrmName()
+    } // setName()
 
     /**
-     * Sets the value of [prm_create_date] column to a normalized version of the date/time value specified.
+     * Sets the value of [create_date] column to a normalized version of the date/time value specified.
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
      * @return     $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
      */
-    public function setPrmCreateDate($v)
+    public function setCreateDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->prm_create_date !== null || $dt !== null) {
-            if ($dt !== $this->prm_create_date) {
-                $this->prm_create_date = $dt;
-                $this->modifiedColumns[PermissionTableMap::COL_PRM_CREATE_DATE] = true;
+        if ($this->create_date !== null || $dt !== null) {
+            if ($dt !== $this->create_date) {
+                $this->create_date = $dt;
+                $this->modifiedColumns[PermissionTableMap::COL_CREATE_DATE] = true;
             }
         } // if either are not null
 
         return $this;
-    } // setPrmCreateDate()
+    } // setCreateDate()
 
     /**
-     * Sets the value of [prm_update_date] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return     $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
-     */
-    public function setPrmUpdateDate($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->prm_update_date !== null || $dt !== null) {
-            if ($dt !== $this->prm_update_date) {
-                $this->prm_update_date = $dt;
-                $this->modifiedColumns[PermissionTableMap::COL_PRM_UPDATE_DATE] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setPrmUpdateDate()
-
-    /**
-     * Set the value of [prm_status] column.
+     * Set the value of [description] column.
      *
      * @param      string $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
      */
-    public function setPrmStatus($v)
+    public function setDescription($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->prm_status !== $v) {
-            $this->prm_status = $v;
-            $this->modifiedColumns[PermissionTableMap::COL_PRM_STATUS] = true;
+        if ($this->description !== $v) {
+            $this->description = $v;
+            $this->modifiedColumns[PermissionTableMap::COL_DESCRIPTION] = true;
         }
 
         return $this;
-    } // setPrmStatus()
+    } // setDescription()
+
+    /**
+     * Sets the value of [update_date] column to a normalized version of the date/time value specified.
+     *
+     * @param      mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return     $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
+     */
+    public function setUpdateDate($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
+        if ($this->update_date !== null || $dt !== null) {
+            if ($dt !== $this->update_date) {
+                $this->update_date = $dt;
+                $this->modifiedColumns[PermissionTableMap::COL_UPDATE_DATE] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setUpdateDate()
+
+    /**
+     * Set the value of [status] column.
+     *
+     * @param      string $v new value
+     * @return     $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
+     */
+    public function setStatus($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->status !== $v) {
+            $this->status = $v;
+            $this->modifiedColumns[PermissionTableMap::COL_STATUS] = true;
+        }
+
+        return $this;
+    } // setStatus()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -519,7 +555,7 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->prm_status !== 'ACTIVE') {
+            if ($this->status !== 'ACTIVE') {
                 return false;
             }
 
@@ -549,26 +585,29 @@ abstract class Permission implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : PermissionTableMap::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->prm_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : PermissionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : PermissionTableMap::translateFieldName('PrmName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->prm_name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : PermissionTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : PermissionTableMap::translateFieldName('PrmCreateDate', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : PermissionTableMap::translateFieldName('CreateDate', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
-            $this->prm_create_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
+            $this->create_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : PermissionTableMap::translateFieldName('PrmUpdateDate', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : PermissionTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->description = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PermissionTableMap::translateFieldName('UpdateDate', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
-            $this->prm_update_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
+            $this->update_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PermissionTableMap::translateFieldName('PrmStatus', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->prm_status = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PermissionTableMap::translateFieldName('Status', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->status = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -577,7 +616,7 @@ abstract class Permission implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = PermissionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = PermissionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Alchemy\\Component\\Cerberus\\Model\\Permission'), 0, $e);
@@ -638,7 +677,7 @@ abstract class Permission implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collRolPermissions = null;
+            $this->collRolePermissions = null;
 
         } // if (deep)
     }
@@ -750,17 +789,17 @@ abstract class Permission implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->rolPermissionsScheduledForDeletion !== null) {
-                if (!$this->rolPermissionsScheduledForDeletion->isEmpty()) {
-                    \Alchemy\Component\Cerberus\Model\RolPermissionQuery::create()
-                        ->filterByPrimaryKeys($this->rolPermissionsScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->rolePermissionsScheduledForDeletion !== null) {
+                if (!$this->rolePermissionsScheduledForDeletion->isEmpty()) {
+                    \Alchemy\Component\Cerberus\Model\RolePermissionQuery::create()
+                        ->filterByPrimaryKeys($this->rolePermissionsScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->rolPermissionsScheduledForDeletion = null;
+                    $this->rolePermissionsScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collRolPermissions !== null) {
-                foreach ($this->collRolPermissions as $referrerFK) {
+            if ($this->collRolePermissions !== null) {
+                foreach ($this->collRolePermissions as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -787,30 +826,33 @@ abstract class Permission implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[PermissionTableMap::COL_PRM_ID] = true;
-        if (null !== $this->prm_id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PermissionTableMap::COL_PRM_ID . ')');
+        $this->modifiedColumns[PermissionTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PermissionTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'PRM_ID';
+        if ($this->isColumnModified(PermissionTableMap::COL_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'PRM_NAME';
+        if ($this->isColumnModified(PermissionTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'NAME';
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_CREATE_DATE)) {
-            $modifiedColumns[':p' . $index++]  = 'PRM_CREATE_DATE';
+        if ($this->isColumnModified(PermissionTableMap::COL_CREATE_DATE)) {
+            $modifiedColumns[':p' . $index++]  = 'CREATE_DATE';
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_UPDATE_DATE)) {
-            $modifiedColumns[':p' . $index++]  = 'PRM_UPDATE_DATE';
+        if ($this->isColumnModified(PermissionTableMap::COL_DESCRIPTION)) {
+            $modifiedColumns[':p' . $index++]  = 'DESCRIPTION';
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_STATUS)) {
-            $modifiedColumns[':p' . $index++]  = 'PRM_STATUS';
+        if ($this->isColumnModified(PermissionTableMap::COL_UPDATE_DATE)) {
+            $modifiedColumns[':p' . $index++]  = 'UPDATE_DATE';
+        }
+        if ($this->isColumnModified(PermissionTableMap::COL_STATUS)) {
+            $modifiedColumns[':p' . $index++]  = 'STATUS';
         }
 
         $sql = sprintf(
-            'INSERT INTO permission (%s) VALUES (%s)',
+            'INSERT INTO PERMISSION (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -819,20 +861,23 @@ abstract class Permission implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'PRM_ID':
-                        $stmt->bindValue($identifier, $this->prm_id, PDO::PARAM_INT);
+                    case 'ID':
+                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'PRM_NAME':
-                        $stmt->bindValue($identifier, $this->prm_name, PDO::PARAM_STR);
+                    case 'NAME':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'PRM_CREATE_DATE':
-                        $stmt->bindValue($identifier, $this->prm_create_date ? $this->prm_create_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                    case 'CREATE_DATE':
+                        $stmt->bindValue($identifier, $this->create_date ? $this->create_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
-                    case 'PRM_UPDATE_DATE':
-                        $stmt->bindValue($identifier, $this->prm_update_date ? $this->prm_update_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                    case 'DESCRIPTION':
+                        $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
                         break;
-                    case 'PRM_STATUS':
-                        $stmt->bindValue($identifier, $this->prm_status, PDO::PARAM_STR);
+                    case 'UPDATE_DATE':
+                        $stmt->bindValue($identifier, $this->update_date ? $this->update_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'STATUS':
+                        $stmt->bindValue($identifier, $this->status, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -847,7 +892,7 @@ abstract class Permission implements ActiveRecordInterface
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', 0, $e);
         }
-        $this->setPrmId($pk);
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -897,19 +942,22 @@ abstract class Permission implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getPrmId();
+                return $this->getId();
                 break;
             case 1:
-                return $this->getPrmName();
+                return $this->getName();
                 break;
             case 2:
-                return $this->getPrmCreateDate();
+                return $this->getCreateDate();
                 break;
             case 3:
-                return $this->getPrmUpdateDate();
+                return $this->getDescription();
                 break;
             case 4:
-                return $this->getPrmStatus();
+                return $this->getUpdateDate();
+                break;
+            case 5:
+                return $this->getStatus();
                 break;
             default:
                 return null;
@@ -940,11 +988,12 @@ abstract class Permission implements ActiveRecordInterface
         $alreadyDumpedObjects['Permission'][$this->getPrimaryKey()] = true;
         $keys = PermissionTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getPrmId(),
-            $keys[1] => $this->getPrmName(),
-            $keys[2] => $this->getPrmCreateDate(),
-            $keys[3] => $this->getPrmUpdateDate(),
-            $keys[4] => $this->getPrmStatus(),
+            $keys[0] => $this->getId(),
+            $keys[1] => $this->getName(),
+            $keys[2] => $this->getCreateDate(),
+            $keys[3] => $this->getDescription(),
+            $keys[4] => $this->getUpdateDate(),
+            $keys[5] => $this->getStatus(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -952,8 +1001,8 @@ abstract class Permission implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collRolPermissions) {
-                $result['RolPermissions'] = $this->collRolPermissions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->collRolePermissions) {
+                $result['RolePermissions'] = $this->collRolePermissions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -990,19 +1039,22 @@ abstract class Permission implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                $this->setPrmId($value);
+                $this->setId($value);
                 break;
             case 1:
-                $this->setPrmName($value);
+                $this->setName($value);
                 break;
             case 2:
-                $this->setPrmCreateDate($value);
+                $this->setCreateDate($value);
                 break;
             case 3:
-                $this->setPrmUpdateDate($value);
+                $this->setDescription($value);
                 break;
             case 4:
-                $this->setPrmStatus($value);
+                $this->setUpdateDate($value);
+                break;
+            case 5:
+                $this->setStatus($value);
                 break;
         } // switch()
 
@@ -1031,19 +1083,22 @@ abstract class Permission implements ActiveRecordInterface
         $keys = PermissionTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setPrmId($arr[$keys[0]]);
+            $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setPrmName($arr[$keys[1]]);
+            $this->setName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setPrmCreateDate($arr[$keys[2]]);
+            $this->setCreateDate($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPrmUpdateDate($arr[$keys[3]]);
+            $this->setDescription($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPrmStatus($arr[$keys[4]]);
+            $this->setUpdateDate($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setStatus($arr[$keys[5]]);
         }
     }
 
@@ -1080,20 +1135,23 @@ abstract class Permission implements ActiveRecordInterface
     {
         $criteria = new Criteria(PermissionTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_ID)) {
-            $criteria->add(PermissionTableMap::COL_PRM_ID, $this->prm_id);
+        if ($this->isColumnModified(PermissionTableMap::COL_ID)) {
+            $criteria->add(PermissionTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_NAME)) {
-            $criteria->add(PermissionTableMap::COL_PRM_NAME, $this->prm_name);
+        if ($this->isColumnModified(PermissionTableMap::COL_NAME)) {
+            $criteria->add(PermissionTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_CREATE_DATE)) {
-            $criteria->add(PermissionTableMap::COL_PRM_CREATE_DATE, $this->prm_create_date);
+        if ($this->isColumnModified(PermissionTableMap::COL_CREATE_DATE)) {
+            $criteria->add(PermissionTableMap::COL_CREATE_DATE, $this->create_date);
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_UPDATE_DATE)) {
-            $criteria->add(PermissionTableMap::COL_PRM_UPDATE_DATE, $this->prm_update_date);
+        if ($this->isColumnModified(PermissionTableMap::COL_DESCRIPTION)) {
+            $criteria->add(PermissionTableMap::COL_DESCRIPTION, $this->description);
         }
-        if ($this->isColumnModified(PermissionTableMap::COL_PRM_STATUS)) {
-            $criteria->add(PermissionTableMap::COL_PRM_STATUS, $this->prm_status);
+        if ($this->isColumnModified(PermissionTableMap::COL_UPDATE_DATE)) {
+            $criteria->add(PermissionTableMap::COL_UPDATE_DATE, $this->update_date);
+        }
+        if ($this->isColumnModified(PermissionTableMap::COL_STATUS)) {
+            $criteria->add(PermissionTableMap::COL_STATUS, $this->status);
         }
 
         return $criteria;
@@ -1112,7 +1170,7 @@ abstract class Permission implements ActiveRecordInterface
     public function buildPkeyCriteria()
     {
         $criteria = new Criteria(PermissionTableMap::DATABASE_NAME);
-        $criteria->add(PermissionTableMap::COL_PRM_ID, $this->prm_id);
+        $criteria->add(PermissionTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1125,7 +1183,7 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getPrmId();
+        $validPk = null !== $this->getId();
 
         $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
@@ -1145,18 +1203,18 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function getPrimaryKey()
     {
-        return $this->getPrmId();
+        return $this->getId();
     }
 
     /**
-     * Generic method to set the primary key (prm_id column).
+     * Generic method to set the primary key (id column).
      *
      * @param       int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setPrmId($key);
+        $this->setId($key);
     }
 
     /**
@@ -1165,7 +1223,7 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getPrmId();
+        return null === $this->getId();
     }
 
     /**
@@ -1181,19 +1239,20 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setPrmName($this->getPrmName());
-        $copyObj->setPrmCreateDate($this->getPrmCreateDate());
-        $copyObj->setPrmUpdateDate($this->getPrmUpdateDate());
-        $copyObj->setPrmStatus($this->getPrmStatus());
+        $copyObj->setName($this->getName());
+        $copyObj->setCreateDate($this->getCreateDate());
+        $copyObj->setDescription($this->getDescription());
+        $copyObj->setUpdateDate($this->getUpdateDate());
+        $copyObj->setStatus($this->getStatus());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getRolPermissions() as $relObj) {
+            foreach ($this->getRolePermissions() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addRolPermission($relObj->copy($deepCopy));
+                    $copyObj->addRolePermission($relObj->copy($deepCopy));
                 }
             }
 
@@ -1201,7 +1260,7 @@ abstract class Permission implements ActiveRecordInterface
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setPrmId(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1238,37 +1297,37 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('RolPermission' == $relationName) {
-            return $this->initRolPermissions();
+        if ('RolePermission' == $relationName) {
+            return $this->initRolePermissions();
         }
     }
 
     /**
-     * Clears out the collRolPermissions collection
+     * Clears out the collRolePermissions collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addRolPermissions()
+     * @see        addRolePermissions()
      */
-    public function clearRolPermissions()
+    public function clearRolePermissions()
     {
-        $this->collRolPermissions = null; // important to set this to NULL since that means it is uninitialized
+        $this->collRolePermissions = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collRolPermissions collection loaded partially.
+     * Reset is the collRolePermissions collection loaded partially.
      */
-    public function resetPartialRolPermissions($v = true)
+    public function resetPartialRolePermissions($v = true)
     {
-        $this->collRolPermissionsPartial = $v;
+        $this->collRolePermissionsPartial = $v;
     }
 
     /**
-     * Initializes the collRolPermissions collection.
+     * Initializes the collRolePermissions collection.
      *
-     * By default this just sets the collRolPermissions collection to an empty array (like clearcollRolPermissions());
+     * By default this just sets the collRolePermissions collection to an empty array (like clearcollRolePermissions());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1277,17 +1336,17 @@ abstract class Permission implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initRolPermissions($overrideExisting = true)
+    public function initRolePermissions($overrideExisting = true)
     {
-        if (null !== $this->collRolPermissions && !$overrideExisting) {
+        if (null !== $this->collRolePermissions && !$overrideExisting) {
             return;
         }
-        $this->collRolPermissions = new ObjectCollection();
-        $this->collRolPermissions->setModel('\Alchemy\Component\Cerberus\Model\RolPermission');
+        $this->collRolePermissions = new ObjectCollection();
+        $this->collRolePermissions->setModel('\Alchemy\Component\Cerberus\Model\RolePermission');
     }
 
     /**
-     * Gets an array of ChildRolPermission objects which contain a foreign key that references this object.
+     * Gets an array of ChildRolePermission objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1297,113 +1356,113 @@ abstract class Permission implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildRolPermission[] List of ChildRolPermission objects
+     * @return ObjectCollection|ChildRolePermission[] List of ChildRolePermission objects
      * @throws PropelException
      */
-    public function getRolPermissions(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getRolePermissions(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collRolPermissionsPartial && !$this->isNew();
-        if (null === $this->collRolPermissions || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collRolPermissions) {
+        $partial = $this->collRolePermissionsPartial && !$this->isNew();
+        if (null === $this->collRolePermissions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collRolePermissions) {
                 // return empty collection
-                $this->initRolPermissions();
+                $this->initRolePermissions();
             } else {
-                $collRolPermissions = ChildRolPermissionQuery::create(null, $criteria)
+                $collRolePermissions = ChildRolePermissionQuery::create(null, $criteria)
                     ->filterByPermission($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collRolPermissionsPartial && count($collRolPermissions)) {
-                        $this->initRolPermissions(false);
+                    if (false !== $this->collRolePermissionsPartial && count($collRolePermissions)) {
+                        $this->initRolePermissions(false);
 
-                        foreach ($collRolPermissions as $obj) {
-                            if (false == $this->collRolPermissions->contains($obj)) {
-                                $this->collRolPermissions->append($obj);
+                        foreach ($collRolePermissions as $obj) {
+                            if (false == $this->collRolePermissions->contains($obj)) {
+                                $this->collRolePermissions->append($obj);
                             }
                         }
 
-                        $this->collRolPermissionsPartial = true;
+                        $this->collRolePermissionsPartial = true;
                     }
 
-                    $collRolPermissions->rewind();
+                    $collRolePermissions->rewind();
 
-                    return $collRolPermissions;
+                    return $collRolePermissions;
                 }
 
-                if ($partial && $this->collRolPermissions) {
-                    foreach ($this->collRolPermissions as $obj) {
+                if ($partial && $this->collRolePermissions) {
+                    foreach ($this->collRolePermissions as $obj) {
                         if ($obj->isNew()) {
-                            $collRolPermissions[] = $obj;
+                            $collRolePermissions[] = $obj;
                         }
                     }
                 }
 
-                $this->collRolPermissions = $collRolPermissions;
-                $this->collRolPermissionsPartial = false;
+                $this->collRolePermissions = $collRolePermissions;
+                $this->collRolePermissionsPartial = false;
             }
         }
 
-        return $this->collRolPermissions;
+        return $this->collRolePermissions;
     }
 
     /**
-     * Sets a collection of ChildRolPermission objects related by a one-to-many relationship
+     * Sets a collection of ChildRolePermission objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $rolPermissions A Propel collection.
+     * @param      Collection $rolePermissions A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return     $this|ChildPermission The current object (for fluent API support)
      */
-    public function setRolPermissions(Collection $rolPermissions, ConnectionInterface $con = null)
+    public function setRolePermissions(Collection $rolePermissions, ConnectionInterface $con = null)
     {
-        /** @var ChildRolPermission[] $rolPermissionsToDelete */
-        $rolPermissionsToDelete = $this->getRolPermissions(new Criteria(), $con)->diff($rolPermissions);
+        /** @var ChildRolePermission[] $rolePermissionsToDelete */
+        $rolePermissionsToDelete = $this->getRolePermissions(new Criteria(), $con)->diff($rolePermissions);
 
 
         //since at least one column in the foreign key is at the same time a PK
         //we can not just set a PK to NULL in the lines below. We have to store
         //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->rolPermissionsScheduledForDeletion = clone $rolPermissionsToDelete;
+        $this->rolePermissionsScheduledForDeletion = clone $rolePermissionsToDelete;
 
-        foreach ($rolPermissionsToDelete as $rolPermissionRemoved) {
-            $rolPermissionRemoved->setPermission(null);
+        foreach ($rolePermissionsToDelete as $rolePermissionRemoved) {
+            $rolePermissionRemoved->setPermission(null);
         }
 
-        $this->collRolPermissions = null;
-        foreach ($rolPermissions as $rolPermission) {
-            $this->addRolPermission($rolPermission);
+        $this->collRolePermissions = null;
+        foreach ($rolePermissions as $rolePermission) {
+            $this->addRolePermission($rolePermission);
         }
 
-        $this->collRolPermissions = $rolPermissions;
-        $this->collRolPermissionsPartial = false;
+        $this->collRolePermissions = $rolePermissions;
+        $this->collRolePermissionsPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related RolPermission objects.
+     * Returns the number of related RolePermission objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related RolPermission objects.
+     * @return int             Count of related RolePermission objects.
      * @throws PropelException
      */
-    public function countRolPermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countRolePermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collRolPermissionsPartial && !$this->isNew();
-        if (null === $this->collRolPermissions || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collRolPermissions) {
+        $partial = $this->collRolePermissionsPartial && !$this->isNew();
+        if (null === $this->collRolePermissions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collRolePermissions) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getRolPermissions());
+                return count($this->getRolePermissions());
             }
 
-            $query = ChildRolPermissionQuery::create(null, $criteria);
+            $query = ChildRolePermissionQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1413,54 +1472,54 @@ abstract class Permission implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collRolPermissions);
+        return count($this->collRolePermissions);
     }
 
     /**
-     * Method called to associate a ChildRolPermission object to this object
-     * through the ChildRolPermission foreign key attribute.
+     * Method called to associate a ChildRolePermission object to this object
+     * through the ChildRolePermission foreign key attribute.
      *
-     * @param    ChildRolPermission $l ChildRolPermission
+     * @param    ChildRolePermission $l ChildRolePermission
      * @return   $this|\Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
      */
-    public function addRolPermission(ChildRolPermission $l)
+    public function addRolePermission(ChildRolePermission $l)
     {
-        if ($this->collRolPermissions === null) {
-            $this->initRolPermissions();
-            $this->collRolPermissionsPartial = true;
+        if ($this->collRolePermissions === null) {
+            $this->initRolePermissions();
+            $this->collRolePermissionsPartial = true;
         }
 
-        if (!$this->collRolPermissions->contains($l)) {
-            $this->doAddRolPermission($l);
+        if (!$this->collRolePermissions->contains($l)) {
+            $this->doAddRolePermission($l);
         }
 
         return $this;
     }
 
     /**
-     * @param ChildRolPermission $rolPermission The ChildRolPermission object to add.
+     * @param ChildRolePermission $rolePermission The ChildRolePermission object to add.
      */
-    protected function doAddRolPermission(ChildRolPermission $rolPermission)
+    protected function doAddRolePermission(ChildRolePermission $rolePermission)
     {
-        $this->collRolPermissions[]= $rolPermission;
-        $rolPermission->setPermission($this);
+        $this->collRolePermissions[]= $rolePermission;
+        $rolePermission->setPermission($this);
     }
 
     /**
-     * @param  ChildRolPermission $rolPermission The ChildRolPermission object to remove.
+     * @param  ChildRolePermission $rolePermission The ChildRolePermission object to remove.
      * @return $this|ChildPermission The current object (for fluent API support)
      */
-    public function removeRolPermission(ChildRolPermission $rolPermission)
+    public function removeRolePermission(ChildRolePermission $rolePermission)
     {
-        if ($this->getRolPermissions()->contains($rolPermission)) {
-            $pos = $this->collRolPermissions->search($rolPermission);
-            $this->collRolPermissions->remove($pos);
-            if (null === $this->rolPermissionsScheduledForDeletion) {
-                $this->rolPermissionsScheduledForDeletion = clone $this->collRolPermissions;
-                $this->rolPermissionsScheduledForDeletion->clear();
+        if ($this->getRolePermissions()->contains($rolePermission)) {
+            $pos = $this->collRolePermissions->search($rolePermission);
+            $this->collRolePermissions->remove($pos);
+            if (null === $this->rolePermissionsScheduledForDeletion) {
+                $this->rolePermissionsScheduledForDeletion = clone $this->collRolePermissions;
+                $this->rolePermissionsScheduledForDeletion->clear();
             }
-            $this->rolPermissionsScheduledForDeletion[]= clone $rolPermission;
-            $rolPermission->setPermission(null);
+            $this->rolePermissionsScheduledForDeletion[]= clone $rolePermission;
+            $rolePermission->setPermission(null);
         }
 
         return $this;
@@ -1472,7 +1531,7 @@ abstract class Permission implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this Permission is new, it will return
      * an empty collection; or if this Permission has previously
-     * been saved, it will retrieve related RolPermissions from storage.
+     * been saved, it will retrieve related RolePermissions from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -1481,14 +1540,14 @@ abstract class Permission implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildRolPermission[] List of ChildRolPermission objects
+     * @return ObjectCollection|ChildRolePermission[] List of ChildRolePermission objects
      */
-    public function getRolPermissionsJoinRol(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getRolePermissionsJoinRole(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildRolPermissionQuery::create(null, $criteria);
-        $query->joinWith('Rol', $joinBehavior);
+        $query = ChildRolePermissionQuery::create(null, $criteria);
+        $query->joinWith('Role', $joinBehavior);
 
-        return $this->getRolPermissions($query, $con);
+        return $this->getRolePermissions($query, $con);
     }
 
     /**
@@ -1498,11 +1557,12 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function clear()
     {
-        $this->prm_id = null;
-        $this->prm_name = null;
-        $this->prm_create_date = null;
-        $this->prm_update_date = null;
-        $this->prm_status = null;
+        $this->id = null;
+        $this->name = null;
+        $this->create_date = null;
+        $this->description = null;
+        $this->update_date = null;
+        $this->status = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -1522,14 +1582,14 @@ abstract class Permission implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collRolPermissions) {
-                foreach ($this->collRolPermissions as $o) {
+            if ($this->collRolePermissions) {
+                foreach ($this->collRolePermissions as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collRolPermissions = null;
+        $this->collRolePermissions = null;
     }
 
     /**

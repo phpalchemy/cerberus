@@ -7,8 +7,8 @@ use \Exception;
 use \PDO;
 use Alchemy\Component\Cerberus\Model\User as ChildUser;
 use Alchemy\Component\Cerberus\Model\UserQuery as ChildUserQuery;
-use Alchemy\Component\Cerberus\Model\UserRol as ChildUserRol;
-use Alchemy\Component\Cerberus\Model\UserRolQuery as ChildUserRolQuery;
+use Alchemy\Component\Cerberus\Model\UserRole as ChildUserRole;
+use Alchemy\Component\Cerberus\Model\UserRoleQuery as ChildUserRoleQuery;
 use Alchemy\Component\Cerberus\Model\Map\UserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -59,59 +59,59 @@ abstract class User implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the usr_id field.
+     * The value for the id field.
      * @var        int
      */
-    protected $usr_id;
+    protected $id;
 
     /**
-     * The value for the usr_username field.
+     * The value for the username field.
      * @var        string
      */
-    protected $usr_username;
+    protected $username;
 
     /**
-     * The value for the usr_password field.
+     * The value for the password field.
      * @var        string
      */
-    protected $usr_password;
+    protected $password;
 
     /**
-     * The value for the usr_first_name field.
+     * The value for the first_name field.
      * @var        string
      */
-    protected $usr_first_name;
+    protected $first_name;
 
     /**
-     * The value for the usr_last_name field.
+     * The value for the last_name field.
      * @var        string
      */
-    protected $usr_last_name;
+    protected $last_name;
 
     /**
-     * The value for the usr_create_date field.
+     * The value for the create_date field.
      * @var        \DateTime
      */
-    protected $usr_create_date;
+    protected $create_date;
 
     /**
-     * The value for the usr_update_date field.
+     * The value for the update_date field.
      * @var        \DateTime
      */
-    protected $usr_update_date;
+    protected $update_date;
 
     /**
-     * The value for the usr_status field.
+     * The value for the status field.
      * Note: this column has a database default value of: 'ACTIVE'
      * @var        string
      */
-    protected $usr_status;
+    protected $status;
 
     /**
-     * @var        ObjectCollection|ChildUserRol[] Collection to store aggregation of ChildUserRol objects.
+     * @var        ObjectCollection|ChildUserRole[] Collection to store aggregation of ChildUserRole objects.
      */
-    protected $collUserRols;
-    protected $collUserRolsPartial;
+    protected $collUserRoles;
+    protected $collUserRolesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -123,9 +123,9 @@ abstract class User implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildUserRol[]
+     * @var ObjectCollection|ChildUserRole[]
      */
-    protected $userRolsScheduledForDeletion = null;
+    protected $userRolesScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -135,7 +135,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
-        $this->usr_status = 'ACTIVE';
+        $this->status = 'ACTIVE';
     }
 
     /**
@@ -358,57 +358,57 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [usr_id] column value.
+     * Get the [id] column value.
      *
      * @return   int
      */
-    public function getUsrId()
+    public function getId()
     {
-        return $this->usr_id;
+        return $this->id;
     }
 
     /**
-     * Get the [usr_username] column value.
+     * Get the [username] column value.
      *
      * @return   string
      */
-    public function getUsrUsername()
+    public function getUsername()
     {
-        return $this->usr_username;
+        return $this->username;
     }
 
     /**
-     * Get the [usr_password] column value.
+     * Get the [password] column value.
      *
      * @return   string
      */
-    public function getUsrPassword()
+    public function getPassword()
     {
-        return $this->usr_password;
+        return $this->password;
     }
 
     /**
-     * Get the [usr_first_name] column value.
+     * Get the [first_name] column value.
      *
      * @return   string
      */
-    public function getUsrFirstName()
+    public function getFirstName()
     {
-        return $this->usr_first_name;
+        return $this->first_name;
     }
 
     /**
-     * Get the [usr_last_name] column value.
+     * Get the [last_name] column value.
      *
      * @return   string
      */
-    public function getUsrLastName()
+    public function getLastName()
     {
-        return $this->usr_last_name;
+        return $this->last_name;
     }
 
     /**
-     * Get the [optionally formatted] temporal [usr_create_date] column value.
+     * Get the [optionally formatted] temporal [create_date] column value.
      *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
@@ -418,17 +418,17 @@ abstract class User implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getUsrCreateDate($format = NULL)
+    public function getCreateDate($format = NULL)
     {
         if ($format === null) {
-            return $this->usr_create_date;
+            return $this->create_date;
         } else {
-            return $this->usr_create_date instanceof \DateTime ? $this->usr_create_date->format($format) : null;
+            return $this->create_date instanceof \DateTime ? $this->create_date->format($format) : null;
         }
     }
 
     /**
-     * Get the [optionally formatted] temporal [usr_update_date] column value.
+     * Get the [optionally formatted] temporal [update_date] column value.
      *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
@@ -438,184 +438,184 @@ abstract class User implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getUsrUpdateDate($format = NULL)
+    public function getUpdateDate($format = NULL)
     {
         if ($format === null) {
-            return $this->usr_update_date;
+            return $this->update_date;
         } else {
-            return $this->usr_update_date instanceof \DateTime ? $this->usr_update_date->format($format) : null;
+            return $this->update_date instanceof \DateTime ? $this->update_date->format($format) : null;
         }
     }
 
     /**
-     * Get the [usr_status] column value.
+     * Get the [status] column value.
      *
      * @return   string
      */
-    public function getUsrStatus()
+    public function getStatus()
     {
-        return $this->usr_status;
+        return $this->status;
     }
 
     /**
-     * Set the value of [usr_id] column.
+     * Set the value of [id] column.
      *
      * @param      int $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrId($v)
+    public function setId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->usr_id !== $v) {
-            $this->usr_id = $v;
-            $this->modifiedColumns[UserTableMap::COL_USR_ID] = true;
+        if ($this->id !== $v) {
+            $this->id = $v;
+            $this->modifiedColumns[UserTableMap::COL_ID] = true;
         }
 
         return $this;
-    } // setUsrId()
+    } // setId()
 
     /**
-     * Set the value of [usr_username] column.
+     * Set the value of [username] column.
      *
      * @param      string $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrUsername($v)
+    public function setUsername($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->usr_username !== $v) {
-            $this->usr_username = $v;
-            $this->modifiedColumns[UserTableMap::COL_USR_USERNAME] = true;
+        if ($this->username !== $v) {
+            $this->username = $v;
+            $this->modifiedColumns[UserTableMap::COL_USERNAME] = true;
         }
 
         return $this;
-    } // setUsrUsername()
+    } // setUsername()
 
     /**
-     * Set the value of [usr_password] column.
+     * Set the value of [password] column.
      *
      * @param      string $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrPassword($v)
+    public function setPassword($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->usr_password !== $v) {
-            $this->usr_password = $v;
-            $this->modifiedColumns[UserTableMap::COL_USR_PASSWORD] = true;
+        if ($this->password !== $v) {
+            $this->password = $v;
+            $this->modifiedColumns[UserTableMap::COL_PASSWORD] = true;
         }
 
         return $this;
-    } // setUsrPassword()
+    } // setPassword()
 
     /**
-     * Set the value of [usr_first_name] column.
+     * Set the value of [first_name] column.
      *
      * @param      string $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrFirstName($v)
+    public function setFirstName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->usr_first_name !== $v) {
-            $this->usr_first_name = $v;
-            $this->modifiedColumns[UserTableMap::COL_USR_FIRST_NAME] = true;
+        if ($this->first_name !== $v) {
+            $this->first_name = $v;
+            $this->modifiedColumns[UserTableMap::COL_FIRST_NAME] = true;
         }
 
         return $this;
-    } // setUsrFirstName()
+    } // setFirstName()
 
     /**
-     * Set the value of [usr_last_name] column.
+     * Set the value of [last_name] column.
      *
      * @param      string $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrLastName($v)
+    public function setLastName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->usr_last_name !== $v) {
-            $this->usr_last_name = $v;
-            $this->modifiedColumns[UserTableMap::COL_USR_LAST_NAME] = true;
+        if ($this->last_name !== $v) {
+            $this->last_name = $v;
+            $this->modifiedColumns[UserTableMap::COL_LAST_NAME] = true;
         }
 
         return $this;
-    } // setUsrLastName()
+    } // setLastName()
 
     /**
-     * Sets the value of [usr_create_date] column to a normalized version of the date/time value specified.
+     * Sets the value of [create_date] column to a normalized version of the date/time value specified.
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrCreateDate($v)
+    public function setCreateDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->usr_create_date !== null || $dt !== null) {
-            if ($dt !== $this->usr_create_date) {
-                $this->usr_create_date = $dt;
-                $this->modifiedColumns[UserTableMap::COL_USR_CREATE_DATE] = true;
+        if ($this->create_date !== null || $dt !== null) {
+            if ($dt !== $this->create_date) {
+                $this->create_date = $dt;
+                $this->modifiedColumns[UserTableMap::COL_CREATE_DATE] = true;
             }
         } // if either are not null
 
         return $this;
-    } // setUsrCreateDate()
+    } // setCreateDate()
 
     /**
-     * Sets the value of [usr_update_date] column to a normalized version of the date/time value specified.
+     * Sets the value of [update_date] column to a normalized version of the date/time value specified.
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrUpdateDate($v)
+    public function setUpdateDate($v)
     {
         $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->usr_update_date !== null || $dt !== null) {
-            if ($dt !== $this->usr_update_date) {
-                $this->usr_update_date = $dt;
-                $this->modifiedColumns[UserTableMap::COL_USR_UPDATE_DATE] = true;
+        if ($this->update_date !== null || $dt !== null) {
+            if ($dt !== $this->update_date) {
+                $this->update_date = $dt;
+                $this->modifiedColumns[UserTableMap::COL_UPDATE_DATE] = true;
             }
         } // if either are not null
 
         return $this;
-    } // setUsrUpdateDate()
+    } // setUpdateDate()
 
     /**
-     * Set the value of [usr_status] column.
+     * Set the value of [status] column.
      *
      * @param      string $v new value
      * @return     $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function setUsrStatus($v)
+    public function setStatus($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->usr_status !== $v) {
-            $this->usr_status = $v;
-            $this->modifiedColumns[UserTableMap::COL_USR_STATUS] = true;
+        if ($this->status !== $v) {
+            $this->status = $v;
+            $this->modifiedColumns[UserTableMap::COL_STATUS] = true;
         }
 
         return $this;
-    } // setUsrStatus()
+    } // setStatus()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -627,7 +627,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->usr_status !== 'ACTIVE') {
+            if ($this->status !== 'ACTIVE') {
                 return false;
             }
 
@@ -657,35 +657,35 @@ abstract class User implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserTableMap::translateFieldName('UsrId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->usr_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('UsrUsername', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->usr_username = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('Username', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->username = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('UsrPassword', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->usr_password = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->password = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('UsrFirstName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->usr_first_name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('FirstName', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->first_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('UsrLastName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->usr_last_name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('LastName', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->last_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('UsrCreateDate', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('CreateDate', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
-            $this->usr_create_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
+            $this->create_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('UsrUpdateDate', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('UpdateDate', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
-            $this->usr_update_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
+            $this->update_date = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('UsrStatus', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->usr_status = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('Status', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->status = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -755,7 +755,7 @@ abstract class User implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collUserRols = null;
+            $this->collUserRoles = null;
 
         } // if (deep)
     }
@@ -867,17 +867,17 @@ abstract class User implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->userRolsScheduledForDeletion !== null) {
-                if (!$this->userRolsScheduledForDeletion->isEmpty()) {
-                    \Alchemy\Component\Cerberus\Model\UserRolQuery::create()
-                        ->filterByPrimaryKeys($this->userRolsScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->userRolesScheduledForDeletion !== null) {
+                if (!$this->userRolesScheduledForDeletion->isEmpty()) {
+                    \Alchemy\Component\Cerberus\Model\UserRoleQuery::create()
+                        ->filterByPrimaryKeys($this->userRolesScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->userRolsScheduledForDeletion = null;
+                    $this->userRolesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collUserRols !== null) {
-                foreach ($this->collUserRols as $referrerFK) {
+            if ($this->collUserRoles !== null) {
+                foreach ($this->collUserRoles as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -904,39 +904,39 @@ abstract class User implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[UserTableMap::COL_USR_ID] = true;
-        if (null !== $this->usr_id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserTableMap::COL_USR_ID . ')');
+        $this->modifiedColumns[UserTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserTableMap::COL_USR_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_ID';
+        if ($this->isColumnModified(UserTableMap::COL_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_USERNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_USERNAME';
+        if ($this->isColumnModified(UserTableMap::COL_USERNAME)) {
+            $modifiedColumns[':p' . $index++]  = 'USERNAME';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_PASSWORD)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_PASSWORD';
+        if ($this->isColumnModified(UserTableMap::COL_PASSWORD)) {
+            $modifiedColumns[':p' . $index++]  = 'PASSWORD';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_FIRST_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_FIRST_NAME';
+        if ($this->isColumnModified(UserTableMap::COL_FIRST_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'FIRST_NAME';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_LAST_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_LAST_NAME';
+        if ($this->isColumnModified(UserTableMap::COL_LAST_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'LAST_NAME';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_CREATE_DATE)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_CREATE_DATE';
+        if ($this->isColumnModified(UserTableMap::COL_CREATE_DATE)) {
+            $modifiedColumns[':p' . $index++]  = 'CREATE_DATE';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_UPDATE_DATE)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_UPDATE_DATE';
+        if ($this->isColumnModified(UserTableMap::COL_UPDATE_DATE)) {
+            $modifiedColumns[':p' . $index++]  = 'UPDATE_DATE';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_STATUS)) {
-            $modifiedColumns[':p' . $index++]  = 'USR_STATUS';
+        if ($this->isColumnModified(UserTableMap::COL_STATUS)) {
+            $modifiedColumns[':p' . $index++]  = 'STATUS';
         }
 
         $sql = sprintf(
-            'INSERT INTO user (%s) VALUES (%s)',
+            'INSERT INTO USER (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -945,29 +945,29 @@ abstract class User implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'USR_ID':
-                        $stmt->bindValue($identifier, $this->usr_id, PDO::PARAM_INT);
+                    case 'ID':
+                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'USR_USERNAME':
-                        $stmt->bindValue($identifier, $this->usr_username, PDO::PARAM_STR);
+                    case 'USERNAME':
+                        $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
                         break;
-                    case 'USR_PASSWORD':
-                        $stmt->bindValue($identifier, $this->usr_password, PDO::PARAM_STR);
+                    case 'PASSWORD':
+                        $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
                         break;
-                    case 'USR_FIRST_NAME':
-                        $stmt->bindValue($identifier, $this->usr_first_name, PDO::PARAM_STR);
+                    case 'FIRST_NAME':
+                        $stmt->bindValue($identifier, $this->first_name, PDO::PARAM_STR);
                         break;
-                    case 'USR_LAST_NAME':
-                        $stmt->bindValue($identifier, $this->usr_last_name, PDO::PARAM_STR);
+                    case 'LAST_NAME':
+                        $stmt->bindValue($identifier, $this->last_name, PDO::PARAM_STR);
                         break;
-                    case 'USR_CREATE_DATE':
-                        $stmt->bindValue($identifier, $this->usr_create_date ? $this->usr_create_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                    case 'CREATE_DATE':
+                        $stmt->bindValue($identifier, $this->create_date ? $this->create_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
-                    case 'USR_UPDATE_DATE':
-                        $stmt->bindValue($identifier, $this->usr_update_date ? $this->usr_update_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                    case 'UPDATE_DATE':
+                        $stmt->bindValue($identifier, $this->update_date ? $this->update_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
-                    case 'USR_STATUS':
-                        $stmt->bindValue($identifier, $this->usr_status, PDO::PARAM_STR);
+                    case 'STATUS':
+                        $stmt->bindValue($identifier, $this->status, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -982,7 +982,7 @@ abstract class User implements ActiveRecordInterface
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', 0, $e);
         }
-        $this->setUsrId($pk);
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -1032,28 +1032,28 @@ abstract class User implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getUsrId();
+                return $this->getId();
                 break;
             case 1:
-                return $this->getUsrUsername();
+                return $this->getUsername();
                 break;
             case 2:
-                return $this->getUsrPassword();
+                return $this->getPassword();
                 break;
             case 3:
-                return $this->getUsrFirstName();
+                return $this->getFirstName();
                 break;
             case 4:
-                return $this->getUsrLastName();
+                return $this->getLastName();
                 break;
             case 5:
-                return $this->getUsrCreateDate();
+                return $this->getCreateDate();
                 break;
             case 6:
-                return $this->getUsrUpdateDate();
+                return $this->getUpdateDate();
                 break;
             case 7:
-                return $this->getUsrStatus();
+                return $this->getStatus();
                 break;
             default:
                 return null;
@@ -1084,14 +1084,14 @@ abstract class User implements ActiveRecordInterface
         $alreadyDumpedObjects['User'][$this->getPrimaryKey()] = true;
         $keys = UserTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getUsrId(),
-            $keys[1] => $this->getUsrUsername(),
-            $keys[2] => $this->getUsrPassword(),
-            $keys[3] => $this->getUsrFirstName(),
-            $keys[4] => $this->getUsrLastName(),
-            $keys[5] => $this->getUsrCreateDate(),
-            $keys[6] => $this->getUsrUpdateDate(),
-            $keys[7] => $this->getUsrStatus(),
+            $keys[0] => $this->getId(),
+            $keys[1] => $this->getUsername(),
+            $keys[2] => $this->getPassword(),
+            $keys[3] => $this->getFirstName(),
+            $keys[4] => $this->getLastName(),
+            $keys[5] => $this->getCreateDate(),
+            $keys[6] => $this->getUpdateDate(),
+            $keys[7] => $this->getStatus(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1099,8 +1099,8 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collUserRols) {
-                $result['UserRols'] = $this->collUserRols->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            if (null !== $this->collUserRoles) {
+                $result['UserRoles'] = $this->collUserRoles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1137,28 +1137,28 @@ abstract class User implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                $this->setUsrId($value);
+                $this->setId($value);
                 break;
             case 1:
-                $this->setUsrUsername($value);
+                $this->setUsername($value);
                 break;
             case 2:
-                $this->setUsrPassword($value);
+                $this->setPassword($value);
                 break;
             case 3:
-                $this->setUsrFirstName($value);
+                $this->setFirstName($value);
                 break;
             case 4:
-                $this->setUsrLastName($value);
+                $this->setLastName($value);
                 break;
             case 5:
-                $this->setUsrCreateDate($value);
+                $this->setCreateDate($value);
                 break;
             case 6:
-                $this->setUsrUpdateDate($value);
+                $this->setUpdateDate($value);
                 break;
             case 7:
-                $this->setUsrStatus($value);
+                $this->setStatus($value);
                 break;
         } // switch()
 
@@ -1187,28 +1187,28 @@ abstract class User implements ActiveRecordInterface
         $keys = UserTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setUsrId($arr[$keys[0]]);
+            $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUsrUsername($arr[$keys[1]]);
+            $this->setUsername($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setUsrPassword($arr[$keys[2]]);
+            $this->setPassword($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setUsrFirstName($arr[$keys[3]]);
+            $this->setFirstName($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUsrLastName($arr[$keys[4]]);
+            $this->setLastName($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setUsrCreateDate($arr[$keys[5]]);
+            $this->setCreateDate($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setUsrUpdateDate($arr[$keys[6]]);
+            $this->setUpdateDate($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setUsrStatus($arr[$keys[7]]);
+            $this->setStatus($arr[$keys[7]]);
         }
     }
 
@@ -1245,29 +1245,29 @@ abstract class User implements ActiveRecordInterface
     {
         $criteria = new Criteria(UserTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserTableMap::COL_USR_ID)) {
-            $criteria->add(UserTableMap::COL_USR_ID, $this->usr_id);
+        if ($this->isColumnModified(UserTableMap::COL_ID)) {
+            $criteria->add(UserTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_USERNAME)) {
-            $criteria->add(UserTableMap::COL_USR_USERNAME, $this->usr_username);
+        if ($this->isColumnModified(UserTableMap::COL_USERNAME)) {
+            $criteria->add(UserTableMap::COL_USERNAME, $this->username);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_PASSWORD)) {
-            $criteria->add(UserTableMap::COL_USR_PASSWORD, $this->usr_password);
+        if ($this->isColumnModified(UserTableMap::COL_PASSWORD)) {
+            $criteria->add(UserTableMap::COL_PASSWORD, $this->password);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_FIRST_NAME)) {
-            $criteria->add(UserTableMap::COL_USR_FIRST_NAME, $this->usr_first_name);
+        if ($this->isColumnModified(UserTableMap::COL_FIRST_NAME)) {
+            $criteria->add(UserTableMap::COL_FIRST_NAME, $this->first_name);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_LAST_NAME)) {
-            $criteria->add(UserTableMap::COL_USR_LAST_NAME, $this->usr_last_name);
+        if ($this->isColumnModified(UserTableMap::COL_LAST_NAME)) {
+            $criteria->add(UserTableMap::COL_LAST_NAME, $this->last_name);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_CREATE_DATE)) {
-            $criteria->add(UserTableMap::COL_USR_CREATE_DATE, $this->usr_create_date);
+        if ($this->isColumnModified(UserTableMap::COL_CREATE_DATE)) {
+            $criteria->add(UserTableMap::COL_CREATE_DATE, $this->create_date);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_UPDATE_DATE)) {
-            $criteria->add(UserTableMap::COL_USR_UPDATE_DATE, $this->usr_update_date);
+        if ($this->isColumnModified(UserTableMap::COL_UPDATE_DATE)) {
+            $criteria->add(UserTableMap::COL_UPDATE_DATE, $this->update_date);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USR_STATUS)) {
-            $criteria->add(UserTableMap::COL_USR_STATUS, $this->usr_status);
+        if ($this->isColumnModified(UserTableMap::COL_STATUS)) {
+            $criteria->add(UserTableMap::COL_STATUS, $this->status);
         }
 
         return $criteria;
@@ -1286,7 +1286,7 @@ abstract class User implements ActiveRecordInterface
     public function buildPkeyCriteria()
     {
         $criteria = new Criteria(UserTableMap::DATABASE_NAME);
-        $criteria->add(UserTableMap::COL_USR_ID, $this->usr_id);
+        $criteria->add(UserTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1299,7 +1299,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getUsrId();
+        $validPk = null !== $this->getId();
 
         $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
@@ -1319,18 +1319,18 @@ abstract class User implements ActiveRecordInterface
      */
     public function getPrimaryKey()
     {
-        return $this->getUsrId();
+        return $this->getId();
     }
 
     /**
-     * Generic method to set the primary key (usr_id column).
+     * Generic method to set the primary key (id column).
      *
      * @param       int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setUsrId($key);
+        $this->setId($key);
     }
 
     /**
@@ -1339,7 +1339,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getUsrId();
+        return null === $this->getId();
     }
 
     /**
@@ -1355,22 +1355,22 @@ abstract class User implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setUsrUsername($this->getUsrUsername());
-        $copyObj->setUsrPassword($this->getUsrPassword());
-        $copyObj->setUsrFirstName($this->getUsrFirstName());
-        $copyObj->setUsrLastName($this->getUsrLastName());
-        $copyObj->setUsrCreateDate($this->getUsrCreateDate());
-        $copyObj->setUsrUpdateDate($this->getUsrUpdateDate());
-        $copyObj->setUsrStatus($this->getUsrStatus());
+        $copyObj->setUsername($this->getUsername());
+        $copyObj->setPassword($this->getPassword());
+        $copyObj->setFirstName($this->getFirstName());
+        $copyObj->setLastName($this->getLastName());
+        $copyObj->setCreateDate($this->getCreateDate());
+        $copyObj->setUpdateDate($this->getUpdateDate());
+        $copyObj->setStatus($this->getStatus());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getUserRols() as $relObj) {
+            foreach ($this->getUserRoles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addUserRol($relObj->copy($deepCopy));
+                    $copyObj->addUserRole($relObj->copy($deepCopy));
                 }
             }
 
@@ -1378,7 +1378,7 @@ abstract class User implements ActiveRecordInterface
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setUsrId(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1415,37 +1415,37 @@ abstract class User implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('UserRol' == $relationName) {
-            return $this->initUserRols();
+        if ('UserRole' == $relationName) {
+            return $this->initUserRoles();
         }
     }
 
     /**
-     * Clears out the collUserRols collection
+     * Clears out the collUserRoles collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addUserRols()
+     * @see        addUserRoles()
      */
-    public function clearUserRols()
+    public function clearUserRoles()
     {
-        $this->collUserRols = null; // important to set this to NULL since that means it is uninitialized
+        $this->collUserRoles = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collUserRols collection loaded partially.
+     * Reset is the collUserRoles collection loaded partially.
      */
-    public function resetPartialUserRols($v = true)
+    public function resetPartialUserRoles($v = true)
     {
-        $this->collUserRolsPartial = $v;
+        $this->collUserRolesPartial = $v;
     }
 
     /**
-     * Initializes the collUserRols collection.
+     * Initializes the collUserRoles collection.
      *
-     * By default this just sets the collUserRols collection to an empty array (like clearcollUserRols());
+     * By default this just sets the collUserRoles collection to an empty array (like clearcollUserRoles());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1454,17 +1454,17 @@ abstract class User implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initUserRols($overrideExisting = true)
+    public function initUserRoles($overrideExisting = true)
     {
-        if (null !== $this->collUserRols && !$overrideExisting) {
+        if (null !== $this->collUserRoles && !$overrideExisting) {
             return;
         }
-        $this->collUserRols = new ObjectCollection();
-        $this->collUserRols->setModel('\Alchemy\Component\Cerberus\Model\UserRol');
+        $this->collUserRoles = new ObjectCollection();
+        $this->collUserRoles->setModel('\Alchemy\Component\Cerberus\Model\UserRole');
     }
 
     /**
-     * Gets an array of ChildUserRol objects which contain a foreign key that references this object.
+     * Gets an array of ChildUserRole objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1474,113 +1474,113 @@ abstract class User implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildUserRol[] List of ChildUserRol objects
+     * @return ObjectCollection|ChildUserRole[] List of ChildUserRole objects
      * @throws PropelException
      */
-    public function getUserRols(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getUserRoles(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collUserRolsPartial && !$this->isNew();
-        if (null === $this->collUserRols || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collUserRols) {
+        $partial = $this->collUserRolesPartial && !$this->isNew();
+        if (null === $this->collUserRoles || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collUserRoles) {
                 // return empty collection
-                $this->initUserRols();
+                $this->initUserRoles();
             } else {
-                $collUserRols = ChildUserRolQuery::create(null, $criteria)
+                $collUserRoles = ChildUserRoleQuery::create(null, $criteria)
                     ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collUserRolsPartial && count($collUserRols)) {
-                        $this->initUserRols(false);
+                    if (false !== $this->collUserRolesPartial && count($collUserRoles)) {
+                        $this->initUserRoles(false);
 
-                        foreach ($collUserRols as $obj) {
-                            if (false == $this->collUserRols->contains($obj)) {
-                                $this->collUserRols->append($obj);
+                        foreach ($collUserRoles as $obj) {
+                            if (false == $this->collUserRoles->contains($obj)) {
+                                $this->collUserRoles->append($obj);
                             }
                         }
 
-                        $this->collUserRolsPartial = true;
+                        $this->collUserRolesPartial = true;
                     }
 
-                    $collUserRols->rewind();
+                    $collUserRoles->rewind();
 
-                    return $collUserRols;
+                    return $collUserRoles;
                 }
 
-                if ($partial && $this->collUserRols) {
-                    foreach ($this->collUserRols as $obj) {
+                if ($partial && $this->collUserRoles) {
+                    foreach ($this->collUserRoles as $obj) {
                         if ($obj->isNew()) {
-                            $collUserRols[] = $obj;
+                            $collUserRoles[] = $obj;
                         }
                     }
                 }
 
-                $this->collUserRols = $collUserRols;
-                $this->collUserRolsPartial = false;
+                $this->collUserRoles = $collUserRoles;
+                $this->collUserRolesPartial = false;
             }
         }
 
-        return $this->collUserRols;
+        return $this->collUserRoles;
     }
 
     /**
-     * Sets a collection of ChildUserRol objects related by a one-to-many relationship
+     * Sets a collection of ChildUserRole objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $userRols A Propel collection.
+     * @param      Collection $userRoles A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return     $this|ChildUser The current object (for fluent API support)
      */
-    public function setUserRols(Collection $userRols, ConnectionInterface $con = null)
+    public function setUserRoles(Collection $userRoles, ConnectionInterface $con = null)
     {
-        /** @var ChildUserRol[] $userRolsToDelete */
-        $userRolsToDelete = $this->getUserRols(new Criteria(), $con)->diff($userRols);
+        /** @var ChildUserRole[] $userRolesToDelete */
+        $userRolesToDelete = $this->getUserRoles(new Criteria(), $con)->diff($userRoles);
 
 
         //since at least one column in the foreign key is at the same time a PK
         //we can not just set a PK to NULL in the lines below. We have to store
         //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->userRolsScheduledForDeletion = clone $userRolsToDelete;
+        $this->userRolesScheduledForDeletion = clone $userRolesToDelete;
 
-        foreach ($userRolsToDelete as $userRolRemoved) {
-            $userRolRemoved->setUser(null);
+        foreach ($userRolesToDelete as $userRoleRemoved) {
+            $userRoleRemoved->setUser(null);
         }
 
-        $this->collUserRols = null;
-        foreach ($userRols as $userRol) {
-            $this->addUserRol($userRol);
+        $this->collUserRoles = null;
+        foreach ($userRoles as $userRole) {
+            $this->addUserRole($userRole);
         }
 
-        $this->collUserRols = $userRols;
-        $this->collUserRolsPartial = false;
+        $this->collUserRoles = $userRoles;
+        $this->collUserRolesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related UserRol objects.
+     * Returns the number of related UserRole objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related UserRol objects.
+     * @return int             Count of related UserRole objects.
      * @throws PropelException
      */
-    public function countUserRols(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countUserRoles(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collUserRolsPartial && !$this->isNew();
-        if (null === $this->collUserRols || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collUserRols) {
+        $partial = $this->collUserRolesPartial && !$this->isNew();
+        if (null === $this->collUserRoles || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUserRoles) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getUserRols());
+                return count($this->getUserRoles());
             }
 
-            $query = ChildUserRolQuery::create(null, $criteria);
+            $query = ChildUserRoleQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1590,54 +1590,54 @@ abstract class User implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collUserRols);
+        return count($this->collUserRoles);
     }
 
     /**
-     * Method called to associate a ChildUserRol object to this object
-     * through the ChildUserRol foreign key attribute.
+     * Method called to associate a ChildUserRole object to this object
+     * through the ChildUserRole foreign key attribute.
      *
-     * @param    ChildUserRol $l ChildUserRol
+     * @param    ChildUserRole $l ChildUserRole
      * @return   $this|\Alchemy\Component\Cerberus\Model\User The current object (for fluent API support)
      */
-    public function addUserRol(ChildUserRol $l)
+    public function addUserRole(ChildUserRole $l)
     {
-        if ($this->collUserRols === null) {
-            $this->initUserRols();
-            $this->collUserRolsPartial = true;
+        if ($this->collUserRoles === null) {
+            $this->initUserRoles();
+            $this->collUserRolesPartial = true;
         }
 
-        if (!$this->collUserRols->contains($l)) {
-            $this->doAddUserRol($l);
+        if (!$this->collUserRoles->contains($l)) {
+            $this->doAddUserRole($l);
         }
 
         return $this;
     }
 
     /**
-     * @param ChildUserRol $userRol The ChildUserRol object to add.
+     * @param ChildUserRole $userRole The ChildUserRole object to add.
      */
-    protected function doAddUserRol(ChildUserRol $userRol)
+    protected function doAddUserRole(ChildUserRole $userRole)
     {
-        $this->collUserRols[]= $userRol;
-        $userRol->setUser($this);
+        $this->collUserRoles[]= $userRole;
+        $userRole->setUser($this);
     }
 
     /**
-     * @param  ChildUserRol $userRol The ChildUserRol object to remove.
+     * @param  ChildUserRole $userRole The ChildUserRole object to remove.
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function removeUserRol(ChildUserRol $userRol)
+    public function removeUserRole(ChildUserRole $userRole)
     {
-        if ($this->getUserRols()->contains($userRol)) {
-            $pos = $this->collUserRols->search($userRol);
-            $this->collUserRols->remove($pos);
-            if (null === $this->userRolsScheduledForDeletion) {
-                $this->userRolsScheduledForDeletion = clone $this->collUserRols;
-                $this->userRolsScheduledForDeletion->clear();
+        if ($this->getUserRoles()->contains($userRole)) {
+            $pos = $this->collUserRoles->search($userRole);
+            $this->collUserRoles->remove($pos);
+            if (null === $this->userRolesScheduledForDeletion) {
+                $this->userRolesScheduledForDeletion = clone $this->collUserRoles;
+                $this->userRolesScheduledForDeletion->clear();
             }
-            $this->userRolsScheduledForDeletion[]= clone $userRol;
-            $userRol->setUser(null);
+            $this->userRolesScheduledForDeletion[]= clone $userRole;
+            $userRole->setUser(null);
         }
 
         return $this;
@@ -1649,7 +1649,7 @@ abstract class User implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this User is new, it will return
      * an empty collection; or if this User has previously
-     * been saved, it will retrieve related UserRols from storage.
+     * been saved, it will retrieve related UserRoles from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -1658,14 +1658,14 @@ abstract class User implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildUserRol[] List of ChildUserRol objects
+     * @return ObjectCollection|ChildUserRole[] List of ChildUserRole objects
      */
-    public function getUserRolsJoinRol(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getUserRolesJoinRole(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildUserRolQuery::create(null, $criteria);
-        $query->joinWith('Rol', $joinBehavior);
+        $query = ChildUserRoleQuery::create(null, $criteria);
+        $query->joinWith('Role', $joinBehavior);
 
-        return $this->getUserRols($query, $con);
+        return $this->getUserRoles($query, $con);
     }
 
     /**
@@ -1675,14 +1675,14 @@ abstract class User implements ActiveRecordInterface
      */
     public function clear()
     {
-        $this->usr_id = null;
-        $this->usr_username = null;
-        $this->usr_password = null;
-        $this->usr_first_name = null;
-        $this->usr_last_name = null;
-        $this->usr_create_date = null;
-        $this->usr_update_date = null;
-        $this->usr_status = null;
+        $this->id = null;
+        $this->username = null;
+        $this->password = null;
+        $this->first_name = null;
+        $this->last_name = null;
+        $this->create_date = null;
+        $this->update_date = null;
+        $this->status = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -1702,14 +1702,14 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collUserRols) {
-                foreach ($this->collUserRols as $o) {
+            if ($this->collUserRoles) {
+                foreach ($this->collUserRoles as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collUserRols = null;
+        $this->collUserRoles = null;
     }
 
     /**

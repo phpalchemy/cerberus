@@ -2,50 +2,51 @@
 <database name="Cerberus" defaultIdMethod="native" namespace="Alchemy\Component\Cerberus\Model">
     <!-- Cerberus Tables -->
     <table name="USER">
-        <column name="usr_id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="usr_username" type="varchar" size="128" required="true"/>
-        <column name="usr_password" type="varchar" size="32" required="true"/>
-        <column name="usr_first_name" type="varchar" size="128" required="true"/>
-        <column name="usr_last_name" type="varchar" size="128" required="true"/>
-        <column name="usr_create_date" type="timestamp"/>
-        <column name="usr_update_date" type="timestamp"/>
-        <column name="usr_status" type="varchar" size="64" default="ACTIVE"/>
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="username" type="varchar" size="128" required="true"/>
+        <column name="password" type="varchar" size="32" required="true"/>
+        <column name="first_name" type="varchar" size="128" required="true"/>
+        <column name="last_name" type="varchar" size="128" required="true"/>
+        <column name="create_date" type="timestamp"/>
+        <column name="update_date" type="timestamp"/>
+        <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
     <table name="PERMISSION">
-        <column name="prm_id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="prm_name" type="varchar" size="256" required="true"/>
-        <column name="prm_create_date" type="timestamp"/>
-        <column name="prm_update_date" type="timestamp"/>
-        <column name="prm_status" type="varchar" size="64" default="ACTIVE"/>
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="256" required="true"/>
+        <column name="create_date" type="timestamp"/>
+        <column name="description" type="varchar" size="256" required="true"/>
+        <column name="update_date" type="timestamp"/>
+        <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
     <table name="ROLE">
-        <column name="rol_id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="rol_name" type="varchar" size="128" required="true"/>
-        <column name="rol_description" type="varchar" size="128" required="true"/>
-        <column name="rol_create_date" type="timestamp"/>
-        <column name="rol_update_date" type="timestamp"/>
-        <column name="rol_status" type="varchar" size="64" default="ACTIVE"/>
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="128" required="true"/>
+        <column name="description" type="varchar" size="256" required="true"/>
+        <column name="create_date" type="timestamp"/>
+        <column name="update_date" type="timestamp"/>
+        <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
     <table name="USER_ROLE">
-        <column name="usr_id" type="integer" required="true" primaryKey="true"/>
-        <column name="rol_id" type="integer" required="true" primaryKey="true"/>
+        <column name="user_id" type="integer" required="true" primaryKey="true"/>
+        <column name="role_id" type="integer" required="true" primaryKey="true"/>
 
-        <foreign-key foreignTable="user" onDelete="cascade">
-            <reference local="usr_id" foreign="usr_id"/>
+        <foreign-key foreignTable="USER" onDelete="cascade">
+            <reference local="user_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="rol" onDelete="cascade">
-            <reference local="rol_id" foreign="rol_id"/>
+        <foreign-key foreignTable="ROLE" onDelete="cascade">
+            <reference local="role_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="ROLE_PERMISSION">
-        <column name="rol_id" type="integer" required="true" primaryKey="true"/>
-        <column name="prm_id" type="integer" required="true" primaryKey="true"/>
+        <column name="role_id" type="integer" required="true" primaryKey="true"/>
+        <column name="permission_id" type="integer" required="true" primaryKey="true"/>
 
-        <foreign-key foreignTable="rol" onDelete="cascade">
-            <reference local="rol_id" foreign="rol_id"/>
+        <foreign-key foreignTable="ROLE" onDelete="cascade">
+            <reference local="role_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="permission" onDelete="cascade">
-            <reference local="prm_id" foreign="prm_id"/>
+        <foreign-key foreignTable="PERMISSION" onDelete="cascade">
+            <reference local="permission_id" foreign="id"/>
         </foreign-key>
     </table>
 </database>

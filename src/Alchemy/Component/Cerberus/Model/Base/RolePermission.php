@@ -6,10 +6,10 @@ use \Exception;
 use \PDO;
 use Alchemy\Component\Cerberus\Model\Permission as ChildPermission;
 use Alchemy\Component\Cerberus\Model\PermissionQuery as ChildPermissionQuery;
-use Alchemy\Component\Cerberus\Model\Rol as ChildRol;
-use Alchemy\Component\Cerberus\Model\RolPermissionQuery as ChildRolPermissionQuery;
-use Alchemy\Component\Cerberus\Model\RolQuery as ChildRolQuery;
-use Alchemy\Component\Cerberus\Model\Map\RolPermissionTableMap;
+use Alchemy\Component\Cerberus\Model\Role as ChildRole;
+use Alchemy\Component\Cerberus\Model\RolePermissionQuery as ChildRolePermissionQuery;
+use Alchemy\Component\Cerberus\Model\RoleQuery as ChildRoleQuery;
+use Alchemy\Component\Cerberus\Model\Map\RolePermissionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -22,12 +22,12 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
-abstract class RolPermission implements ActiveRecordInterface
+abstract class RolePermission implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Alchemy\\Component\\Cerberus\\Model\\Map\\RolPermissionTableMap';
+    const TABLE_MAP = '\\Alchemy\\Component\\Cerberus\\Model\\Map\\RolePermissionTableMap';
 
 
     /**
@@ -57,21 +57,21 @@ abstract class RolPermission implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the rol_id field.
+     * The value for the role_id field.
      * @var        int
      */
-    protected $rol_id;
+    protected $role_id;
 
     /**
-     * The value for the prm_id field.
+     * The value for the permission_id field.
      * @var        int
      */
-    protected $prm_id;
+    protected $permission_id;
 
     /**
-     * @var        ChildRol
+     * @var        ChildRole
      */
-    protected $aRol;
+    protected $aRole;
 
     /**
      * @var        ChildPermission
@@ -87,7 +87,7 @@ abstract class RolPermission implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Alchemy\Component\Cerberus\Model\Base\RolPermission object.
+     * Initializes internal state of Alchemy\Component\Cerberus\Model\Base\RolePermission object.
      */
     public function __construct()
     {
@@ -182,9 +182,9 @@ abstract class RolPermission implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>RolPermission</code> instance.  If
-     * <code>obj</code> is an instance of <code>RolPermission</code>, delegates to
-     * <code>equals(RolPermission)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>RolePermission</code> instance.  If
+     * <code>obj</code> is an instance of <code>RolePermission</code>, delegates to
+     * <code>equals(RolePermission)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -250,7 +250,7 @@ abstract class RolPermission implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|RolPermission The current object, for fluid interface
+     * @return $this|RolePermission The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -304,72 +304,72 @@ abstract class RolPermission implements ActiveRecordInterface
     }
 
     /**
-     * Get the [rol_id] column value.
+     * Get the [role_id] column value.
      *
      * @return   int
      */
-    public function getRolId()
+    public function getRoleId()
     {
-        return $this->rol_id;
+        return $this->role_id;
     }
 
     /**
-     * Get the [prm_id] column value.
+     * Get the [permission_id] column value.
      *
      * @return   int
      */
-    public function getPrmId()
+    public function getPermissionId()
     {
-        return $this->prm_id;
+        return $this->permission_id;
     }
 
     /**
-     * Set the value of [rol_id] column.
+     * Set the value of [role_id] column.
      *
      * @param      int $v new value
-     * @return     $this|\Alchemy\Component\Cerberus\Model\RolPermission The current object (for fluent API support)
+     * @return     $this|\Alchemy\Component\Cerberus\Model\RolePermission The current object (for fluent API support)
      */
-    public function setRolId($v)
+    public function setRoleId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->rol_id !== $v) {
-            $this->rol_id = $v;
-            $this->modifiedColumns[RolPermissionTableMap::COL_ROL_ID] = true;
+        if ($this->role_id !== $v) {
+            $this->role_id = $v;
+            $this->modifiedColumns[RolePermissionTableMap::COL_ROLE_ID] = true;
         }
 
-        if ($this->aRol !== null && $this->aRol->getRolId() !== $v) {
-            $this->aRol = null;
+        if ($this->aRole !== null && $this->aRole->getId() !== $v) {
+            $this->aRole = null;
         }
 
         return $this;
-    } // setRolId()
+    } // setRoleId()
 
     /**
-     * Set the value of [prm_id] column.
+     * Set the value of [permission_id] column.
      *
      * @param      int $v new value
-     * @return     $this|\Alchemy\Component\Cerberus\Model\RolPermission The current object (for fluent API support)
+     * @return     $this|\Alchemy\Component\Cerberus\Model\RolePermission The current object (for fluent API support)
      */
-    public function setPrmId($v)
+    public function setPermissionId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->prm_id !== $v) {
-            $this->prm_id = $v;
-            $this->modifiedColumns[RolPermissionTableMap::COL_PRM_ID] = true;
+        if ($this->permission_id !== $v) {
+            $this->permission_id = $v;
+            $this->modifiedColumns[RolePermissionTableMap::COL_PERMISSION_ID] = true;
         }
 
-        if ($this->aPermission !== null && $this->aPermission->getPrmId() !== $v) {
+        if ($this->aPermission !== null && $this->aPermission->getId() !== $v) {
             $this->aPermission = null;
         }
 
         return $this;
-    } // setPrmId()
+    } // setPermissionId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -407,11 +407,11 @@ abstract class RolPermission implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : RolPermissionTableMap::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->rol_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : RolePermissionTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->role_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : RolPermissionTableMap::translateFieldName('PrmId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->prm_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : RolePermissionTableMap::translateFieldName('PermissionId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->permission_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -420,10 +420,10 @@ abstract class RolPermission implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 2; // 2 = RolPermissionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = RolePermissionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Alchemy\\Component\\Cerberus\\Model\\RolPermission'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Alchemy\\Component\\Cerberus\\Model\\RolePermission'), 0, $e);
         }
     }
 
@@ -442,10 +442,10 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aRol !== null && $this->rol_id !== $this->aRol->getRolId()) {
-            $this->aRol = null;
+        if ($this->aRole !== null && $this->role_id !== $this->aRole->getId()) {
+            $this->aRole = null;
         }
-        if ($this->aPermission !== null && $this->prm_id !== $this->aPermission->getPrmId()) {
+        if ($this->aPermission !== null && $this->permission_id !== $this->aPermission->getId()) {
             $this->aPermission = null;
         }
     } // ensureConsistency
@@ -471,13 +471,13 @@ abstract class RolPermission implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(RolPermissionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(RolePermissionTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildRolPermissionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildRolePermissionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -487,7 +487,7 @@ abstract class RolPermission implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aRol = null;
+            $this->aRole = null;
             $this->aPermission = null;
         } // if (deep)
     }
@@ -498,8 +498,8 @@ abstract class RolPermission implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see RolPermission::setDeleted()
-     * @see RolPermission::isDeleted()
+     * @see RolePermission::setDeleted()
+     * @see RolePermission::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -508,11 +508,11 @@ abstract class RolPermission implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(RolPermissionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(RolePermissionTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildRolPermissionQuery::create()
+            $deleteQuery = ChildRolePermissionQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -543,7 +543,7 @@ abstract class RolPermission implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(RolPermissionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(RolePermissionTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -562,7 +562,7 @@ abstract class RolPermission implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                RolPermissionTableMap::addInstanceToPool($this);
+                RolePermissionTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -593,11 +593,11 @@ abstract class RolPermission implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aRol !== null) {
-                if ($this->aRol->isModified() || $this->aRol->isNew()) {
-                    $affectedRows += $this->aRol->save($con);
+            if ($this->aRole !== null) {
+                if ($this->aRole->isModified() || $this->aRole->isNew()) {
+                    $affectedRows += $this->aRole->save($con);
                 }
-                $this->setRol($this->aRol);
+                $this->setRole($this->aRole);
             }
 
             if ($this->aPermission !== null) {
@@ -640,15 +640,15 @@ abstract class RolPermission implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(RolPermissionTableMap::COL_ROL_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'ROL_ID';
+        if ($this->isColumnModified(RolePermissionTableMap::COL_ROLE_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'ROLE_ID';
         }
-        if ($this->isColumnModified(RolPermissionTableMap::COL_PRM_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'PRM_ID';
+        if ($this->isColumnModified(RolePermissionTableMap::COL_PERMISSION_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'PERMISSION_ID';
         }
 
         $sql = sprintf(
-            'INSERT INTO rol_permission (%s) VALUES (%s)',
+            'INSERT INTO ROLE_PERMISSION (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -657,11 +657,11 @@ abstract class RolPermission implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'ROL_ID':
-                        $stmt->bindValue($identifier, $this->rol_id, PDO::PARAM_INT);
+                    case 'ROLE_ID':
+                        $stmt->bindValue($identifier, $this->role_id, PDO::PARAM_INT);
                         break;
-                    case 'PRM_ID':
-                        $stmt->bindValue($identifier, $this->prm_id, PDO::PARAM_INT);
+                    case 'PERMISSION_ID':
+                        $stmt->bindValue($identifier, $this->permission_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -702,7 +702,7 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = RolPermissionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = RolePermissionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -719,10 +719,10 @@ abstract class RolPermission implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getRolId();
+                return $this->getRoleId();
                 break;
             case 1:
-                return $this->getPrmId();
+                return $this->getPermissionId();
                 break;
             default:
                 return null;
@@ -747,14 +747,14 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['RolPermission'][serialize($this->getPrimaryKey())])) {
+        if (isset($alreadyDumpedObjects['RolePermission'][serialize($this->getPrimaryKey())])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['RolPermission'][serialize($this->getPrimaryKey())] = true;
-        $keys = RolPermissionTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['RolePermission'][serialize($this->getPrimaryKey())] = true;
+        $keys = RolePermissionTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getRolId(),
-            $keys[1] => $this->getPrmId(),
+            $keys[0] => $this->getRoleId(),
+            $keys[1] => $this->getPermissionId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -762,8 +762,8 @@ abstract class RolPermission implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aRol) {
-                $result['Rol'] = $this->aRol->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aRole) {
+                $result['Role'] = $this->aRole->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->aPermission) {
                 $result['Permission'] = $this->aPermission->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
@@ -782,11 +782,11 @@ abstract class RolPermission implements ActiveRecordInterface
      *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                     Defaults to TableMap::TYPE_PHPNAME.
-     * @return     $this|\Alchemy\Component\Cerberus\Model\RolPermission
+     * @return     $this|\Alchemy\Component\Cerberus\Model\RolePermission
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = RolPermissionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = RolePermissionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -797,16 +797,16 @@ abstract class RolPermission implements ActiveRecordInterface
      *
      * @param      int $pos position in xml schema
      * @param      mixed $value field value
-     * @return     $this|\Alchemy\Component\Cerberus\Model\RolPermission
+     * @return     $this|\Alchemy\Component\Cerberus\Model\RolePermission
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setRolId($value);
+                $this->setRoleId($value);
                 break;
             case 1:
-                $this->setPrmId($value);
+                $this->setPermissionId($value);
                 break;
         } // switch()
 
@@ -832,13 +832,13 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = RolPermissionTableMap::getFieldNames($keyType);
+        $keys = RolePermissionTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setRolId($arr[$keys[0]]);
+            $this->setRoleId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setPrmId($arr[$keys[1]]);
+            $this->setPermissionId($arr[$keys[1]]);
         }
     }
 
@@ -853,7 +853,7 @@ abstract class RolPermission implements ActiveRecordInterface
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return $this|\Alchemy\Component\Cerberus\Model\RolPermission The current object, for fluid interface
+     * @return $this|\Alchemy\Component\Cerberus\Model\RolePermission The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -873,13 +873,13 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(RolPermissionTableMap::DATABASE_NAME);
+        $criteria = new Criteria(RolePermissionTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(RolPermissionTableMap::COL_ROL_ID)) {
-            $criteria->add(RolPermissionTableMap::COL_ROL_ID, $this->rol_id);
+        if ($this->isColumnModified(RolePermissionTableMap::COL_ROLE_ID)) {
+            $criteria->add(RolePermissionTableMap::COL_ROLE_ID, $this->role_id);
         }
-        if ($this->isColumnModified(RolPermissionTableMap::COL_PRM_ID)) {
-            $criteria->add(RolPermissionTableMap::COL_PRM_ID, $this->prm_id);
+        if ($this->isColumnModified(RolePermissionTableMap::COL_PERMISSION_ID)) {
+            $criteria->add(RolePermissionTableMap::COL_PERMISSION_ID, $this->permission_id);
         }
 
         return $criteria;
@@ -897,9 +897,9 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(RolPermissionTableMap::DATABASE_NAME);
-        $criteria->add(RolPermissionTableMap::COL_ROL_ID, $this->rol_id);
-        $criteria->add(RolPermissionTableMap::COL_PRM_ID, $this->prm_id);
+        $criteria = new Criteria(RolePermissionTableMap::DATABASE_NAME);
+        $criteria->add(RolePermissionTableMap::COL_ROLE_ID, $this->role_id);
+        $criteria->add(RolePermissionTableMap::COL_PERMISSION_ID, $this->permission_id);
 
         return $criteria;
     }
@@ -912,20 +912,20 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getRolId() &&
-            null !== $this->getPrmId();
+        $validPk = null !== $this->getRoleId() &&
+            null !== $this->getPermissionId();
 
         $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
 
-        //relation rol_permission_FK_1 to table rol
-        if ($this->aRol && $hash = spl_object_hash($this->aRol)) {
+        //relation ROLE_PERMISSION_FK_1 to table ROLE
+        if ($this->aRole && $hash = spl_object_hash($this->aRole)) {
             $primaryKeyFKs[] = $hash;
         } else {
             $validPrimaryKeyFKs = false;
         }
 
-        //relation rol_permission_FK_2 to table permission
+        //relation ROLE_PERMISSION_FK_2 to table PERMISSION
         if ($this->aPermission && $hash = spl_object_hash($this->aPermission)) {
             $primaryKeyFKs[] = $hash;
         } else {
@@ -949,8 +949,8 @@ abstract class RolPermission implements ActiveRecordInterface
     public function getPrimaryKey()
     {
         $pks = array();
-        $pks[0] = $this->getRolId();
-        $pks[1] = $this->getPrmId();
+        $pks[0] = $this->getRoleId();
+        $pks[1] = $this->getPermissionId();
 
         return $pks;
     }
@@ -963,8 +963,8 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function setPrimaryKey($keys)
     {
-        $this->setRolId($keys[0]);
-        $this->setPrmId($keys[1]);
+        $this->setRoleId($keys[0]);
+        $this->setPermissionId($keys[1]);
     }
 
     /**
@@ -973,7 +973,7 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return (null === $this->getRolId()) && (null === $this->getPrmId());
+        return (null === $this->getRoleId()) && (null === $this->getPermissionId());
     }
 
     /**
@@ -982,15 +982,15 @@ abstract class RolPermission implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Alchemy\Component\Cerberus\Model\RolPermission (or compatible) type.
+     * @param      object $copyObj An object of \Alchemy\Component\Cerberus\Model\RolePermission (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setRolId($this->getRolId());
-        $copyObj->setPrmId($this->getPrmId());
+        $copyObj->setRoleId($this->getRoleId());
+        $copyObj->setPermissionId($this->getPermissionId());
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -1005,7 +1005,7 @@ abstract class RolPermission implements ActiveRecordInterface
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \Alchemy\Component\Cerberus\Model\RolPermission Clone of current object.
+     * @return                 \Alchemy\Component\Cerberus\Model\RolePermission Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1019,26 +1019,26 @@ abstract class RolPermission implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildRol object.
+     * Declares an association between this object and a ChildRole object.
      *
-     * @param                  ChildRol $v
-     * @return                 $this|\Alchemy\Component\Cerberus\Model\RolPermission The current object (for fluent API support)
+     * @param                  ChildRole $v
+     * @return                 $this|\Alchemy\Component\Cerberus\Model\RolePermission The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setRol(ChildRol $v = null)
+    public function setRole(ChildRole $v = null)
     {
         if ($v === null) {
-            $this->setRolId(NULL);
+            $this->setRoleId(NULL);
         } else {
-            $this->setRolId($v->getRolId());
+            $this->setRoleId($v->getId());
         }
 
-        $this->aRol = $v;
+        $this->aRole = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildRol object, it will not be re-added.
+        // If this object has already been added to the ChildRole object, it will not be re-added.
         if ($v !== null) {
-            $v->addRolPermission($this);
+            $v->addRolePermission($this);
         }
 
 
@@ -1047,41 +1047,41 @@ abstract class RolPermission implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildRol object
+     * Get the associated ChildRole object
      *
      * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildRol The associated ChildRol object.
+     * @return                 ChildRole The associated ChildRole object.
      * @throws PropelException
      */
-    public function getRol(ConnectionInterface $con = null)
+    public function getRole(ConnectionInterface $con = null)
     {
-        if ($this->aRol === null && ($this->rol_id !== null)) {
-            $this->aRol = ChildRolQuery::create()->findPk($this->rol_id, $con);
+        if ($this->aRole === null && ($this->role_id !== null)) {
+            $this->aRole = ChildRoleQuery::create()->findPk($this->role_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aRol->addRolPermissions($this);
+                $this->aRole->addRolePermissions($this);
              */
         }
 
-        return $this->aRol;
+        return $this->aRole;
     }
 
     /**
      * Declares an association between this object and a ChildPermission object.
      *
      * @param                  ChildPermission $v
-     * @return                 $this|\Alchemy\Component\Cerberus\Model\RolPermission The current object (for fluent API support)
+     * @return                 $this|\Alchemy\Component\Cerberus\Model\RolePermission The current object (for fluent API support)
      * @throws PropelException
      */
     public function setPermission(ChildPermission $v = null)
     {
         if ($v === null) {
-            $this->setPrmId(NULL);
+            $this->setPermissionId(NULL);
         } else {
-            $this->setPrmId($v->getPrmId());
+            $this->setPermissionId($v->getId());
         }
 
         $this->aPermission = $v;
@@ -1089,7 +1089,7 @@ abstract class RolPermission implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildPermission object, it will not be re-added.
         if ($v !== null) {
-            $v->addRolPermission($this);
+            $v->addRolePermission($this);
         }
 
 
@@ -1106,14 +1106,14 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function getPermission(ConnectionInterface $con = null)
     {
-        if ($this->aPermission === null && ($this->prm_id !== null)) {
-            $this->aPermission = ChildPermissionQuery::create()->findPk($this->prm_id, $con);
+        if ($this->aPermission === null && ($this->permission_id !== null)) {
+            $this->aPermission = ChildPermissionQuery::create()->findPk($this->permission_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aPermission->addRolPermissions($this);
+                $this->aPermission->addRolePermissions($this);
              */
         }
 
@@ -1127,14 +1127,14 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aRol) {
-            $this->aRol->removeRolPermission($this);
+        if (null !== $this->aRole) {
+            $this->aRole->removeRolePermission($this);
         }
         if (null !== $this->aPermission) {
-            $this->aPermission->removeRolPermission($this);
+            $this->aPermission->removeRolePermission($this);
         }
-        $this->rol_id = null;
-        $this->prm_id = null;
+        $this->role_id = null;
+        $this->permission_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1155,7 +1155,7 @@ abstract class RolPermission implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
-        $this->aRol = null;
+        $this->aRole = null;
         $this->aPermission = null;
     }
 
@@ -1166,7 +1166,7 @@ abstract class RolPermission implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(RolPermissionTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(RolePermissionTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

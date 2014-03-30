@@ -2,8 +2,8 @@
 
 namespace Alchemy\Component\Cerberus\Model\Map;
 
-use Alchemy\Component\Cerberus\Model\UserRol;
-use Alchemy\Component\Cerberus\Model\UserRolQuery;
+use Alchemy\Component\Cerberus\Model\RolePermission;
+use Alchemy\Component\Cerberus\Model\RolePermissionQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'user_rol' table.
+ * This class defines the structure of the 'ROLE_PERMISSION' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class UserRolTableMap extends TableMap
+class RolePermissionTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class UserRolTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Alchemy.Component.Cerberus.Model.Map.UserRolTableMap';
+    const CLASS_NAME = 'Alchemy.Component.Cerberus.Model.Map.RolePermissionTableMap';
 
     /**
      * The default database name for this class
@@ -44,17 +44,17 @@ class UserRolTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'user_rol';
+    const TABLE_NAME = 'ROLE_PERMISSION';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Alchemy\\Component\\Cerberus\\Model\\UserRol';
+    const OM_CLASS = '\\Alchemy\\Component\\Cerberus\\Model\\RolePermission';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Alchemy.Component.Cerberus.Model.UserRol';
+    const CLASS_DEFAULT = 'Alchemy.Component.Cerberus.Model.RolePermission';
 
     /**
      * The total number of columns
@@ -72,14 +72,14 @@ class UserRolTableMap extends TableMap
     const NUM_HYDRATE_COLUMNS = 2;
 
     /**
-     * the column name for the USR_ID field
+     * the column name for the ROLE_ID field
      */
-    const COL_USR_ID = 'user_rol.USR_ID';
+    const COL_ROLE_ID = 'ROLE_PERMISSION.ROLE_ID';
 
     /**
-     * the column name for the ROL_ID field
+     * the column name for the PERMISSION_ID field
      */
-    const COL_ROL_ID = 'user_rol.ROL_ID';
+    const COL_PERMISSION_ID = 'ROLE_PERMISSION.PERMISSION_ID';
 
     /**
      * The default string format for model objects of the related table
@@ -93,11 +93,11 @@ class UserRolTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('UsrId', 'RolId', ),
-        self::TYPE_STUDLYPHPNAME => array('usrId', 'rolId', ),
-        self::TYPE_COLNAME       => array(UserRolTableMap::COL_USR_ID, UserRolTableMap::COL_ROL_ID, ),
-        self::TYPE_RAW_COLNAME   => array('COL_USR_ID', 'COL_ROL_ID', ),
-        self::TYPE_FIELDNAME     => array('usr_id', 'rol_id', ),
+        self::TYPE_PHPNAME       => array('RoleId', 'PermissionId', ),
+        self::TYPE_STUDLYPHPNAME => array('roleId', 'permissionId', ),
+        self::TYPE_COLNAME       => array(RolePermissionTableMap::COL_ROLE_ID, RolePermissionTableMap::COL_PERMISSION_ID, ),
+        self::TYPE_RAW_COLNAME   => array('COL_ROLE_ID', 'COL_PERMISSION_ID', ),
+        self::TYPE_FIELDNAME     => array('role_id', 'permission_id', ),
         self::TYPE_NUM           => array(0, 1, )
     );
 
@@ -108,11 +108,11 @@ class UserRolTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('UsrId' => 0, 'RolId' => 1, ),
-        self::TYPE_STUDLYPHPNAME => array('usrId' => 0, 'rolId' => 1, ),
-        self::TYPE_COLNAME       => array(UserRolTableMap::COL_USR_ID => 0, UserRolTableMap::COL_ROL_ID => 1, ),
-        self::TYPE_RAW_COLNAME   => array('COL_USR_ID' => 0, 'COL_ROL_ID' => 1, ),
-        self::TYPE_FIELDNAME     => array('usr_id' => 0, 'rol_id' => 1, ),
+        self::TYPE_PHPNAME       => array('RoleId' => 0, 'PermissionId' => 1, ),
+        self::TYPE_STUDLYPHPNAME => array('roleId' => 0, 'permissionId' => 1, ),
+        self::TYPE_COLNAME       => array(RolePermissionTableMap::COL_ROLE_ID => 0, RolePermissionTableMap::COL_PERMISSION_ID => 1, ),
+        self::TYPE_RAW_COLNAME   => array('COL_ROLE_ID' => 0, 'COL_PERMISSION_ID' => 1, ),
+        self::TYPE_FIELDNAME     => array('role_id' => 0, 'permission_id' => 1, ),
         self::TYPE_NUM           => array(0, 1, )
     );
 
@@ -126,14 +126,14 @@ class UserRolTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('user_rol');
-        $this->setPhpName('UserRol');
-        $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\UserRol');
+        $this->setName('ROLE_PERMISSION');
+        $this->setPhpName('RolePermission');
+        $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\RolePermission');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
         $this->setUseIdGenerator(false);
         // columns
-        $this->addForeignPrimaryKey('USR_ID', 'UsrId', 'INTEGER' , 'user', 'USR_ID', true, null, null);
-        $this->addForeignPrimaryKey('ROL_ID', 'RolId', 'INTEGER' , 'rol', 'ROL_ID', true, null, null);
+        $this->addForeignPrimaryKey('ROLE_ID', 'RoleId', 'INTEGER' , 'ROLE', 'ID', true, null, null);
+        $this->addForeignPrimaryKey('PERMISSION_ID', 'PermissionId', 'INTEGER' , 'PERMISSION', 'ID', true, null, null);
     } // initialize()
 
     /**
@@ -141,8 +141,8 @@ class UserRolTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', '\\Alchemy\\Component\\Cerberus\\Model\\User', RelationMap::MANY_TO_ONE, array('usr_id' => 'usr_id', ), 'CASCADE', null);
-        $this->addRelation('Rol', '\\Alchemy\\Component\\Cerberus\\Model\\Rol', RelationMap::MANY_TO_ONE, array('rol_id' => 'rol_id', ), 'CASCADE', null);
+        $this->addRelation('Role', '\\Alchemy\\Component\\Cerberus\\Model\\Role', RelationMap::MANY_TO_ONE, array('role_id' => 'id', ), 'CASCADE', null);
+        $this->addRelation('Permission', '\\Alchemy\\Component\\Cerberus\\Model\\Permission', RelationMap::MANY_TO_ONE, array('permission_id' => 'id', ), 'CASCADE', null);
     } // buildRelations()
 
     /**
@@ -153,14 +153,14 @@ class UserRolTableMap extends TableMap
      * to the cache in order to ensure that the same objects are always returned by find*()
      * and findPk*() calls.
      *
-     * @param \Alchemy\Component\Cerberus\Model\UserRol $obj A \Alchemy\Component\Cerberus\Model\UserRol object.
+     * @param \Alchemy\Component\Cerberus\Model\RolePermission $obj A \Alchemy\Component\Cerberus\Model\RolePermission object.
      * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (null === $key) {
-                $key = serialize(array((string) $obj->getUsrId(), (string) $obj->getRolId()));
+                $key = serialize(array((string) $obj->getRoleId(), (string) $obj->getPermissionId()));
             } // if key === null
             self::$instances[$key] = $obj;
         }
@@ -174,13 +174,13 @@ class UserRolTableMap extends TableMap
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param mixed $value A \Alchemy\Component\Cerberus\Model\UserRol object or a primary key value.
+     * @param mixed $value A \Alchemy\Component\Cerberus\Model\RolePermission object or a primary key value.
      */
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && null !== $value) {
-            if (is_object($value) && $value instanceof \Alchemy\Component\Cerberus\Model\UserRol) {
-                $key = serialize(array((string) $value->getUsrId(), (string) $value->getRolId()));
+            if (is_object($value) && $value instanceof \Alchemy\Component\Cerberus\Model\RolePermission) {
+                $key = serialize(array((string) $value->getRoleId(), (string) $value->getPermissionId()));
 
             } elseif (is_array($value) && count($value) === 2) {
                 // assume we've been passed a primary key";
@@ -190,7 +190,7 @@ class UserRolTableMap extends TableMap
 
                 return;
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or \Alchemy\Component\Cerberus\Model\UserRol object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or \Alchemy\Component\Cerberus\Model\RolePermission object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
                 throw $e;
             }
 
@@ -214,11 +214,11 @@ class UserRolTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UsrId', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('PermissionId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UsrId', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)]));
+        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('PermissionId', TableMap::TYPE_PHPNAME, $indexType)]));
     }
 
     /**
@@ -240,12 +240,12 @@ class UserRolTableMap extends TableMap
         $pks[] = (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 0 + $offset
-                : self::translateFieldName('UsrId', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)
         ];
         $pks[] = (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 1 + $offset
-                : self::translateFieldName('RolId', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('PermissionId', TableMap::TYPE_PHPNAME, $indexType)
         ];
 
         return $pks;
@@ -264,7 +264,7 @@ class UserRolTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? UserRolTableMap::CLASS_DEFAULT : UserRolTableMap::OM_CLASS;
+        return $withPrefix ? RolePermissionTableMap::CLASS_DEFAULT : RolePermissionTableMap::OM_CLASS;
     }
 
     /**
@@ -278,22 +278,22 @@ class UserRolTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return array (UserRol object, last column rank)
+     * @return array (RolePermission object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = UserRolTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = UserRolTableMap::getInstanceFromPool($key))) {
+        $key = RolePermissionTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = RolePermissionTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + UserRolTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + RolePermissionTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = UserRolTableMap::OM_CLASS;
-            /** @var UserRol $obj */
+            $cls = RolePermissionTableMap::OM_CLASS;
+            /** @var RolePermission $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            UserRolTableMap::addInstanceToPool($obj, $key);
+            RolePermissionTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -316,18 +316,18 @@ class UserRolTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = UserRolTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = UserRolTableMap::getInstanceFromPool($key))) {
+            $key = RolePermissionTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = RolePermissionTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var UserRol $obj */
+                /** @var RolePermission $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                UserRolTableMap::addInstanceToPool($obj, $key);
+                RolePermissionTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -348,11 +348,11 @@ class UserRolTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserRolTableMap::COL_USR_ID);
-            $criteria->addSelectColumn(UserRolTableMap::COL_ROL_ID);
+            $criteria->addSelectColumn(RolePermissionTableMap::COL_ROLE_ID);
+            $criteria->addSelectColumn(RolePermissionTableMap::COL_PERMISSION_ID);
         } else {
-            $criteria->addSelectColumn($alias . '.USR_ID');
-            $criteria->addSelectColumn($alias . '.ROL_ID');
+            $criteria->addSelectColumn($alias . '.ROLE_ID');
+            $criteria->addSelectColumn($alias . '.PERMISSION_ID');
         }
     }
 
@@ -365,7 +365,7 @@ class UserRolTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(UserRolTableMap::DATABASE_NAME)->getTable(UserRolTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(RolePermissionTableMap::DATABASE_NAME)->getTable(RolePermissionTableMap::TABLE_NAME);
     }
 
     /**
@@ -373,16 +373,16 @@ class UserRolTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserRolTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(UserRolTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new UserRolTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(RolePermissionTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(RolePermissionTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new RolePermissionTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a UserRol or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a RolePermission or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or UserRol object or primary key or array of primary keys
+     * @param mixed               $values Criteria or RolePermission object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -393,17 +393,17 @@ class UserRolTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(RolePermissionTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Alchemy\Component\Cerberus\Model\UserRol) { // it's a model object
+        } elseif ($values instanceof \Alchemy\Component\Cerberus\Model\RolePermission) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(UserRolTableMap::DATABASE_NAME);
+            $criteria = new Criteria(RolePermissionTableMap::DATABASE_NAME);
             // primary key is composite; we therefore, expect
             // the primary key passed to be an array of pkey values
             if (count($values) == count($values, COUNT_RECURSIVE)) {
@@ -411,19 +411,19 @@ class UserRolTableMap extends TableMap
                 $values = array($values);
             }
             foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(UserRolTableMap::COL_USR_ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(UserRolTableMap::COL_ROL_ID, $value[1]));
+                $criterion = $criteria->getNewCriterion(RolePermissionTableMap::COL_ROLE_ID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(RolePermissionTableMap::COL_PERMISSION_ID, $value[1]));
                 $criteria->addOr($criterion);
             }
         }
 
-        $query = UserRolQuery::create()->mergeWith($criteria);
+        $query = RolePermissionQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            UserRolTableMap::clearInstancePool();
+            RolePermissionTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                UserRolTableMap::removeInstanceFromPool($singleval);
+                RolePermissionTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -431,20 +431,20 @@ class UserRolTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the user_rol table.
+     * Deletes all rows from the ROLE_PERMISSION table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return UserRolQuery::create()->doDeleteAll($con);
+        return RolePermissionQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a UserRol or Criteria object.
+     * Performs an INSERT on the database, given a RolePermission or Criteria object.
      *
-     * @param mixed               $criteria Criteria or UserRol object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or RolePermission object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -453,18 +453,18 @@ class UserRolTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(RolePermissionTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from UserRol object
+            $criteria = $criteria->buildCriteria(); // build Criteria from RolePermission object
         }
 
 
         // Set the correct dbName
-        $query = UserRolQuery::create()->mergeWith($criteria);
+        $query = RolePermissionQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -473,7 +473,7 @@ class UserRolTableMap extends TableMap
         });
     }
 
-} // UserRolTableMap
+} // RolePermissionTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-UserRolTableMap::buildTableMap();
+RolePermissionTableMap::buildTableMap();

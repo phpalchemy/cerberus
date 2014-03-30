@@ -4,9 +4,9 @@ namespace Alchemy\Component\Cerberus\Model\Base;
 
 use \Exception;
 use \PDO;
-use Alchemy\Component\Cerberus\Model\UserRol as ChildUserRol;
-use Alchemy\Component\Cerberus\Model\UserRolQuery as ChildUserRolQuery;
-use Alchemy\Component\Cerberus\Model\Map\UserRolTableMap;
+use Alchemy\Component\Cerberus\Model\UserRole as ChildUserRole;
+use Alchemy\Component\Cerberus\Model\UserRoleQuery as ChildUserRoleQuery;
+use Alchemy\Component\Cerberus\Model\Map\UserRoleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -16,71 +16,71 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'user_rol' table.
+ * Base class that represents a query for the 'USER_ROLE' table.
  *
  *
  *
- * @method     ChildUserRolQuery orderByUsrId($order = Criteria::ASC) Order by the usr_id column
- * @method     ChildUserRolQuery orderByRolId($order = Criteria::ASC) Order by the rol_id column
+ * @method     ChildUserRoleQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildUserRoleQuery orderByRoleId($order = Criteria::ASC) Order by the role_id column
  *
- * @method     ChildUserRolQuery groupByUsrId() Group by the usr_id column
- * @method     ChildUserRolQuery groupByRolId() Group by the rol_id column
+ * @method     ChildUserRoleQuery groupByUserId() Group by the user_id column
+ * @method     ChildUserRoleQuery groupByRoleId() Group by the role_id column
  *
- * @method     ChildUserRolQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildUserRolQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildUserRolQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildUserRoleQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildUserRoleQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildUserRoleQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildUserRolQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method     ChildUserRolQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method     ChildUserRolQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ * @method     ChildUserRoleQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     ChildUserRoleQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     ChildUserRoleQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
- * @method     ChildUserRolQuery leftJoinRol($relationAlias = null) Adds a LEFT JOIN clause to the query using the Rol relation
- * @method     ChildUserRolQuery rightJoinRol($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Rol relation
- * @method     ChildUserRolQuery innerJoinRol($relationAlias = null) Adds a INNER JOIN clause to the query using the Rol relation
+ * @method     ChildUserRoleQuery leftJoinRole($relationAlias = null) Adds a LEFT JOIN clause to the query using the Role relation
+ * @method     ChildUserRoleQuery rightJoinRole($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Role relation
+ * @method     ChildUserRoleQuery innerJoinRole($relationAlias = null) Adds a INNER JOIN clause to the query using the Role relation
  *
- * @method     \Alchemy\Component\Cerberus\Model\UserQuery|\Alchemy\Component\Cerberus\Model\RolQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Alchemy\Component\Cerberus\Model\UserQuery|\Alchemy\Component\Cerberus\Model\RoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildUserRol findOne(ConnectionInterface $con = null) Return the first ChildUserRol matching the query
- * @method     ChildUserRol findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUserRol matching the query, or a new ChildUserRol object populated from the query conditions when no match is found
+ * @method     ChildUserRole findOne(ConnectionInterface $con = null) Return the first ChildUserRole matching the query
+ * @method     ChildUserRole findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUserRole matching the query, or a new ChildUserRole object populated from the query conditions when no match is found
  *
- * @method     ChildUserRol findOneByUsrId(int $usr_id) Return the first ChildUserRol filtered by the usr_id column
- * @method     ChildUserRol findOneByRolId(int $rol_id) Return the first ChildUserRol filtered by the rol_id column
+ * @method     ChildUserRole findOneByUserId(int $user_id) Return the first ChildUserRole filtered by the user_id column
+ * @method     ChildUserRole findOneByRoleId(int $role_id) Return the first ChildUserRole filtered by the role_id column
  *
- * @method     ChildUserRol[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUserRol objects based on current ModelCriteria
- * @method     ChildUserRol[]|ObjectCollection findByUsrId(int $usr_id) Return ChildUserRol objects filtered by the usr_id column
- * @method     ChildUserRol[]|ObjectCollection findByRolId(int $rol_id) Return ChildUserRol objects filtered by the rol_id column
- * @method     ChildUserRol[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildUserRole[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUserRole objects based on current ModelCriteria
+ * @method     ChildUserRole[]|ObjectCollection findByUserId(int $user_id) Return ChildUserRole objects filtered by the user_id column
+ * @method     ChildUserRole[]|ObjectCollection findByRoleId(int $role_id) Return ChildUserRole objects filtered by the role_id column
+ * @method     ChildUserRole[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class UserRolQuery extends ModelCriteria
+abstract class UserRoleQuery extends ModelCriteria
 {
 
     /**
-     * Initializes internal state of \Alchemy\Component\Cerberus\Model\Base\UserRolQuery object.
+     * Initializes internal state of \Alchemy\Component\Cerberus\Model\Base\UserRoleQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'Cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\UserRol', $modelAlias = null)
+    public function __construct($dbName = 'Cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\UserRole', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildUserRolQuery object.
+     * Returns a new ChildUserRoleQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildUserRolQuery
+     * @return ChildUserRoleQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildUserRolQuery) {
+        if ($criteria instanceof ChildUserRoleQuery) {
             return $criteria;
         }
-        $query = new ChildUserRolQuery();
+        $query = new ChildUserRoleQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -100,22 +100,22 @@ abstract class UserRolQuery extends ModelCriteria
      * $obj = $c->findPk(array(12, 34), $con);
      * </code>
      *
-     * @param array[$usr_id, $rol_id] $key Primary key to use for the query
+     * @param array[$user_id, $role_id] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildUserRol|array|mixed the result, formatted by the current formatter
+     * @return ChildUserRole|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = UserRolTableMap::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && !$this->formatter) {
+        if ((null !== ($obj = UserRoleTableMap::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(UserRoleTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -134,11 +134,11 @@ abstract class UserRolQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return   ChildUserRol A model object, or null if the key is not found
+     * @return   ChildUserRole A model object, or null if the key is not found
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT USR_ID, ROL_ID FROM user_rol WHERE USR_ID = :p0 AND ROL_ID = :p1';
+        $sql = 'SELECT USER_ID, ROLE_ID FROM USER_ROLE WHERE USER_ID = :p0 AND ROLE_ID = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -150,10 +150,10 @@ abstract class UserRolQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildUserRol $obj */
-            $obj = new ChildUserRol();
+            /** @var ChildUserRole $obj */
+            $obj = new ChildUserRole();
             $obj->hydrate($row);
-            UserRolTableMap::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1])));
+            UserRoleTableMap::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1])));
         }
         $stmt->closeCursor();
 
@@ -166,7 +166,7 @@ abstract class UserRolQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildUserRol|array|mixed the result, formatted by the current formatter
+     * @return ChildUserRole|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, ConnectionInterface $con)
     {
@@ -208,12 +208,12 @@ abstract class UserRolQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildUserRolQuery The current query, for fluid interface
+     * @return $this|ChildUserRoleQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
-        $this->addUsingAlias(UserRolTableMap::COL_USR_ID, $key[0], Criteria::EQUAL);
-        $this->addUsingAlias(UserRolTableMap::COL_ROL_ID, $key[1], Criteria::EQUAL);
+        $this->addUsingAlias(UserRoleTableMap::COL_USER_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(UserRoleTableMap::COL_ROLE_ID, $key[1], Criteria::EQUAL);
 
         return $this;
     }
@@ -223,7 +223,7 @@ abstract class UserRolQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildUserRolQuery The current query, for fluid interface
+     * @return $this|ChildUserRoleQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
@@ -231,8 +231,8 @@ abstract class UserRolQuery extends ModelCriteria
             return $this->add(null, '1<>1', Criteria::CUSTOM);
         }
         foreach ($keys as $key) {
-            $cton0 = $this->getNewCriterion(UserRolTableMap::COL_USR_ID, $key[0], Criteria::EQUAL);
-            $cton1 = $this->getNewCriterion(UserRolTableMap::COL_ROL_ID, $key[1], Criteria::EQUAL);
+            $cton0 = $this->getNewCriterion(UserRoleTableMap::COL_USER_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(UserRoleTableMap::COL_ROLE_ID, $key[1], Criteria::EQUAL);
             $cton0->addAnd($cton1);
             $this->addOr($cton0);
         }
@@ -241,35 +241,35 @@ abstract class UserRolQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the usr_id column
+     * Filter the query on the user_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsrId(1234); // WHERE usr_id = 1234
-     * $query->filterByUsrId(array(12, 34)); // WHERE usr_id IN (12, 34)
-     * $query->filterByUsrId(array('min' => 12)); // WHERE usr_id > 12
+     * $query->filterByUserId(1234); // WHERE user_id = 1234
+     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
+     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
      *
      * @see       filterByUser()
      *
-     * @param     mixed $usrId The value to use as filter.
+     * @param     mixed $userId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildUserRolQuery The current query, for fluid interface
+     * @return $this|ChildUserRoleQuery The current query, for fluid interface
      */
-    public function filterByUsrId($usrId = null, $comparison = null)
+    public function filterByUserId($userId = null, $comparison = null)
     {
-        if (is_array($usrId)) {
+        if (is_array($userId)) {
             $useMinMax = false;
-            if (isset($usrId['min'])) {
-                $this->addUsingAlias(UserRolTableMap::COL_USR_ID, $usrId['min'], Criteria::GREATER_EQUAL);
+            if (isset($userId['min'])) {
+                $this->addUsingAlias(UserRoleTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($usrId['max'])) {
-                $this->addUsingAlias(UserRolTableMap::COL_USR_ID, $usrId['max'], Criteria::LESS_EQUAL);
+            if (isset($userId['max'])) {
+                $this->addUsingAlias(UserRoleTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -280,39 +280,39 @@ abstract class UserRolQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserRolTableMap::COL_USR_ID, $usrId, $comparison);
+        return $this->addUsingAlias(UserRoleTableMap::COL_USER_ID, $userId, $comparison);
     }
 
     /**
-     * Filter the query on the rol_id column
+     * Filter the query on the role_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByRolId(1234); // WHERE rol_id = 1234
-     * $query->filterByRolId(array(12, 34)); // WHERE rol_id IN (12, 34)
-     * $query->filterByRolId(array('min' => 12)); // WHERE rol_id > 12
+     * $query->filterByRoleId(1234); // WHERE role_id = 1234
+     * $query->filterByRoleId(array(12, 34)); // WHERE role_id IN (12, 34)
+     * $query->filterByRoleId(array('min' => 12)); // WHERE role_id > 12
      * </code>
      *
-     * @see       filterByRol()
+     * @see       filterByRole()
      *
-     * @param     mixed $rolId The value to use as filter.
+     * @param     mixed $roleId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildUserRolQuery The current query, for fluid interface
+     * @return $this|ChildUserRoleQuery The current query, for fluid interface
      */
-    public function filterByRolId($rolId = null, $comparison = null)
+    public function filterByRoleId($roleId = null, $comparison = null)
     {
-        if (is_array($rolId)) {
+        if (is_array($roleId)) {
             $useMinMax = false;
-            if (isset($rolId['min'])) {
-                $this->addUsingAlias(UserRolTableMap::COL_ROL_ID, $rolId['min'], Criteria::GREATER_EQUAL);
+            if (isset($roleId['min'])) {
+                $this->addUsingAlias(UserRoleTableMap::COL_ROLE_ID, $roleId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($rolId['max'])) {
-                $this->addUsingAlias(UserRolTableMap::COL_ROL_ID, $rolId['max'], Criteria::LESS_EQUAL);
+            if (isset($roleId['max'])) {
+                $this->addUsingAlias(UserRoleTableMap::COL_ROLE_ID, $roleId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -323,7 +323,7 @@ abstract class UserRolQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserRolTableMap::COL_ROL_ID, $rolId, $comparison);
+        return $this->addUsingAlias(UserRoleTableMap::COL_ROLE_ID, $roleId, $comparison);
     }
 
     /**
@@ -332,20 +332,20 @@ abstract class UserRolQuery extends ModelCriteria
      * @param \Alchemy\Component\Cerberus\Model\User|ObjectCollection $user The related object(s) to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildUserRolQuery The current query, for fluid interface
+     * @return ChildUserRoleQuery The current query, for fluid interface
      */
     public function filterByUser($user, $comparison = null)
     {
         if ($user instanceof \Alchemy\Component\Cerberus\Model\User) {
             return $this
-                ->addUsingAlias(UserRolTableMap::COL_USR_ID, $user->getUsrId(), $comparison);
+                ->addUsingAlias(UserRoleTableMap::COL_USER_ID, $user->getId(), $comparison);
         } elseif ($user instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(UserRolTableMap::COL_USR_ID, $user->toKeyValue('PrimaryKey', 'UsrId'), $comparison);
+                ->addUsingAlias(UserRoleTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type \Alchemy\Component\Cerberus\Model\User or Collection');
         }
@@ -357,7 +357,7 @@ abstract class UserRolQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildUserRolQuery The current query, for fluid interface
+     * @return $this|ChildUserRoleQuery The current query, for fluid interface
      */
     public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -402,42 +402,42 @@ abstract class UserRolQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Alchemy\Component\Cerberus\Model\Rol object
+     * Filter the query by a related \Alchemy\Component\Cerberus\Model\Role object
      *
-     * @param \Alchemy\Component\Cerberus\Model\Rol|ObjectCollection $rol The related object(s) to use as filter
+     * @param \Alchemy\Component\Cerberus\Model\Role|ObjectCollection $role The related object(s) to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildUserRolQuery The current query, for fluid interface
+     * @return ChildUserRoleQuery The current query, for fluid interface
      */
-    public function filterByRol($rol, $comparison = null)
+    public function filterByRole($role, $comparison = null)
     {
-        if ($rol instanceof \Alchemy\Component\Cerberus\Model\Rol) {
+        if ($role instanceof \Alchemy\Component\Cerberus\Model\Role) {
             return $this
-                ->addUsingAlias(UserRolTableMap::COL_ROL_ID, $rol->getRolId(), $comparison);
-        } elseif ($rol instanceof ObjectCollection) {
+                ->addUsingAlias(UserRoleTableMap::COL_ROLE_ID, $role->getId(), $comparison);
+        } elseif ($role instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(UserRolTableMap::COL_ROL_ID, $rol->toKeyValue('PrimaryKey', 'RolId'), $comparison);
+                ->addUsingAlias(UserRoleTableMap::COL_ROLE_ID, $role->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByRol() only accepts arguments of type \Alchemy\Component\Cerberus\Model\Rol or Collection');
+            throw new PropelException('filterByRole() only accepts arguments of type \Alchemy\Component\Cerberus\Model\Role or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Rol relation
+     * Adds a JOIN clause to the query using the Role relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildUserRolQuery The current query, for fluid interface
+     * @return $this|ChildUserRoleQuery The current query, for fluid interface
      */
-    public function joinRol($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinRole($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Rol');
+        $relationMap = $tableMap->getRelation('Role');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -452,14 +452,14 @@ abstract class UserRolQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Rol');
+            $this->addJoinObject($join, 'Role');
         }
 
         return $this;
     }
 
     /**
-     * Use the Rol relation Rol object
+     * Use the Role relation Role object
      *
      * @see useQuery()
      *
@@ -467,27 +467,27 @@ abstract class UserRolQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   \Alchemy\Component\Cerberus\Model\RolQuery A secondary query class using the current class as primary query
+     * @return   \Alchemy\Component\Cerberus\Model\RoleQuery A secondary query class using the current class as primary query
      */
-    public function useRolQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useRoleQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinRol($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Rol', '\Alchemy\Component\Cerberus\Model\RolQuery');
+            ->joinRole($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Role', '\Alchemy\Component\Cerberus\Model\RoleQuery');
     }
 
     /**
      * Exclude object from result
      *
-     * @param   ChildUserRol $userRol Object to remove from the list of results
+     * @param   ChildUserRole $userRole Object to remove from the list of results
      *
-     * @return $this|ChildUserRolQuery The current query, for fluid interface
+     * @return $this|ChildUserRoleQuery The current query, for fluid interface
      */
-    public function prune($userRol = null)
+    public function prune($userRole = null)
     {
-        if ($userRol) {
-            $this->addCond('pruneCond0', $this->getAliasedColName(UserRolTableMap::COL_USR_ID), $userRol->getUsrId(), Criteria::NOT_EQUAL);
-            $this->addCond('pruneCond1', $this->getAliasedColName(UserRolTableMap::COL_ROL_ID), $userRol->getRolId(), Criteria::NOT_EQUAL);
+        if ($userRole) {
+            $this->addCond('pruneCond0', $this->getAliasedColName(UserRoleTableMap::COL_USER_ID), $userRole->getUserId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(UserRoleTableMap::COL_ROLE_ID), $userRole->getRoleId(), Criteria::NOT_EQUAL);
             $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
         }
 
@@ -495,7 +495,7 @@ abstract class UserRolQuery extends ModelCriteria
     }
 
     /**
-     * Deletes all rows from the user_rol table.
+     * Deletes all rows from the USER_ROLE table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -503,7 +503,7 @@ abstract class UserRolQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserRoleTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -514,8 +514,8 @@ abstract class UserRolQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            UserRolTableMap::clearInstancePool();
-            UserRolTableMap::clearRelatedInstancePool();
+            UserRoleTableMap::clearInstancePool();
+            UserRoleTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -533,26 +533,26 @@ abstract class UserRolQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserRolTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserRoleTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(UserRolTableMap::DATABASE_NAME);
+        $criteria->setDbName(UserRoleTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            UserRolTableMap::removeInstanceFromPool($criteria);
+            UserRoleTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            UserRolTableMap::clearRelatedInstancePool();
+            UserRoleTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
     }
 
-} // UserRolQuery
+} // UserRoleQuery

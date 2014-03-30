@@ -4,98 +4,99 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ---------------------------------------------------------------------
--- user
+-- USER
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `USER`;
 
-CREATE TABLE `user`
+CREATE TABLE `USER`
 (
-    `usr_id` INTEGER NOT NULL AUTO_INCREMENT,
-    `usr_username` VARCHAR(128) NOT NULL,
-    `usr_password` VARCHAR(32) NOT NULL,
-    `usr_first_name` VARCHAR(128) NOT NULL,
-    `usr_last_name` VARCHAR(128) NOT NULL,
-    `usr_create_date` DATETIME,
-    `usr_update_date` DATETIME,
-    `usr_status` VARCHAR(64) DEFAULT 'ACTIVE',
-    PRIMARY KEY (`usr_id`)
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `username` VARCHAR(128) NOT NULL,
+    `password` VARCHAR(32) NOT NULL,
+    `first_name` VARCHAR(128) NOT NULL,
+    `last_name` VARCHAR(128) NOT NULL,
+    `create_date` DATETIME,
+    `update_date` DATETIME,
+    `status` VARCHAR(64) DEFAULT 'ACTIVE',
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- permission
+-- PERMISSION
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `permission`;
+DROP TABLE IF EXISTS `PERMISSION`;
 
-CREATE TABLE `permission`
+CREATE TABLE `PERMISSION`
 (
-    `prm_id` INTEGER NOT NULL AUTO_INCREMENT,
-    `prm_name` VARCHAR(256) NOT NULL,
-    `prm_create_date` DATETIME,
-    `prm_update_date` DATETIME,
-    `prm_status` VARCHAR(64) DEFAULT 'ACTIVE',
-    PRIMARY KEY (`prm_id`)
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(256) NOT NULL,
+    `create_date` DATETIME,
+    `description` VARCHAR(256) NOT NULL,
+    `update_date` DATETIME,
+    `status` VARCHAR(64) DEFAULT 'ACTIVE',
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- rol
+-- ROLE
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `rol`;
+DROP TABLE IF EXISTS `ROLE`;
 
-CREATE TABLE `rol`
+CREATE TABLE `ROLE`
 (
-    `rol_id` INTEGER NOT NULL AUTO_INCREMENT,
-    `rol_name` VARCHAR(128) NOT NULL,
-    `rol_description` VARCHAR(128) NOT NULL,
-    `rol_create_date` DATETIME,
-    `rol_update_date` DATETIME,
-    `rol_status` VARCHAR(64) DEFAULT 'ACTIVE',
-    PRIMARY KEY (`rol_id`)
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(128) NOT NULL,
+    `description` VARCHAR(256) NOT NULL,
+    `create_date` DATETIME,
+    `update_date` DATETIME,
+    `status` VARCHAR(64) DEFAULT 'ACTIVE',
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- user_rol
+-- USER_ROLE
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user_rol`;
+DROP TABLE IF EXISTS `USER_ROLE`;
 
-CREATE TABLE `user_rol`
+CREATE TABLE `USER_ROLE`
 (
-    `usr_id` INTEGER NOT NULL,
-    `rol_id` INTEGER NOT NULL,
-    PRIMARY KEY (`usr_id`,`rol_id`),
-    INDEX `user_rol_FI_2` (`rol_id`),
-    CONSTRAINT `user_rol_FK_1`
-        FOREIGN KEY (`usr_id`)
-        REFERENCES `user` (`usr_id`)
+    `user_id` INTEGER NOT NULL,
+    `role_id` INTEGER NOT NULL,
+    PRIMARY KEY (`user_id`,`role_id`),
+    INDEX `USER_ROLE_FI_2` (`role_id`),
+    CONSTRAINT `USER_ROLE_FK_1`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `USER` (`id`)
         ON DELETE CASCADE,
-    CONSTRAINT `user_rol_FK_2`
-        FOREIGN KEY (`rol_id`)
-        REFERENCES `rol` (`rol_id`)
+    CONSTRAINT `USER_ROLE_FK_2`
+        FOREIGN KEY (`role_id`)
+        REFERENCES `ROLE` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- rol_permission
+-- ROLE_PERMISSION
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `rol_permission`;
+DROP TABLE IF EXISTS `ROLE_PERMISSION`;
 
-CREATE TABLE `rol_permission`
+CREATE TABLE `ROLE_PERMISSION`
 (
-    `rol_id` INTEGER NOT NULL,
-    `prm_id` INTEGER NOT NULL,
-    PRIMARY KEY (`rol_id`,`prm_id`),
-    INDEX `rol_permission_FI_2` (`prm_id`),
-    CONSTRAINT `rol_permission_FK_1`
-        FOREIGN KEY (`rol_id`)
-        REFERENCES `rol` (`rol_id`)
+    `role_id` INTEGER NOT NULL,
+    `permission_id` INTEGER NOT NULL,
+    PRIMARY KEY (`role_id`,`permission_id`),
+    INDEX `ROLE_PERMISSION_FI_2` (`permission_id`),
+    CONSTRAINT `ROLE_PERMISSION_FK_1`
+        FOREIGN KEY (`role_id`)
+        REFERENCES `ROLE` (`id`)
         ON DELETE CASCADE,
-    CONSTRAINT `rol_permission_FK_2`
-        FOREIGN KEY (`prm_id`)
-        REFERENCES `permission` (`prm_id`)
+    CONSTRAINT `ROLE_PERMISSION_FK_2`
+        FOREIGN KEY (`permission_id`)
+        REFERENCES `PERMISSION` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

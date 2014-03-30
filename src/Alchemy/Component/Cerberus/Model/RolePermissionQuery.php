@@ -2,11 +2,11 @@
 
 namespace Alchemy\Component\Cerberus\Model;
 
-use Alchemy\Component\Cerberus\Model\Base\RolPermissionQuery as BaseRolPermissionQuery;
+use Alchemy\Component\Cerberus\Model\Base\RolePermissionQuery as BaseRolePermissionQuery;
 
 
 /**
- * Skeleton subclass for performing query and update operations on the 'rol_permission' table.
+ * Skeleton subclass for performing query and update operations on the 'ROLE_PERMISSION' table.
  *
  *
  *
@@ -15,7 +15,7 @@ use Alchemy\Component\Cerberus\Model\Base\RolPermissionQuery as BaseRolPermissio
  * long as it does not already exist in the output directory.
  *
  */
-class RolPermissionQuery extends BaseRolPermissionQuery
+class RolePermissionQuery extends BaseRolePermissionQuery
 {
 
-} // RolPermissionQuery
+} // RolePermissionQuery
