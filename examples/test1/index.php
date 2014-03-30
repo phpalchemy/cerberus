@@ -1,6 +1,8 @@
 <?php
+$rootDir = realpath(__DIR__ . "/../../");
+var_dump($rootDir);
 
-$cerverus = new \Alchemy\Component\Cerberus\Cerberus();
-$user = new
+$loader = include $rootDir."/vendor/autoload.php";
 
-$cerverus->register();
+$cerberus = new \Alchemy\Component\Cerberus\Cerberus();
+$cerberus->init();
