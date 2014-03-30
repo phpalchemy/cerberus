@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="Sandbox" defaultIdMethod="native" namespace="Sandbox\Model">
+<database name="Cerberus" defaultIdMethod="native" namespace="Alchemy\Component\Cerberus\Model">
     <!-- Cerberus Tables -->
     <table name="user">
         <column name="usr_id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
