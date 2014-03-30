@@ -46,7 +46,7 @@ class BuildCommand extends Command
 
         $this
             ->addOption("vendor-dir", null, InputOption::VALUE_REQUIRED, "Vendor Directory", "")
-            ->addOption("db-host", null, InputOption::VALUE_REQUIRED, "Data Base server address", "")
+            ->addOption("db-host", null, InputOption::VALUE_REQUIRED, "Data Base server address", "localhost")
             ->addOption("db-port", null, InputOption::VALUE_REQUIRED, "Server Port", "")
             ->addOption("db-user", null, InputOption::VALUE_REQUIRED, "DB User", "")
             ->addOption("db-password", null, InputOption::VALUE_REQUIRED, "DB User Password", "")
@@ -65,6 +65,13 @@ class BuildCommand extends Command
         $vendorDir = $input->getOption("vendor-dir") != ""? $input->getOption("vendor-dir"): $this->config["home_dir"].DS."vendor";
         $propelBin = $vendorDir."/propel/propel/bin/propel";
         $dbEngineConf = $input->getOption("db-engine");
+        $dbUser = $input->getOption("db-user");
+        $dbPassword = $input->getOption("db-password");
+        $dbHost = $input->getOption("db-host");
+        $dbPort = $input->getOption("db-port");
+        $dbName = $input->getOption("db-name");
+        $srcName = "Cerberus";
+        $commands = array();
 
         if (! file_exists($propelBin)) {
             throw new \Exception("Can't found Propel, binary, please ensure that propel is properly installed.");
@@ -99,13 +106,26 @@ class BuildCommand extends Command
         $schemaDir = $this->config["schema_dir"];
         $classDir = $this->config["class_dir"];
 
+        $commands["model"] = sprintf("%s model:build --input-dir=%s --output-dir=%s", $propelBin, $schemaDir, $classDir);
+        $commands["sql"] = sprintf("%s sql:build --input-dir=%s --output-dir=%s --platform=%s", $propelBin, $schemaDir, $schemaDir, $dbEngine);
+
+        if (! empty($dbName)) {
+            if (empty($dbHost)) throw new \Exception("DB Host configuration missing.");
+            if (empty($dbUser)) throw new \Exception("DB User configuration missing.");
+            if (empty($dbPassword)) throw new \Exception("DB Password configuration missing.");
+            $dbPort = empty($dbPort)? "": ";port=".$dbPort;
+
+            $dns = sprintf("%s:host=%s;dbname=%s;user=%s;password=%s%s", $dbEngineConf, $dbHost, $dbName, $dbUser, $dbPassword, $dbPort);
+            $commands["sql:insert"] = sprintf("%s sql:insert --input-dir=schema/db --connection=\"%s=%s\"", $propelBin, $srcName, $dns);
+
+            // prepare Data Base
+            $dbh = new \PDO("$dbEngineConf:host=$dbHost", $dbUser, $dbPassword);
+            $dbh->exec("CREATE DATABASE IF NOT EXISTS $dbName") or die(print_r($dbh->errorInfo(), true));
+        }
+
         $output->writeln("Propel input dir: " . $schemaDir);
         $output->writeln("Propel output class dir: " . $classDir);
         $output->writeln("Propel output sql dir: " . $schemaDir);
-
-        $commands = array();
-        $commands["model"] = sprintf("%s model:build --input-dir=%s --output-dir=%s", $propelBin, $schemaDir, $classDir);
-        $commands["sql"] = sprintf("%s sql:build --input-dir=%s --output-dir=%s --platform=%s", $propelBin, $schemaDir, $schemaDir, $dbEngine);
 
         foreach ($commands as $build => $command) {
             $output->write(sprintf("- Building %s ... ", $build));

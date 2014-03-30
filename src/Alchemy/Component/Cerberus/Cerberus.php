@@ -22,7 +22,7 @@ class Cerberus
     protected function initPropel()
     {
         $serviceContainer = Propel::getServiceContainer();
-        $serviceContainer->setAdapterClass(CERBERUS_DB_SRC_NAME, $this->config["db-engine"]);
+        $serviceContainer->setAdapterClass(self::CERBERUS_DB_SRC_NAME, $this->config["db-engine"]);
         $manager = new ConnectionManagerSingle();
         $port = empty($this->config["db-port"])? "": ";port=".$this->config["db-port"];
         $manager->setConfiguration(array(
@@ -30,6 +30,6 @@ class Cerberus
             "user"     => $this->config["db-user"],
             "password" => $this->config["db-password"],
         ));
-        $serviceContainer->setConnectionManager(CERBERUS_DB_SRC_NAME, $manager);
+        $serviceContainer->setConnectionManager(self::CERBERUS_DB_SRC_NAME, $manager);
     }
 }
