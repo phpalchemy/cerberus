@@ -39,7 +39,7 @@ class RoleTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'Cerberus';
+    const DATABASE_NAME = 'cerberus';
 
     /**
      * The table name for this class
@@ -167,6 +167,8 @@ class RoleTableMap extends TableMap
     {
         $this->addRelation('UserRole', '\\Alchemy\\Component\\Cerberus\\Model\\UserRole', RelationMap::ONE_TO_MANY, array('id' => 'role_id', ), 'CASCADE', null, 'UserRoles');
         $this->addRelation('RolePermission', '\\Alchemy\\Component\\Cerberus\\Model\\RolePermission', RelationMap::ONE_TO_MANY, array('id' => 'role_id', ), 'CASCADE', null, 'RolePermissions');
+        $this->addRelation('User', '\\Alchemy\\Component\\Cerberus\\Model\\User', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Users');
+        $this->addRelation('Permission', '\\Alchemy\\Component\\Cerberus\\Model\\Permission', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Permissions');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to ROLE     * by a foreign key with ON DELETE CASCADE

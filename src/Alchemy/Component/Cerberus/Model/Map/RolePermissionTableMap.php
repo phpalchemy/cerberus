@@ -39,7 +39,7 @@ class RolePermissionTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'Cerberus';
+    const DATABASE_NAME = 'cerberus';
 
     /**
      * The table name for this class
@@ -131,6 +131,7 @@ class RolePermissionTableMap extends TableMap
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\RolePermission');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
         $this->setUseIdGenerator(false);
+        $this->setIsCrossRef(true);
         // columns
         $this->addForeignPrimaryKey('ROLE_ID', 'RoleId', 'INTEGER' , 'ROLE', 'ID', true, null, null);
         $this->addForeignPrimaryKey('PERMISSION_ID', 'PermissionId', 'INTEGER' , 'PERMISSION', 'ID', true, null, null);

@@ -4,10 +4,15 @@ namespace Alchemy\Component\Cerberus;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Alchemy\Component\Cerberus\Model\User;
+use Alchemy\Component\Cerberus\Model\UserQuery;
 use Alchemy\Component\Cerberus\Model\Role;
+use Alchemy\Component\Cerberus\Model\RoleQuery;
 use Alchemy\Component\Cerberus\Model\Permission;
+use Alchemy\Component\Cerberus\Model\PermissionQuery;
 use Alchemy\Component\Cerberus\Model\UserRole;
+use Alchemy\Component\Cerberus\Model\UserRoleQuery;
 use Alchemy\Component\Cerberus\Model\RolePermission;
+use Alchemy\Component\Cerberus\Model\RolePermissionQuery;
 
 /**
  * Cerberus class
@@ -38,7 +43,7 @@ class Cerberus
      */
     protected $translationsTable = array();
 
-    const CERBERUS_DB_SRC_NAME = "Cerberus";
+    const CERBERUS_DB_SRC_NAME = "cerberus";
 
     /**
      * @return \Alchemy\Component\Cerberus\Cerberus|static
@@ -71,26 +76,6 @@ class Cerberus
 
         $this->config = array_merge($this->config, $config);
     }
-
-    public function addUser($data)
-    {
-        echo _("Invalid data type."); die;
-
-        if (get_class($data) == '\Alchemy\Component\Cerberus\Model\User') {
-            $data->save();
-        } elseif (is_array($data)){
-            $user = new User();
-            $user->fromArray($data);
-        } else {
-            throw new \Exception(_("Invalid data type."));
-        }
-
-        $user->save();
-    }
-
-    /*
-     * Others methods
-     */
 
     public function setLocale(array $localeConf)
     {
@@ -127,35 +112,94 @@ class Cerberus
 
     protected function initLocale()
     {
-
         if (isset($this->config["locale"])) {
-
-            if (isset($this->config["locale"]["language"])) {
-//                $translationFile = $this->homeDir . "/resources/translations/".$this->config["locale"]["language"].".php";
-//                if (file_exists($translationFile)) {
-//                    $this->translationsTable = include($translationFile);
-//                }
-
-//                if (! function_exists("gettext")){
-//                    echo "gettext is not installed\n";
-//                } else{
-//                    echo "gettext is supported\n";
-//                }
-
-                $locale = $this->config["locale"]["language"];
-                //var_dump($locale); die;
-                putenv("LANG=" . $locale);
-                setlocale(LC_ALL, "");
+            if (isset($this->config["locale"]["lang"])) {
+                if (! function_exists("gettext")) {
+                    error_log("Can't Internationalize Cerberus gettext(), is not loaded.");
+                    return false;
+                }
 
                 $domain = "cerberus";
-                //var_dump($this->homeDir . "/locale"); die;
+                $locale = $this->config["locale"]["lang"];
+
+                putenv("LANG=" . $locale);
+                putenv("LC_ALL=" . $locale);
+                setlocale(LC_MESSAGES, $locale);
+                setlocale(LC_ALL, $locale);
                 bindtextdomain($domain, $this->homeDir . "/locale");
-                //bind_textdomain_codeset($domain, 'UTF-8');
-
+                bind_textdomain_codeset($domain, 'UTF-8');
                 textdomain($domain);
-
-                echo _("Invalid data type."); die("-end-");
             }
         }
+    }
+
+    public function register($el)
+    {
+        $el->save();
+
+//        if (get_class($user) == '\Alchemy\Component\Cerberus\Model\User') {
+//        } elseif (is_array($user)){
+//            $userData = $user;
+//            $user = new User();
+//            $user->fromArray($userData);
+//        } else {
+//            throw new \Exception(_("Invalid data type."));
+//        }
+//
+//        $user->save();
+    }
+
+    /**
+     * @param $username
+     * @return \Alchemy\Component\Cerberus\Model\User
+     */
+    public function getUser($username)
+    {
+        return UserQuery::create()->findOneByUsername($username);
+    }
+
+    /**
+     * @param $username
+     * @return bool
+     */
+    public function userExists($username)
+    {
+        return is_object(UserQuery::create()->findOneByUsername($username));
+    }
+
+    /**
+     * @param $name
+     * @return \Alchemy\Component\Cerberus\Model\Role
+     */
+    public function getRole($name)
+    {
+        return RoleQuery::create()->findOneByName($name);
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function roleExists($name)
+    {
+        return is_object(RoleQuery::create()->findOneByName($name));
+    }
+
+    /**
+     * @param $name
+     * @return \Alchemy\Component\Cerberus\Model\Permission
+     */
+    public function getPermission($name)
+    {
+        return PermissionQuery::create()->findOneByName($name);
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function permissionExists($name)
+    {
+        return is_object(PermissionQuery::create()->findOneByName($name));
     }
 }

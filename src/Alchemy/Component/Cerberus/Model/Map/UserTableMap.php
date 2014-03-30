@@ -39,7 +39,7 @@ class UserTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'Cerberus';
+    const DATABASE_NAME = 'cerberus';
 
     /**
      * The table name for this class
@@ -178,6 +178,7 @@ class UserTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('UserRole', '\\Alchemy\\Component\\Cerberus\\Model\\UserRole', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), 'CASCADE', null, 'UserRoles');
+        $this->addRelation('Role', '\\Alchemy\\Component\\Cerberus\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to USER     * by a foreign key with ON DELETE CASCADE

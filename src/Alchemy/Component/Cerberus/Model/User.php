@@ -3,10 +3,17 @@
 namespace Alchemy\Component\Cerberus\Model;
 
 use Alchemy\Component\Cerberus\Model\Base\User as BaseUser;
-use Alchemy\Component\Cerberus\_ as _;
 
 class User extends BaseUser
 {
+    private $passwordUpdated = false;
+
+    public function setPassword($password)
+    {
+        $this->passwordUpdated = true;
+        parent::setPassword($password);
+    }
+
     public function save()
     {
         if ($this->getId()) {
@@ -19,6 +26,15 @@ class User extends BaseUser
             $this->setCreateDate(date("Y-m-d H:i:s"));
         }
 
+        if ($this->passwordUpdated) {
+            $this->setPassword(md5($this->getPassword()));
+        }
+
         parent::save();
+    }
+
+    public function getByUsername($username)
+    {
+        return UserQuery::create()->findOneByUsername($username);
     }
 }

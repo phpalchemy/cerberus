@@ -5,10 +5,14 @@ namespace Alchemy\Component\Cerberus\Model\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Alchemy\Component\Cerberus\Model\Permission as ChildPermission;
+use Alchemy\Component\Cerberus\Model\PermissionQuery as ChildPermissionQuery;
 use Alchemy\Component\Cerberus\Model\Role as ChildRole;
 use Alchemy\Component\Cerberus\Model\RolePermission as ChildRolePermission;
 use Alchemy\Component\Cerberus\Model\RolePermissionQuery as ChildRolePermissionQuery;
 use Alchemy\Component\Cerberus\Model\RoleQuery as ChildRoleQuery;
+use Alchemy\Component\Cerberus\Model\User as ChildUser;
+use Alchemy\Component\Cerberus\Model\UserQuery as ChildUserQuery;
 use Alchemy\Component\Cerberus\Model\UserRole as ChildUserRole;
 use Alchemy\Component\Cerberus\Model\UserRoleQuery as ChildUserRoleQuery;
 use Alchemy\Component\Cerberus\Model\Map\RoleTableMap;
@@ -110,12 +114,44 @@ abstract class Role implements ActiveRecordInterface
     protected $collRolePermissionsPartial;
 
     /**
+     * @var        ObjectCollection|ChildUser[] Cross Collection to store aggregation of ChildUser objects.
+     */
+    protected $collUsers;
+
+    /**
+     * @var bool
+     */
+    protected $collUsersPartial;
+
+    /**
+     * @var        ObjectCollection|ChildPermission[] Cross Collection to store aggregation of ChildPermission objects.
+     */
+    protected $collPermissions;
+
+    /**
+     * @var bool
+     */
+    protected $collPermissionsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildUser[]
+     */
+    protected $usersScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildPermission[]
+     */
+    protected $permissionsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -695,6 +731,8 @@ abstract class Role implements ActiveRecordInterface
 
             $this->collRolePermissions = null;
 
+            $this->collUsers = null;
+            $this->collPermissions = null;
         } // if (deep)
     }
 
@@ -804,6 +842,64 @@ abstract class Role implements ActiveRecordInterface
                 $affectedRows += 1;
                 $this->resetModified();
             }
+
+            if ($this->usersScheduledForDeletion !== null) {
+                if (!$this->usersScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->usersScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \Alchemy\Component\Cerberus\Model\UserRoleQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->usersScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collUsers) {
+                foreach ($this->collUsers as $user) {
+                    if (!$user->isDeleted() && ($user->isNew() || $user->isModified())) {
+                        $user->save($con);
+                    }
+                }
+            }
+
+
+            if ($this->permissionsScheduledForDeletion !== null) {
+                if (!$this->permissionsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->permissionsScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \Alchemy\Component\Cerberus\Model\RolePermissionQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->permissionsScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collPermissions) {
+                foreach ($this->collPermissions as $permission) {
+                    if (!$permission->isDeleted() && ($permission->isNew() || $permission->isModified())) {
+                        $permission->save($con);
+                    }
+                }
+            }
+
 
             if ($this->userRolesScheduledForDeletion !== null) {
                 if (!$this->userRolesScheduledForDeletion->isEmpty()) {
@@ -1844,6 +1940,490 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collUsers collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addUsers()
+     */
+    public function clearUsers()
+    {
+        $this->collUsers = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collUsers collection.
+     *
+     * By default this just sets the collUsers collection to an empty collection (like clearUsers());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initUsers()
+    {
+        $this->collUsers = new ObjectCollection();
+        $this->collUsersPartial = true;
+
+        $this->collUsers->setModel('\Alchemy\Component\Cerberus\Model\User');
+    }
+
+    /**
+     * Checks if the collUsers collection is loaded.
+     *
+     * @return bool
+     */
+    public function isUsersLoaded()
+    {
+        return null !== $this->collUsers;
+    }
+
+    /**
+     * Gets a collection of ChildUser objects related by a many-to-many relationship
+     * to the current object by way of the USER_ROLE cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildRole is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildUser[] List of ChildUser objects
+     */
+    public function getUsers(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collUsersPartial && !$this->isNew();
+        if (null === $this->collUsers || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collUsers) {
+                    $this->initUsers();
+                }
+            } else {
+
+                $query = ChildUserQuery::create(null, $criteria)
+                    ->filterByRole($this);
+                $collUsers = $query->find($con);
+                if (null !== $criteria) {
+                    return $collUsers;
+                }
+
+                if ($partial && $this->collUsers) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collUsers as $obj) {
+                        if (!$collUsers->contains($obj)) {
+                            $collUsers[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collUsers = $collUsers;
+                $this->collUsersPartial = false;
+            }
+        }
+
+        return $this->collUsers;
+    }
+
+    /**
+     * Sets a collection of User objects related by a many-to-many relationship
+     * to the current object by way of the USER_ROLE cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $users A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildRole The current object (for fluent API support)
+     */
+    public function setUsers(Collection $users, ConnectionInterface $con = null)
+    {
+        $this->clearUsers();
+        $currentUsers = $this->getUsers();
+
+        $usersScheduledForDeletion = $currentUsers->diff($users);
+
+        foreach ($usersScheduledForDeletion as $toDelete) {
+            $this->removeUser($toDelete);
+        }
+
+        foreach ($users as $user) {
+            if (!$currentUsers->contains($user)) {
+                $this->doAddUser($user);
+            }
+        }
+
+        $this->collUsersPartial = false;
+        $this->collUsers = $users;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of User objects related by a many-to-many relationship
+     * to the current object by way of the USER_ROLE cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related User objects
+     */
+    public function countUsers(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collUsersPartial && !$this->isNew();
+        if (null === $this->collUsers || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUsers) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getUsers());
+                }
+
+                $query = ChildUserQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByRole($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collUsers);
+        }
+    }
+
+    /**
+     * Associate a ChildUser to this object
+     * through the USER_ROLE cross reference table.
+     *
+     * @param ChildUser $user
+     * @return ChildRole The current object (for fluent API support)
+     */
+    public function addUser(ChildUser $user)
+    {
+        if ($this->collUsers === null) {
+            $this->initUsers();
+        }
+
+        if (!$this->getUsers()->contains($user)) {
+            // only add it if the **same** object is not already associated
+            $this->collUsers->push($user);
+            $this->doAddUser($user);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildUser $user
+     */
+    protected function doAddUser(ChildUser $user)
+    {
+        $userRole = new ChildUserRole();
+
+        $userRole->setUser($user);
+
+        $userRole->setRole($this);
+
+        $this->addUserRole($userRole);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$user->isRolesLoaded()) {
+            $user->initRoles();
+            $user->getRoles()->push($this);
+        } else if (!$user->getRoles()->contains($this)) {
+            $user->getRoles()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove user of this object
+     * through the USER_ROLE cross reference table.
+     *
+     * @param ChildUser $user
+     * @return ChildRole The current object (for fluent API support)
+     */
+    public function removeUser(ChildUser $user)
+    {
+        if ($this->getUsers()->contains($user)) {
+            $userRole = new ChildUserRole();
+
+            $userRole->setUser($user);
+            if ($user->isRolesLoaded()) {
+                //remove the back reference if available
+                $user->getRoles()->removeObject($this);
+            }
+
+            $userRole->setRole($this);
+            $this->removeUserRole(clone $userRole);
+            $userRole->clear();
+
+            $this->collUsers->remove($this->collUsers->search($user));
+
+            if (null === $this->usersScheduledForDeletion) {
+                $this->usersScheduledForDeletion = clone $this->collUsers;
+                $this->usersScheduledForDeletion->clear();
+            }
+
+            $this->usersScheduledForDeletion->push($user);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collPermissions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addPermissions()
+     */
+    public function clearPermissions()
+    {
+        $this->collPermissions = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collPermissions collection.
+     *
+     * By default this just sets the collPermissions collection to an empty collection (like clearPermissions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initPermissions()
+    {
+        $this->collPermissions = new ObjectCollection();
+        $this->collPermissionsPartial = true;
+
+        $this->collPermissions->setModel('\Alchemy\Component\Cerberus\Model\Permission');
+    }
+
+    /**
+     * Checks if the collPermissions collection is loaded.
+     *
+     * @return bool
+     */
+    public function isPermissionsLoaded()
+    {
+        return null !== $this->collPermissions;
+    }
+
+    /**
+     * Gets a collection of ChildPermission objects related by a many-to-many relationship
+     * to the current object by way of the ROLE_PERMISSION cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildRole is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildPermission[] List of ChildPermission objects
+     */
+    public function getPermissions(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPermissionsPartial && !$this->isNew();
+        if (null === $this->collPermissions || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collPermissions) {
+                    $this->initPermissions();
+                }
+            } else {
+
+                $query = ChildPermissionQuery::create(null, $criteria)
+                    ->filterByRole($this);
+                $collPermissions = $query->find($con);
+                if (null !== $criteria) {
+                    return $collPermissions;
+                }
+
+                if ($partial && $this->collPermissions) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collPermissions as $obj) {
+                        if (!$collPermissions->contains($obj)) {
+                            $collPermissions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPermissions = $collPermissions;
+                $this->collPermissionsPartial = false;
+            }
+        }
+
+        return $this->collPermissions;
+    }
+
+    /**
+     * Sets a collection of Permission objects related by a many-to-many relationship
+     * to the current object by way of the ROLE_PERMISSION cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $permissions A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildRole The current object (for fluent API support)
+     */
+    public function setPermissions(Collection $permissions, ConnectionInterface $con = null)
+    {
+        $this->clearPermissions();
+        $currentPermissions = $this->getPermissions();
+
+        $permissionsScheduledForDeletion = $currentPermissions->diff($permissions);
+
+        foreach ($permissionsScheduledForDeletion as $toDelete) {
+            $this->removePermission($toDelete);
+        }
+
+        foreach ($permissions as $permission) {
+            if (!$currentPermissions->contains($permission)) {
+                $this->doAddPermission($permission);
+            }
+        }
+
+        $this->collPermissionsPartial = false;
+        $this->collPermissions = $permissions;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Permission objects related by a many-to-many relationship
+     * to the current object by way of the ROLE_PERMISSION cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Permission objects
+     */
+    public function countPermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPermissionsPartial && !$this->isNew();
+        if (null === $this->collPermissions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPermissions) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getPermissions());
+                }
+
+                $query = ChildPermissionQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByRole($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collPermissions);
+        }
+    }
+
+    /**
+     * Associate a ChildPermission to this object
+     * through the ROLE_PERMISSION cross reference table.
+     *
+     * @param ChildPermission $permission
+     * @return ChildRole The current object (for fluent API support)
+     */
+    public function addPermission(ChildPermission $permission)
+    {
+        if ($this->collPermissions === null) {
+            $this->initPermissions();
+        }
+
+        if (!$this->getPermissions()->contains($permission)) {
+            // only add it if the **same** object is not already associated
+            $this->collPermissions->push($permission);
+            $this->doAddPermission($permission);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildPermission $permission
+     */
+    protected function doAddPermission(ChildPermission $permission)
+    {
+        $rolePermission = new ChildRolePermission();
+
+        $rolePermission->setPermission($permission);
+
+        $rolePermission->setRole($this);
+
+        $this->addRolePermission($rolePermission);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$permission->isRolesLoaded()) {
+            $permission->initRoles();
+            $permission->getRoles()->push($this);
+        } else if (!$permission->getRoles()->contains($this)) {
+            $permission->getRoles()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove permission of this object
+     * through the ROLE_PERMISSION cross reference table.
+     *
+     * @param ChildPermission $permission
+     * @return ChildRole The current object (for fluent API support)
+     */
+    public function removePermission(ChildPermission $permission)
+    {
+        if ($this->getPermissions()->contains($permission)) {
+            $rolePermission = new ChildRolePermission();
+
+            $rolePermission->setPermission($permission);
+            if ($permission->isRolesLoaded()) {
+                //remove the back reference if available
+                $permission->getRoles()->removeObject($this);
+            }
+
+            $rolePermission->setRole($this);
+            $this->removeRolePermission(clone $rolePermission);
+            $rolePermission->clear();
+
+            $this->collPermissions->remove($this->collPermissions->search($permission));
+
+            if (null === $this->permissionsScheduledForDeletion) {
+                $this->permissionsScheduledForDeletion = clone $this->collPermissions;
+                $this->permissionsScheduledForDeletion->clear();
+            }
+
+            $this->permissionsScheduledForDeletion->push($permission);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1885,10 +2465,22 @@ abstract class Role implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collUsers) {
+                foreach ($this->collUsers as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collPermissions) {
+                foreach ($this->collPermissions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collUserRoles = null;
         $this->collRolePermissions = null;
+        $this->collUsers = null;
+        $this->collPermissions = null;
     }
 
     /**

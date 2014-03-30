@@ -39,7 +39,7 @@ class UserRoleTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'Cerberus';
+    const DATABASE_NAME = 'cerberus';
 
     /**
      * The table name for this class
@@ -131,6 +131,7 @@ class UserRoleTableMap extends TableMap
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\UserRole');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
         $this->setUseIdGenerator(false);
+        $this->setIsCrossRef(true);
         // columns
         $this->addForeignPrimaryKey('USER_ID', 'UserId', 'INTEGER' , 'USER', 'ID', true, null, null);
         $this->addForeignPrimaryKey('ROLE_ID', 'RoleId', 'INTEGER' , 'ROLE', 'ID', true, null, null);

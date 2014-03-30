@@ -82,7 +82,7 @@ abstract class UserQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'Cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\User', $modelAlias = null)
+    public function __construct($dbName = 'cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\User', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -589,6 +589,23 @@ abstract class UserQuery extends ModelCriteria
         return $this
             ->joinUserRole($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'UserRole', '\Alchemy\Component\Cerberus\Model\UserRoleQuery');
+    }
+
+    /**
+     * Filter the query by a related Role object
+     * using the USER_ROLE table as cross reference
+     *
+     * @param Role $role the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByRole($role, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useUserRoleQuery()
+            ->filterByRole($role, $comparison)
+            ->endUse();
     }
 
     /**

@@ -74,7 +74,7 @@ abstract class PermissionQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'Cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\Permission', $modelAlias = null)
+    public function __construct($dbName = 'cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\Permission', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -523,6 +523,23 @@ abstract class PermissionQuery extends ModelCriteria
         return $this
             ->joinRolePermission($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'RolePermission', '\Alchemy\Component\Cerberus\Model\RolePermissionQuery');
+    }
+
+    /**
+     * Filter the query by a related Role object
+     * using the ROLE_PERMISSION table as cross reference
+     *
+     * @param Role $role the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildPermissionQuery The current query, for fluid interface
+     */
+    public function filterByRole($role, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useRolePermissionQuery()
+            ->filterByRole($role, $comparison)
+            ->endUse();
     }
 
     /**

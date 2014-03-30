@@ -70,7 +70,7 @@ class BuildCommand extends Command
         $dbHost = $input->getOption("db-host");
         $dbPort = $input->getOption("db-port");
         $dbName = $input->getOption("db-name");
-        $srcName = "Cerberus";
+        $srcName = "cerberus";
         $commands = array();
 
         if (! file_exists($propelBin)) {

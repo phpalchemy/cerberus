@@ -78,7 +78,7 @@ abstract class RoleQuery extends ModelCriteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'Cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\Role', $modelAlias = null)
+    public function __construct($dbName = 'cerberus', $modelName = '\\Alchemy\\Component\\Cerberus\\Model\\Role', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
@@ -600,6 +600,40 @@ abstract class RoleQuery extends ModelCriteria
         return $this
             ->joinRolePermission($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'RolePermission', '\Alchemy\Component\Cerberus\Model\RolePermissionQuery');
+    }
+
+    /**
+     * Filter the query by a related User object
+     * using the USER_ROLE table as cross reference
+     *
+     * @param User $user the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildRoleQuery The current query, for fluid interface
+     */
+    public function filterByUser($user, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useUserRoleQuery()
+            ->filterByUser($user, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related Permission object
+     * using the ROLE_PERMISSION table as cross reference
+     *
+     * @param Permission $permission the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildRoleQuery The current query, for fluid interface
+     */
+    public function filterByPermission($permission, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useRolePermissionQuery()
+            ->filterByPermission($permission, $comparison)
+            ->endUse();
     }
 
     /**

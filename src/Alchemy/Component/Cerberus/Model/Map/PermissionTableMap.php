@@ -39,7 +39,7 @@ class PermissionTableMap extends TableMap
     /**
      * The default database name for this class
      */
-    const DATABASE_NAME = 'Cerberus';
+    const DATABASE_NAME = 'cerberus';
 
     /**
      * The table name for this class
@@ -166,6 +166,7 @@ class PermissionTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('RolePermission', '\\Alchemy\\Component\\Cerberus\\Model\\RolePermission', RelationMap::ONE_TO_MANY, array('id' => 'permission_id', ), 'CASCADE', null, 'RolePermissions');
+        $this->addRelation('Role', '\\Alchemy\\Component\\Cerberus\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to PERMISSION     * by a foreign key with ON DELETE CASCADE
