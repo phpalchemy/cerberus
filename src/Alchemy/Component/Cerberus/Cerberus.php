@@ -13,6 +13,10 @@ use Alchemy\Component\Cerberus\Model\UserRole;
 use Alchemy\Component\Cerberus\Model\UserRoleQuery;
 use Alchemy\Component\Cerberus\Model\RolePermission;
 use Alchemy\Component\Cerberus\Model\RolePermissionQuery;
+use Alchemy\Component\Cerberus\Model\LoginLog;
+use Alchemy\Component\Cerberus\Model\LoginLogQuery;
+
+use Alchemy\Component\Cerberus\Session;
 
 /**
  * Cerberus class
@@ -39,9 +43,9 @@ class Cerberus
      */
     protected $homeDir = "";
     /**
-     * @var array
+     * @var \Alchemy\Component\Cerberus\Session\Session
      */
-    protected $translationsTable = array();
+    protected $session;
 
     const CERBERUS_DB_SRC_NAME = "cerberus";
 
@@ -90,7 +94,6 @@ class Cerberus
 
     public function init(array $config = array())
     {
-        session_start();
         $this->setConfig($config);
         $this->initLocale();
         $this->initPropel();
@@ -131,22 +134,6 @@ class Cerberus
                 textdomain($domain);
             }
         }
-    }
-
-    public function register($el)
-    {
-        $el->save();
-
-//        if (get_class($user) == '\Alchemy\Component\Cerberus\Model\User') {
-//        } elseif (is_array($user)){
-//            $userData = $user;
-//            $user = new User();
-//            $user->fromArray($userData);
-//        } else {
-//            throw new \Exception(_("Invalid data type."));
-//        }
-//
-//        $user->save();
     }
 
     /**
@@ -202,4 +189,189 @@ class Cerberus
     {
         return is_object(PermissionQuery::create()->findOneByName($name));
     }
+
+    public function authenticate($username, $password)
+    {
+        $user = $this->getUser($username);
+
+        if (! is_object($user)) {
+            throw new \Exception(sprintf(_("Invalid User, the user \"%s\" is not registered!"), $username));
+        }
+
+        if ($user->getStatus() !== "ACTIVE") {
+            throw new \Exception(sprintf(_("The user \"%s\" is not active."), $username));
+        }
+
+        if (! $user->authenticate($password)) {
+            throw new \Exception(_("Authentication failed."));
+        }
+
+        $log = new LoginLog();
+        $log->setType("LOGIN");
+        $log->setDateTime(date("Y-m-d H:i:s"));
+        $log->setUsername($username);
+        $log->setUserId($user->getId());
+
+        if (isset($_SERVER["HTTP_HOST"])) {
+            $log->setClientAddress($_SERVER["HTTP_HOST"]);
+        }
+        if (isset($_SERVER["REMOTE_ADDR"])) {
+            $log->setClientIp($_SERVER["REMOTE_ADDR"]);
+        }
+        if (isset($_SERVER["HTTP_USER_AGENT"])) {
+            if(ini_get("browscap")) {
+                $browser = get_browser(null, true);
+            } else {
+                $browser = self::getBrowser();
+            }
+
+            $log->setClientAgent($browser["browser"]." (v".$browser["version"].")");
+            $log->setClientPlatform($browser["platform"]);
+        }
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $log->setSessionId(session_id());
+        }
+        $log->save();
+
+        return true;
+    }
+
+    public function initUserSession(User $user)
+    {
+        $this->session = new Session\PhpNativeSession();
+        $this->session->init();
+        $this->session->set("user", $user);
+        $this->session->set("user_id", $user->getId());
+
+        /** @var \Alchemy\Component\Cerberus\Model\Role[] $roles */
+        $rolesCollection = $user->getRoles();
+        $roles = array();
+        $rolesList = array();
+        $permissions = array();
+        $permissionsList = array();
+
+        foreach ($rolesCollection as $role) {
+            $roles[] = $role;
+            $rolesList[] = $role->getName();
+            $permissionsCollection = $role->getPermissions();
+
+            foreach ($permissionsCollection as $permission) {
+                $permissions[] = $permission;
+                $permissionsList[] = $permission->getName();
+            }
+        }
+
+        $this->session->set("user.roles", $roles);
+        $this->session->set("user.roles_list", $rolesList);
+        $this->session->set("user.permissions", $permissions);
+        $this->session->set("user.permissions_list", $permissionsList);
+    }
+
+    public function userCanAccess($permissionName)
+    {
+        if (is_subclass_of($this->session, 'Alchemy\Component\Cerberus\Session\Session')) {
+            return in_array($permissionName, $this->session->get("user.permissions_list", array()));
+        }
+
+        return false;
+    }
+
+    public function getUserRoles()
+    {
+        return $this->session->get("user.roles");
+    }
+
+    public function getUserPermissions()
+    {
+        return $this->session->get("user.permissions");
+    }
+
+    public static function getBrowser()
+    {
+        $u_agent = $_SERVER['HTTP_USER_AGENT'];
+        $bname = 'Unknown';
+        $platform = 'Unknown';
+        $version= "";
+        $ub = "";
+
+        //First get the platform?
+        if (preg_match('/linux/i', $u_agent)) {
+            $platform = 'linux';
+        }
+        elseif (preg_match('/macintosh|mac os x/i', $u_agent)) {
+            $platform = 'mac';
+        }
+        elseif (preg_match('/windows|win32/i', $u_agent)) {
+            $platform = 'windows';
+        }
+
+        // Next get the name of the user agent yes separately and for good reason
+        if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent))
+        {
+            $bname = 'Internet Explorer';
+            $ub = "MSIE";
+        }
+        elseif(preg_match('/Firefox/i',$u_agent))
+        {
+            $bname = 'Mozilla Firefox';
+            $ub = "Firefox";
+        }
+        elseif(preg_match('/Chrome/i',$u_agent))
+        {
+            $bname = 'Google Chrome';
+            $ub = "Chrome";
+        }
+        elseif(preg_match('/Safari/i',$u_agent))
+        {
+            $bname = 'Apple Safari';
+            $ub = "Safari";
+        }
+        elseif(preg_match('/Opera/i',$u_agent))
+        {
+            $bname = 'Opera';
+            $ub = "Opera";
+        }
+        elseif(preg_match('/Netscape/i',$u_agent))
+        {
+            $bname = 'Netscape';
+            $ub = "Netscape";
+        }
+
+        // finally get the correct version number
+        $known = array('Version', $ub, 'other');
+        $pattern = '#(?<browser>' . join('|', $known) .
+            ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+        if (!preg_match_all($pattern, $u_agent, $matches)) {
+            // we have no matching number just continue
+        }
+
+        // see how many we have
+        $i = count($matches['browser']);
+        if ($i != 1) {
+            //we will have two since we are not using 'other' argument yet
+            //see if version is before or after the name
+            if (strripos($u_agent,"Version") < strripos($u_agent,$ub)){
+                $version= $matches['version'][0];
+            }
+            else {
+                $version= $matches['version'][1];
+            }
+        }
+        else {
+            $version= $matches['version'][0];
+        }
+
+        // check if we have a number
+        if ($version==null || $version=="") {$version="?";}
+
+        return array(
+            'userAgent' => $u_agent,
+            'browser'      => $bname,
+            'version'   => $version,
+            'platform'  => $platform,
+            'pattern'    => $pattern
+        );
+    }
 }
+
+

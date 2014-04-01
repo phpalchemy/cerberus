@@ -1,7 +1,7 @@
 <?php
-namespace Alchemy\Session;
+namespace Alchemy\Component\Cerberus\Session;
 
-class Session
+abstract class Session
 {
     protected $data;
 

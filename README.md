@@ -14,7 +14,8 @@ Cerberus is a PHP Authentication and RBAC (see [RBAC](http://en.wikipedia.org/wi
 [New MIT license](http://www.opensource.org/licenses/mit-license.php)
 
 ## Requirements
-Cerberus RBAC is only supported on PHP 5.4 3 and up.
+Cerberus RBAC is only supported on (PHP >=5.4.0).
+PHP mcrypt (php5-mcrypt) extension enabled
 
 ## Development
 Cerberus RBAC uses [Composer](http://getcomposer.org/) to manage dependencies.

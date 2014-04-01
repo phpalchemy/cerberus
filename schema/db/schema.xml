@@ -4,7 +4,7 @@
     <table name="USER">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="username" type="varchar" size="128" required="true"/>
-        <column name="password" type="varchar" size="32" required="true"/>
+        <column name="password" type="varchar" size="255" required="true"/>
         <column name="first_name" type="varchar" size="128" required="true"/>
         <column name="last_name" type="varchar" size="128" required="true"/>
         <column name="create_date" type="timestamp"/>
@@ -48,5 +48,19 @@
         <foreign-key foreignTable="PERMISSION" onDelete="cascade">
             <reference local="permission_id" foreign="id"/>
         </foreign-key>
+    </table>
+
+    <!-- Other tables -->
+    <table name="LOGIN_LOG">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="type" type="varchar" size="32"/>
+        <column name="date_time" type="timestamp"/>
+        <column name="user_id" type="varchar" size="256"/>
+        <column name="username" type="varchar" size="128"/>
+        <column name="session_id" type="varchar" size="64"/>
+        <column name="client_address" type="varchar" size="128"/>
+        <column name="client_ip" type="varchar" size="16"/>
+        <column name="client_agent" type="varchar" size="128"/>
+        <column name="client_platform" type="varchar" size="64"/>
     </table>
 </database>

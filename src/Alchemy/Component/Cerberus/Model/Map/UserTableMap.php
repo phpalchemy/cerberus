@@ -164,7 +164,7 @@ class UserTableMap extends TableMap
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('USERNAME', 'Username', 'VARCHAR', true, 128, null);
-        $this->addColumn('PASSWORD', 'Password', 'VARCHAR', true, 32, null);
+        $this->addColumn('PASSWORD', 'Password', 'VARCHAR', true, 255, null);
         $this->addColumn('FIRST_NAME', 'FirstName', 'VARCHAR', true, 128, null);
         $this->addColumn('LAST_NAME', 'LastName', 'VARCHAR', true, 128, null);
         $this->addColumn('CREATE_DATE', 'CreateDate', 'TIMESTAMP', false, null, null);
