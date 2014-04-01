@@ -105,7 +105,7 @@ try {
     var_dump($_SESSION["user.permissions_list"]);
     //var_dump($cerberus->getUserPermissions());
 
-    // verifiying access to a resource
+    // verifying access to a resource
     echo "User permission verifying: invalid";
     var_dump($cerberus->userCanAccess("invalid-permission"));
 
