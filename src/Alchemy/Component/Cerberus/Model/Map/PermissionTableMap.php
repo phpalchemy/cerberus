@@ -8,7 +8,6 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -16,7 +15,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'PERMISSION' table.
+ * This class defines the structure of the 'permission' table.
  *
  *
  *
@@ -30,7 +29,6 @@ class PermissionTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
-
     /**
      * The (dot-path) name of this class
      */
@@ -44,7 +42,7 @@ class PermissionTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'PERMISSION';
+    const TABLE_NAME = 'permission';
 
     /**
      * The related Propel class for this table
@@ -74,32 +72,32 @@ class PermissionTableMap extends TableMap
     /**
      * the column name for the ID field
      */
-    const COL_ID = 'PERMISSION.ID';
+    const ID = 'permission.ID';
 
     /**
      * the column name for the NAME field
      */
-    const COL_NAME = 'PERMISSION.NAME';
+    const NAME = 'permission.NAME';
 
     /**
      * the column name for the CREATE_DATE field
      */
-    const COL_CREATE_DATE = 'PERMISSION.CREATE_DATE';
+    const CREATE_DATE = 'permission.CREATE_DATE';
 
     /**
      * the column name for the DESCRIPTION field
      */
-    const COL_DESCRIPTION = 'PERMISSION.DESCRIPTION';
+    const DESCRIPTION = 'permission.DESCRIPTION';
 
     /**
      * the column name for the UPDATE_DATE field
      */
-    const COL_UPDATE_DATE = 'PERMISSION.UPDATE_DATE';
+    const UPDATE_DATE = 'permission.UPDATE_DATE';
 
     /**
      * the column name for the STATUS field
      */
-    const COL_STATUS = 'PERMISSION.STATUS';
+    const STATUS = 'permission.STATUS';
 
     /**
      * The default string format for model objects of the related table
@@ -115,8 +113,8 @@ class PermissionTableMap extends TableMap
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array('Id', 'Name', 'CreateDate', 'Description', 'UpdateDate', 'Status', ),
         self::TYPE_STUDLYPHPNAME => array('id', 'name', 'createDate', 'description', 'updateDate', 'status', ),
-        self::TYPE_COLNAME       => array(PermissionTableMap::COL_ID, PermissionTableMap::COL_NAME, PermissionTableMap::COL_CREATE_DATE, PermissionTableMap::COL_DESCRIPTION, PermissionTableMap::COL_UPDATE_DATE, PermissionTableMap::COL_STATUS, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID', 'COL_NAME', 'COL_CREATE_DATE', 'COL_DESCRIPTION', 'COL_UPDATE_DATE', 'COL_STATUS', ),
+        self::TYPE_COLNAME       => array(PermissionTableMap::ID, PermissionTableMap::NAME, PermissionTableMap::CREATE_DATE, PermissionTableMap::DESCRIPTION, PermissionTableMap::UPDATE_DATE, PermissionTableMap::STATUS, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'NAME', 'CREATE_DATE', 'DESCRIPTION', 'UPDATE_DATE', 'STATUS', ),
         self::TYPE_FIELDNAME     => array('id', 'name', 'create_date', 'description', 'update_date', 'status', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
@@ -130,8 +128,8 @@ class PermissionTableMap extends TableMap
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'CreateDate' => 2, 'Description' => 3, 'UpdateDate' => 4, 'Status' => 5, ),
         self::TYPE_STUDLYPHPNAME => array('id' => 0, 'name' => 1, 'createDate' => 2, 'description' => 3, 'updateDate' => 4, 'status' => 5, ),
-        self::TYPE_COLNAME       => array(PermissionTableMap::COL_ID => 0, PermissionTableMap::COL_NAME => 1, PermissionTableMap::COL_CREATE_DATE => 2, PermissionTableMap::COL_DESCRIPTION => 3, PermissionTableMap::COL_UPDATE_DATE => 4, PermissionTableMap::COL_STATUS => 5, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID' => 0, 'COL_NAME' => 1, 'COL_CREATE_DATE' => 2, 'COL_DESCRIPTION' => 3, 'COL_UPDATE_DATE' => 4, 'COL_STATUS' => 5, ),
+        self::TYPE_COLNAME       => array(PermissionTableMap::ID => 0, PermissionTableMap::NAME => 1, PermissionTableMap::CREATE_DATE => 2, PermissionTableMap::DESCRIPTION => 3, PermissionTableMap::UPDATE_DATE => 4, PermissionTableMap::STATUS => 5, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'NAME' => 1, 'CREATE_DATE' => 2, 'DESCRIPTION' => 3, 'UPDATE_DATE' => 4, 'STATUS' => 5, ),
         self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'create_date' => 2, 'description' => 3, 'update_date' => 4, 'status' => 5, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
@@ -146,7 +144,7 @@ class PermissionTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('PERMISSION');
+        $this->setName('permission');
         $this->setPhpName('Permission');
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\Permission');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
@@ -169,14 +167,14 @@ class PermissionTableMap extends TableMap
         $this->addRelation('Role', '\\Alchemy\\Component\\Cerberus\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
     } // buildRelations()
     /**
-     * Method to invalidate the instance pool of all tables related to PERMISSION     * by a foreign key with ON DELETE CASCADE
+     * Method to invalidate the instance pool of all tables related to permission     * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
-        // Invalidate objects in related instance pools,
+        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        RolePermissionTableMap::clearInstancePool();
-    }
+                RolePermissionTableMap::clearInstancePool();
+            }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -188,8 +186,6 @@ class PermissionTableMap extends TableMap
      * @param int    $offset    The 0-based offset for reading from the resultset row.
      * @param string $indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     *
-     * @return string The primary key hash of the row
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
@@ -215,11 +211,12 @@ class PermissionTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return (int) $row[
-            $indexType == TableMap::TYPE_NUM
-                ? 0 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
-        ];
+
+            return (int) $row[
+                            $indexType == TableMap::TYPE_NUM
+                            ? 0 + $offset
+                            : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                        ];
     }
 
     /**
@@ -261,7 +258,6 @@ class PermissionTableMap extends TableMap
             $col = $offset + PermissionTableMap::NUM_HYDRATE_COLUMNS;
         } else {
             $cls = PermissionTableMap::OM_CLASS;
-            /** @var Permission $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
             PermissionTableMap::addInstanceToPool($obj, $key);
@@ -294,7 +290,6 @@ class PermissionTableMap extends TableMap
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Permission $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
@@ -319,12 +314,12 @@ class PermissionTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(PermissionTableMap::COL_ID);
-            $criteria->addSelectColumn(PermissionTableMap::COL_NAME);
-            $criteria->addSelectColumn(PermissionTableMap::COL_CREATE_DATE);
-            $criteria->addSelectColumn(PermissionTableMap::COL_DESCRIPTION);
-            $criteria->addSelectColumn(PermissionTableMap::COL_UPDATE_DATE);
-            $criteria->addSelectColumn(PermissionTableMap::COL_STATUS);
+            $criteria->addSelectColumn(PermissionTableMap::ID);
+            $criteria->addSelectColumn(PermissionTableMap::NAME);
+            $criteria->addSelectColumn(PermissionTableMap::CREATE_DATE);
+            $criteria->addSelectColumn(PermissionTableMap::DESCRIPTION);
+            $criteria->addSelectColumn(PermissionTableMap::UPDATE_DATE);
+            $criteria->addSelectColumn(PermissionTableMap::STATUS);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.NAME');
@@ -352,10 +347,10 @@ class PermissionTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(PermissionTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(PermissionTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new PermissionTableMap());
-        }
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(PermissionTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(PermissionTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new PermissionTableMap());
+      }
     }
 
     /**
@@ -383,16 +378,14 @@ class PermissionTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(PermissionTableMap::DATABASE_NAME);
-            $criteria->add(PermissionTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria->add(PermissionTableMap::ID, (array) $values, Criteria::IN);
         }
 
         $query = PermissionQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) {
-            PermissionTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { PermissionTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) {
-                PermissionTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { PermissionTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -400,7 +393,7 @@ class PermissionTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the PERMISSION table.
+     * Deletes all rows from the permission table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -431,19 +424,26 @@ class PermissionTableMap extends TableMap
             $criteria = $criteria->buildCriteria(); // build Criteria from Permission object
         }
 
-        if ($criteria->containsKey(PermissionTableMap::COL_ID) && $criteria->keyContainsValue(PermissionTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PermissionTableMap::COL_ID.')');
+        if ($criteria->containsKey(PermissionTableMap::ID) && $criteria->keyContainsValue(PermissionTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PermissionTableMap::ID.')');
         }
 
 
         // Set the correct dbName
         $query = PermissionQuery::create()->mergeWith($criteria);
 
-        // use transaction because $criteria could contain info
-        // for more than one table (I guess, conceivably)
-        return $con->transaction(function () use ($con, $query) {
-            return $query->doInsert($con);
-        });
+        try {
+            // use transaction because $criteria could contain info
+            // for more than one table (I guess, conceivably)
+            $con->beginTransaction();
+            $pk = $query->doInsert($con);
+            $con->commit();
+        } catch (PropelException $e) {
+            $con->rollBack();
+            throw $e;
+        }
+
+        return $pk;
     }
 
 } // PermissionTableMap

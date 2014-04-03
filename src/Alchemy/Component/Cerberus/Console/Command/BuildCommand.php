@@ -29,10 +29,13 @@ class BuildCommand extends Command
         if (! array_key_exists("home_dir", $config)) {
             throw new \Exception("Configuration: home_dir, is missing!");
         }
+        if (! array_key_exists("vendor_dir", $config)) {
+            throw new \Exception("Configuration: vendor_dir, is missing!");
+        }
 
         $this->config = $config;
-        $this->config["schema_dir"] = $this->config["home_dir"].DS."schema/db";
-        $this->config["class_dir"] = $this->config["home_dir"].DS."src";
+        $this->config["schema_dir"] = $this->config["home_dir"] . DS . "schema" . DS . "db";
+        $this->config["class_dir"] = $this->config["home_dir"] . DS . "src";
 
         defined("DS") || define("DS", DIRECTORY_SEPARATOR);
     }
@@ -62,7 +65,7 @@ class BuildCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $vendorDir = $input->getOption("vendor-dir") != ""? $input->getOption("vendor-dir"): $this->config["home_dir"].DS."vendor";
+        $vendorDir = $this->config["vendor_dir"];
         $propelBin = $vendorDir."/propel/propel/bin/propel";
         $dbEngineConf = $input->getOption("db-engine");
         $dbUser = $input->getOption("db-user");
@@ -116,7 +119,7 @@ class BuildCommand extends Command
             $dbPort = empty($dbPort)? "": ";port=".$dbPort;
 
             $dns = sprintf("%s:host=%s;dbname=%s;user=%s;password=%s%s", $dbEngineConf, $dbHost, $dbName, $dbUser, $dbPassword, $dbPort);
-            $commands["sql:insert"] = sprintf("%s sql:insert --input-dir=schema/db --connection=\"%s=%s\"", $propelBin, $srcName, $dns);
+            $commands["sql:insert"] = sprintf("%s sql:insert --input-dir=%s --connection=\"%s=%s\"", $propelBin, $schemaDir, $srcName, $dns);
 
             // prepare Data Base
             $dbh = new \PDO("$dbEngineConf:host=$dbHost", $dbUser, $dbPassword);

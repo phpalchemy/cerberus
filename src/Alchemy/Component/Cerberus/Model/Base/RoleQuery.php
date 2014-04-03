@@ -11,12 +11,13 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'ROLE' table.
+ * Base class that represents a query for the 'role' table.
  *
  *
  *
@@ -46,8 +47,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildRoleQuery rightJoinRolePermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RolePermission relation
  * @method     ChildRoleQuery innerJoinRolePermission($relationAlias = null) Adds a INNER JOIN clause to the query using the RolePermission relation
  *
- * @method     \Alchemy\Component\Cerberus\Model\UserRoleQuery|\Alchemy\Component\Cerberus\Model\RolePermissionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
- *
  * @method     ChildRole findOne(ConnectionInterface $con = null) Return the first ChildRole matching the query
  * @method     ChildRole findOneOrCreate(ConnectionInterface $con = null) Return the first ChildRole matching the query, or a new ChildRole object populated from the query conditions when no match is found
  *
@@ -58,14 +57,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildRole findOneByUpdateDate(string $update_date) Return the first ChildRole filtered by the update_date column
  * @method     ChildRole findOneByStatus(string $status) Return the first ChildRole filtered by the status column
  *
- * @method     ChildRole[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildRole objects based on current ModelCriteria
- * @method     ChildRole[]|ObjectCollection findById(int $id) Return ChildRole objects filtered by the id column
- * @method     ChildRole[]|ObjectCollection findByName(string $name) Return ChildRole objects filtered by the name column
- * @method     ChildRole[]|ObjectCollection findByDescription(string $description) Return ChildRole objects filtered by the description column
- * @method     ChildRole[]|ObjectCollection findByCreateDate(string $create_date) Return ChildRole objects filtered by the create_date column
- * @method     ChildRole[]|ObjectCollection findByUpdateDate(string $update_date) Return ChildRole objects filtered by the update_date column
- * @method     ChildRole[]|ObjectCollection findByStatus(string $status) Return ChildRole objects filtered by the status column
- * @method     ChildRole[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     array findById(int $id) Return ChildRole objects filtered by the id column
+ * @method     array findByName(string $name) Return ChildRole objects filtered by the name column
+ * @method     array findByDescription(string $description) Return ChildRole objects filtered by the description column
+ * @method     array findByCreateDate(string $create_date) Return ChildRole objects filtered by the create_date column
+ * @method     array findByUpdateDate(string $update_date) Return ChildRole objects filtered by the update_date column
+ * @method     array findByStatus(string $status) Return ChildRole objects filtered by the status column
  *
  */
 abstract class RoleQuery extends ModelCriteria
@@ -91,12 +88,12 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @return ChildRoleQuery
      */
-    public static function create($modelAlias = null, Criteria $criteria = null)
+    public static function create($modelAlias = null, $criteria = null)
     {
-        if ($criteria instanceof ChildRoleQuery) {
+        if ($criteria instanceof \Alchemy\Component\Cerberus\Model\RoleQuery) {
             return $criteria;
         }
-        $query = new ChildRoleQuery();
+        $query = new \Alchemy\Component\Cerberus\Model\RoleQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -121,7 +118,7 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @return ChildRole|array|mixed the result, formatted by the current formatter
      */
-    public function findPk($key, ConnectionInterface $con = null)
+    public function findPk($key, $con = null)
     {
         if ($key === null) {
             return null;
@@ -152,9 +149,9 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @return   ChildRole A model object, or null if the key is not found
      */
-    protected function findPkSimple($key, ConnectionInterface $con)
+    protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, NAME, DESCRIPTION, CREATE_DATE, UPDATE_DATE, STATUS FROM ROLE WHERE ID = :p0';
+        $sql = 'SELECT ID, NAME, DESCRIPTION, CREATE_DATE, UPDATE_DATE, STATUS FROM role WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -165,7 +162,6 @@ abstract class RoleQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildRole $obj */
             $obj = new ChildRole();
             $obj->hydrate($row);
             RoleTableMap::addInstanceToPool($obj, (string) $key);
@@ -183,7 +179,7 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @return ChildRole|array|mixed the result, formatted by the current formatter
      */
-    protected function findPkComplex($key, ConnectionInterface $con)
+    protected function findPkComplex($key, $con)
     {
         // As the query uses a PK condition, no limit(1) is necessary.
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -204,7 +200,7 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
-    public function findPks($keys, ConnectionInterface $con = null)
+    public function findPks($keys, $con = null)
     {
         if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
@@ -223,11 +219,12 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
-        return $this->addUsingAlias(RoleTableMap::COL_ID, $key, Criteria::EQUAL);
+
+        return $this->addUsingAlias(RoleTableMap::ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -235,11 +232,12 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
-        return $this->addUsingAlias(RoleTableMap::COL_ID, $keys, Criteria::IN);
+
+        return $this->addUsingAlias(RoleTableMap::ID, $keys, Criteria::IN);
     }
 
     /**
@@ -258,18 +256,18 @@ abstract class RoleQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterById($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(RoleTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(RoleTableMap::ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(RoleTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(RoleTableMap::ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -280,7 +278,7 @@ abstract class RoleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(RoleTableMap::COL_ID, $id, $comparison);
+        return $this->addUsingAlias(RoleTableMap::ID, $id, $comparison);
     }
 
     /**
@@ -296,7 +294,7 @@ abstract class RoleQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterByName($name = null, $comparison = null)
     {
@@ -309,7 +307,7 @@ abstract class RoleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(RoleTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(RoleTableMap::NAME, $name, $comparison);
     }
 
     /**
@@ -325,7 +323,7 @@ abstract class RoleQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterByDescription($description = null, $comparison = null)
     {
@@ -338,7 +336,7 @@ abstract class RoleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(RoleTableMap::COL_DESCRIPTION, $description, $comparison);
+        return $this->addUsingAlias(RoleTableMap::DESCRIPTION, $description, $comparison);
     }
 
     /**
@@ -359,18 +357,18 @@ abstract class RoleQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterByCreateDate($createDate = null, $comparison = null)
     {
         if (is_array($createDate)) {
             $useMinMax = false;
             if (isset($createDate['min'])) {
-                $this->addUsingAlias(RoleTableMap::COL_CREATE_DATE, $createDate['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(RoleTableMap::CREATE_DATE, $createDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($createDate['max'])) {
-                $this->addUsingAlias(RoleTableMap::COL_CREATE_DATE, $createDate['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(RoleTableMap::CREATE_DATE, $createDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -381,7 +379,7 @@ abstract class RoleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(RoleTableMap::COL_CREATE_DATE, $createDate, $comparison);
+        return $this->addUsingAlias(RoleTableMap::CREATE_DATE, $createDate, $comparison);
     }
 
     /**
@@ -402,18 +400,18 @@ abstract class RoleQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterByUpdateDate($updateDate = null, $comparison = null)
     {
         if (is_array($updateDate)) {
             $useMinMax = false;
             if (isset($updateDate['min'])) {
-                $this->addUsingAlias(RoleTableMap::COL_UPDATE_DATE, $updateDate['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(RoleTableMap::UPDATE_DATE, $updateDate['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($updateDate['max'])) {
-                $this->addUsingAlias(RoleTableMap::COL_UPDATE_DATE, $updateDate['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(RoleTableMap::UPDATE_DATE, $updateDate['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -424,7 +422,7 @@ abstract class RoleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(RoleTableMap::COL_UPDATE_DATE, $updateDate, $comparison);
+        return $this->addUsingAlias(RoleTableMap::UPDATE_DATE, $updateDate, $comparison);
     }
 
     /**
@@ -440,7 +438,7 @@ abstract class RoleQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function filterByStatus($status = null, $comparison = null)
     {
@@ -453,7 +451,7 @@ abstract class RoleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(RoleTableMap::COL_STATUS, $status, $comparison);
+        return $this->addUsingAlias(RoleTableMap::STATUS, $status, $comparison);
     }
 
     /**
@@ -468,7 +466,7 @@ abstract class RoleQuery extends ModelCriteria
     {
         if ($userRole instanceof \Alchemy\Component\Cerberus\Model\UserRole) {
             return $this
-                ->addUsingAlias(RoleTableMap::COL_ID, $userRole->getRoleId(), $comparison);
+                ->addUsingAlias(RoleTableMap::ID, $userRole->getRoleId(), $comparison);
         } elseif ($userRole instanceof ObjectCollection) {
             return $this
                 ->useUserRoleQuery()
@@ -485,7 +483,7 @@ abstract class RoleQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function joinUserRole($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -541,7 +539,7 @@ abstract class RoleQuery extends ModelCriteria
     {
         if ($rolePermission instanceof \Alchemy\Component\Cerberus\Model\RolePermission) {
             return $this
-                ->addUsingAlias(RoleTableMap::COL_ID, $rolePermission->getRoleId(), $comparison);
+                ->addUsingAlias(RoleTableMap::ID, $rolePermission->getRoleId(), $comparison);
         } elseif ($rolePermission instanceof ObjectCollection) {
             return $this
                 ->useRolePermissionQuery()
@@ -558,7 +556,7 @@ abstract class RoleQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function joinRolePermission($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -604,7 +602,7 @@ abstract class RoleQuery extends ModelCriteria
 
     /**
      * Filter the query by a related User object
-     * using the USER_ROLE table as cross reference
+     * using the user_role table as cross reference
      *
      * @param User $user the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
@@ -621,7 +619,7 @@ abstract class RoleQuery extends ModelCriteria
 
     /**
      * Filter the query by a related Permission object
-     * using the ROLE_PERMISSION table as cross reference
+     * using the role_permission table as cross reference
      *
      * @param Permission $permission the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
@@ -641,19 +639,19 @@ abstract class RoleQuery extends ModelCriteria
      *
      * @param   ChildRole $role Object to remove from the list of results
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
     public function prune($role = null)
     {
         if ($role) {
-            $this->addUsingAlias(RoleTableMap::COL_ID, $role->getId(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(RoleTableMap::ID, $role->getId(), Criteria::NOT_EQUAL);
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the ROLE table.
+     * Deletes all rows from the role table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -663,11 +661,11 @@ abstract class RoleQuery extends ModelCriteria
         if (null === $con) {
             $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
         }
-
-        // use transaction because $criteria could contain info
-        // for more than one table or we could emulating ON DELETE CASCADE, etc.
-        return $con->transaction(function () use ($con) {
-            $affectedRows = 0; // initialize var to track total num of affected rows
+        $affectedRows = 0; // initialize var to track total num of affected rows
+        try {
+            // use transaction because $criteria could contain info
+            // for more than one table or we could emulating ON DELETE CASCADE, etc.
+            $con->beginTransaction();
             $affectedRows += parent::doDeleteAll($con);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
@@ -675,21 +673,28 @@ abstract class RoleQuery extends ModelCriteria
             RoleTableMap::clearInstancePool();
             RoleTableMap::clearRelatedInstancePool();
 
-            return $affectedRows;
-        });
+            $con->commit();
+        } catch (PropelException $e) {
+            $con->rollBack();
+            throw $e;
+        }
+
+        return $affectedRows;
     }
 
     /**
-     * Performs a DELETE on the database based on the current ModelCriteria
+     * Performs a DELETE on the database, given a ChildRole or Criteria object OR a primary key value.
      *
+     * @param mixed               $values Criteria or ChildRole object or primary key or array of primary keys
+     *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
      *                if supported by native driver or if emulated using Propel.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    public function delete(ConnectionInterface $con = null)
-    {
+     public function delete(ConnectionInterface $con = null)
+     {
         if (null === $con) {
             $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
         }
@@ -699,18 +704,25 @@ abstract class RoleQuery extends ModelCriteria
         // Set the correct dbName
         $criteria->setDbName(RoleTableMap::DATABASE_NAME);
 
-        // use transaction because $criteria could contain info
-        // for more than one table or we could emulating ON DELETE CASCADE, etc.
-        return $con->transaction(function () use ($con, $criteria) {
-            $affectedRows = 0; // initialize var to track total num of affected rows
+        $affectedRows = 0; // initialize var to track total num of affected rows
 
-            RoleTableMap::removeInstanceFromPool($criteria);
+        try {
+            // use transaction because $criteria could contain info
+            // for more than one table or we could emulating ON DELETE CASCADE, etc.
+            $con->beginTransaction();
+
+
+        RoleTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
             RoleTableMap::clearRelatedInstancePool();
+            $con->commit();
 
             return $affectedRows;
-        });
+        } catch (PropelException $e) {
+            $con->rollBack();
+            throw $e;
+        }
     }
 
 } // RoleQuery
