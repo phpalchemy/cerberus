@@ -145,7 +145,7 @@ class BuildDbCommand extends Command
 
         if ($tablesAlreadyExists) {
             echo PHP_EOL;
-            echo "> Seems cerberus tables already exists, do you want overwrite them?(Yes/n)[Default: n]: ";
+            echo "> Seems cerberus tables already exists, overwrite?(Yes/n): ";
             $ans = rtrim(fgets(fopen("php://stdin","r")));
             if ($ans !== "Yes") {
                 $output->writeln("<comment>Aborted!</comment>");

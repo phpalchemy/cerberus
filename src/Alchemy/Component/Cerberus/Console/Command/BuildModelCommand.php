@@ -106,6 +106,8 @@ class BuildModelCommand extends Command
                 $dbEngineConf
             ));
         }
+
+
         $schemaDir = $this->config["schema_dir"];
         $classDir = $this->config["class_dir"];
 
