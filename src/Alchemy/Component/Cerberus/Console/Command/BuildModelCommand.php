@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputArgument,
  * @version $Revision$
  * @author  Erik Amaru Ortiz <aortiz.erik@gmail.com>
  */
-class BuildCommand extends Command
+class BuildModelCommand extends Command
 {
     protected $config = array();
 
@@ -55,8 +55,8 @@ class BuildCommand extends Command
             ->addOption("db-password", null, InputOption::VALUE_REQUIRED, "DB User Password", "")
             ->addOption("db-name", null, InputOption::VALUE_REQUIRED, "Data Base name", "")
             ->addOption("db-engine", null, InputOption::VALUE_REQUIRED, "Data Base Engine", "mysql")
-            ->setName("init")
-            ->setAliases(array("build"))
+            ->setName("build:model")
+            //->setAliases(array("build"))
             ->setDescription("Build Cerberus");
     }
 
@@ -110,30 +110,19 @@ class BuildCommand extends Command
         $classDir = $this->config["class_dir"];
 
         $commands["model"] = sprintf("%s model:build --input-dir=%s --output-dir=%s", $propelBin, $schemaDir, $classDir);
-        $commands["sql"] = sprintf("%s sql:build --input-dir=%s --output-dir=%s --platform=%s", $propelBin, $schemaDir, $schemaDir, $dbEngine);
+        $commands["sql  "] = sprintf("%s sql:build --input-dir=%s --output-dir=%s --platform=%s", $propelBin, $schemaDir, $schemaDir, $dbEngine);
 
-        if (! empty($dbName)) {
-            if (empty($dbHost)) throw new \Exception("DB Host configuration missing.");
-            if (empty($dbUser)) throw new \Exception("DB User configuration missing.");
-            if (empty($dbPassword)) throw new \Exception("DB Password configuration missing.");
-            $dbPort = empty($dbPort)? "": ";port=".$dbPort;
-
-            $dns = sprintf("%s:host=%s;dbname=%s;user=%s;password=%s%s", $dbEngineConf, $dbHost, $dbName, $dbUser, $dbPassword, $dbPort);
-            $commands["sql:insert"] = sprintf("%s sql:insert --input-dir=%s --connection=\"%s=%s\"", $propelBin, $schemaDir, $srcName, $dns);
-
-            // prepare Data Base
-            $dbh = new \PDO("$dbEngineConf:host=$dbHost", $dbUser, $dbPassword);
-            $dbh->exec("CREATE DATABASE IF NOT EXISTS $dbName");
-        }
-
-        $output->writeln("Propel input dir: " . $schemaDir);
-        $output->writeln("Propel output class dir: " . $classDir);
-        $output->writeln("Propel output sql dir: " . $schemaDir);
+//        $output->writeln("Propel input dir: " . $schemaDir);
+//        $output->writeln("Propel output class dir: " . $classDir);
+//        $output->writeln("Propel output sql dir: " . $schemaDir);
 
         foreach ($commands as $build => $command) {
             $output->write(sprintf("- Building %s ... ", $build));
-            system($command);
-            $output->writeln("<info>DONE</info>");
+            system($command, $stat);
+            if ($stat === 0)
+                $output->writeln("<info>DONE</info>");
+            else
+                $output->writeln("<error>FAILED</error>");
         }
     }
 }

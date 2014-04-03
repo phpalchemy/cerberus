@@ -66,7 +66,8 @@ class Cerberus extends Application
         );
         $helpers  = array();
         $commands = array(
-            new \Alchemy\Component\Cerberus\Console\Command\BuildCommand($config)
+            new \Alchemy\Component\Cerberus\Console\Command\BuildModelCommand($config),
+            new \Alchemy\Component\Cerberus\Console\Command\BuildDbCommand($config)
         );
 
         $helperSet = $this->getHelperSet();
