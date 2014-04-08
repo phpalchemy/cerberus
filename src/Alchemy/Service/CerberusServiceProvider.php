@@ -47,7 +47,7 @@ class CerberusServiceProvider implements ServiceProviderInterface
 
     public function init(Application $app)
     {
-        $app["cerberus"]();
+        $app["cerberus"] = $app["cerberus"]();
     }
 
     public static function configure($config)
