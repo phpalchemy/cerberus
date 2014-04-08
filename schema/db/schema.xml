@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="cerberus" defaultIdMethod="native" namespace="Alchemy\Component\Cerberus\Model">
     <!-- Cerberus Tables -->
-    <table name="USER">
+    <table name="user">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="username" type="varchar" size="128" required="true"/>
         <column name="password" type="varchar" size="255" required="true"/>
@@ -11,15 +11,7 @@
         <column name="update_date" type="timestamp"/>
         <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
-    <table name="PERMISSION">
-        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="name" type="varchar" size="256" required="true"/>
-        <column name="create_date" type="timestamp"/>
-        <column name="description" type="varchar" size="256" required="true"/>
-        <column name="update_date" type="timestamp"/>
-        <column name="status" type="varchar" size="64" default="ACTIVE"/>
-    </table>
-    <table name="ROLE">
+    <table name="role">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="128" required="true"/>
         <column name="description" type="varchar" size="256" required="true"/>
@@ -27,31 +19,39 @@
         <column name="update_date" type="timestamp"/>
         <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
-    <table name="USER_ROLE" isCrossRef="true">
+    <table name="permission">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="256" required="true"/>
+        <column name="create_date" type="timestamp"/>
+        <column name="description" type="varchar" size="256" required="true"/>
+        <column name="update_date" type="timestamp"/>
+        <column name="status" type="varchar" size="64" default="ACTIVE"/>
+    </table>
+    <table name="user_role" isCrossRef="true">
         <column name="user_id" type="integer" required="true" primaryKey="true"/>
         <column name="role_id" type="integer" required="true" primaryKey="true"/>
 
-        <foreign-key foreignTable="USER" onDelete="cascade">
+        <foreign-key foreignTable="user" onDelete="cascade">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="ROLE" onDelete="cascade">
+        <foreign-key foreignTable="role" onDelete="cascade">
             <reference local="role_id" foreign="id"/>
         </foreign-key>
     </table>
-    <table name="ROLE_PERMISSION" isCrossRef="true">
+    <table name="role_permission" isCrossRef="true">
         <column name="role_id" type="integer" required="true" primaryKey="true"/>
         <column name="permission_id" type="integer" required="true" primaryKey="true"/>
 
-        <foreign-key foreignTable="ROLE" onDelete="cascade">
+        <foreign-key foreignTable="role" onDelete="cascade">
             <reference local="role_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="PERMISSION" onDelete="cascade">
+        <foreign-key foreignTable="permission" onDelete="cascade">
             <reference local="permission_id" foreign="id"/>
         </foreign-key>
     </table>
 
     <!-- Other tables -->
-    <table name="LOGIN_LOG">
+    <table name="login_log">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="type" type="varchar" size="32"/>
         <column name="date_time" type="timestamp"/>

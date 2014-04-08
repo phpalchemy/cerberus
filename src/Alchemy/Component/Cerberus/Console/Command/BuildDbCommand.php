@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputArgument,
  * @version $Revision$
  * @author  Erik Amaru Ortiz <aortiz.erik@gmail.com>
  */
-class BuildCommand extends Command
+class BuildDbCommand extends Command
 {
     protected $config = array();
 
@@ -29,10 +29,13 @@ class BuildCommand extends Command
         if (! array_key_exists("home_dir", $config)) {
             throw new \Exception("Configuration: home_dir, is missing!");
         }
+        if (! array_key_exists("vendor_dir", $config)) {
+            throw new \Exception("Configuration: vendor_dir, is missing!");
+        }
 
         $this->config = $config;
-        $this->config["schema_dir"] = $this->config["home_dir"].DS."schema/db";
-        $this->config["class_dir"] = $this->config["home_dir"].DS."src";
+        $this->config["schema_dir"] = $this->config["home_dir"] . DS . "schema" . DS . "db";
+        $this->config["class_dir"] = $this->config["home_dir"] . DS . "src";
 
         defined("DS") || define("DS", DIRECTORY_SEPARATOR);
     }
@@ -52,8 +55,8 @@ class BuildCommand extends Command
             ->addOption("db-password", null, InputOption::VALUE_REQUIRED, "DB User Password", "")
             ->addOption("db-name", null, InputOption::VALUE_REQUIRED, "Data Base name", "")
             ->addOption("db-engine", null, InputOption::VALUE_REQUIRED, "Data Base Engine", "mysql")
-            ->setName("init")
-            ->setAliases(array("build"))
+            ->setName("build:db")
+            //->setAliases(array("build"))
             ->setDescription("Build Cerberus");
     }
 
@@ -62,7 +65,7 @@ class BuildCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $vendorDir = $input->getOption("vendor-dir") != ""? $input->getOption("vendor-dir"): $this->config["home_dir"].DS."vendor";
+        $vendorDir = $this->config["vendor_dir"];
         $propelBin = $vendorDir."/propel/propel/bin/propel";
         $dbEngineConf = $input->getOption("db-engine");
         $dbUser = $input->getOption("db-user");
@@ -106,32 +109,64 @@ class BuildCommand extends Command
         $schemaDir = $this->config["schema_dir"];
         $classDir = $this->config["class_dir"];
 
-        $commands["model"] = sprintf("%s model:build --input-dir=%s --output-dir=%s", $propelBin, $schemaDir, $classDir);
-        $commands["sql"] = sprintf("%s sql:build --input-dir=%s --output-dir=%s --platform=%s", $propelBin, $schemaDir, $schemaDir, $dbEngine);
 
-        if (! empty($dbName)) {
-            if (empty($dbHost)) throw new \Exception("DB Host configuration missing.");
-            if (empty($dbUser)) throw new \Exception("DB User configuration missing.");
-            if (empty($dbPassword)) throw new \Exception("DB Password configuration missing.");
-            $dbPort = empty($dbPort)? "": ";port=".$dbPort;
+        if (empty($dbName)) throw new \Exception("DB Name configuration missing.");
+        if (empty($dbHost)) throw new \Exception("DB Host configuration missing.");
+        if (empty($dbUser)) throw new \Exception("DB User configuration missing.");
+        if (empty($dbPassword)) throw new \Exception("DB Password configuration missing.");
+        $dbPort = empty($dbPort)? "": ";port=".$dbPort;
 
-            $dns = sprintf("%s:host=%s;dbname=%s;user=%s;password=%s%s", $dbEngineConf, $dbHost, $dbName, $dbUser, $dbPassword, $dbPort);
-            $commands["sql:insert"] = sprintf("%s sql:insert --input-dir=schema/db --connection=\"%s=%s\"", $propelBin, $srcName, $dns);
+        $dsn = sprintf("%s:host=%s;dbname=%s;user=%s;password=%s%s", $dbEngineConf, $dbHost, $dbName, $dbUser, $dbPassword, $dbPort);
+        $command = sprintf("%s sql:insert --input-dir=%s --connection=\"%s=%s\"", $propelBin, $schemaDir, $srcName, $dsn);
 
-            // prepare Data Base
-            $dbh = new \PDO("$dbEngineConf:host=$dbHost", $dbUser, $dbPassword);
-            $dbh->exec("CREATE DATABASE IF NOT EXISTS $dbName");
+        // prepare Data Base
+        $dbh = new \PDO("$dbEngineConf:host=$dbHost", $dbUser, $dbPassword);
+        $dbh->exec("CREATE DATABASE IF NOT EXISTS $dbName");
+
+        $dbh = new \PDO($dsn, $dbUser, $dbPassword);
+        $data = $dbh->query('show tables;');
+        $result = $data->fetchAll(\PDO::FETCH_ASSOC);
+        $cerberusTables = array("user", "role", "permission", "user_role", "role_permission", "login_log");
+        $tables = array();
+        $tablesAlreadyExists = false;
+
+        foreach ($result as $res) {
+            if (count($res) > 0) {
+                $tables[] = array_pop($res);
+            }
         }
 
-        $output->writeln("Propel input dir: " . $schemaDir);
-        $output->writeln("Propel output class dir: " . $classDir);
-        $output->writeln("Propel output sql dir: " . $schemaDir);
+        foreach ($cerberusTables as $cerberusTable) {
+            if (in_array($cerberusTable, $tables)) {
+                $tablesAlreadyExists = true;
+                break;
+            }
+        }
 
-        foreach ($commands as $build => $command) {
-            $output->write(sprintf("- Building %s ... ", $build));
-            system($command);
+        if ($tablesAlreadyExists) {
+            echo PHP_EOL;
+            echo "> Seems cerberus tables already exists, overwrite?(Yes/n): ";
+            $ans = rtrim(fgets(fopen("php://stdin","r")));
+            if ($ans !== "Yes") {
+                $output->writeln("<comment>Aborted!</comment>");
+                echo PHP_EOL;
+                exit(0);
+            }
+        }
+        
+//        $output->writeln("Propel input dir: " . $schemaDir);
+//        $output->writeln("Propel output class dir: " . $classDir);
+//        $output->writeln("Propel output sql dir: " . $schemaDir);
+
+        $output->write(sprintf("- Creating Cerberus tables on Database: %s ... ", $dbName));
+        system($command, $stat);
+
+        if ($stat === 0)
             $output->writeln("<info>DONE</info>");
-        }
+        else
+            $output->writeln("<error>FAILED</error>");
+
+        echo PHP_EOL;
     }
 }
 

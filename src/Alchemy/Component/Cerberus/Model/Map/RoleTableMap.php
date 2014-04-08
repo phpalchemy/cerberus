@@ -8,7 +8,6 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -16,7 +15,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'ROLE' table.
+ * This class defines the structure of the 'role' table.
  *
  *
  *
@@ -30,7 +29,6 @@ class RoleTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
-
     /**
      * The (dot-path) name of this class
      */
@@ -44,7 +42,7 @@ class RoleTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'ROLE';
+    const TABLE_NAME = 'role';
 
     /**
      * The related Propel class for this table
@@ -74,32 +72,32 @@ class RoleTableMap extends TableMap
     /**
      * the column name for the ID field
      */
-    const COL_ID = 'ROLE.ID';
+    const ID = 'role.ID';
 
     /**
      * the column name for the NAME field
      */
-    const COL_NAME = 'ROLE.NAME';
+    const NAME = 'role.NAME';
 
     /**
      * the column name for the DESCRIPTION field
      */
-    const COL_DESCRIPTION = 'ROLE.DESCRIPTION';
+    const DESCRIPTION = 'role.DESCRIPTION';
 
     /**
      * the column name for the CREATE_DATE field
      */
-    const COL_CREATE_DATE = 'ROLE.CREATE_DATE';
+    const CREATE_DATE = 'role.CREATE_DATE';
 
     /**
      * the column name for the UPDATE_DATE field
      */
-    const COL_UPDATE_DATE = 'ROLE.UPDATE_DATE';
+    const UPDATE_DATE = 'role.UPDATE_DATE';
 
     /**
      * the column name for the STATUS field
      */
-    const COL_STATUS = 'ROLE.STATUS';
+    const STATUS = 'role.STATUS';
 
     /**
      * The default string format for model objects of the related table
@@ -115,8 +113,8 @@ class RoleTableMap extends TableMap
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'CreateDate', 'UpdateDate', 'Status', ),
         self::TYPE_STUDLYPHPNAME => array('id', 'name', 'description', 'createDate', 'updateDate', 'status', ),
-        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID, RoleTableMap::COL_NAME, RoleTableMap::COL_DESCRIPTION, RoleTableMap::COL_CREATE_DATE, RoleTableMap::COL_UPDATE_DATE, RoleTableMap::COL_STATUS, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID', 'COL_NAME', 'COL_DESCRIPTION', 'COL_CREATE_DATE', 'COL_UPDATE_DATE', 'COL_STATUS', ),
+        self::TYPE_COLNAME       => array(RoleTableMap::ID, RoleTableMap::NAME, RoleTableMap::DESCRIPTION, RoleTableMap::CREATE_DATE, RoleTableMap::UPDATE_DATE, RoleTableMap::STATUS, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'NAME', 'DESCRIPTION', 'CREATE_DATE', 'UPDATE_DATE', 'STATUS', ),
         self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'create_date', 'update_date', 'status', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
@@ -130,8 +128,8 @@ class RoleTableMap extends TableMap
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'CreateDate' => 3, 'UpdateDate' => 4, 'Status' => 5, ),
         self::TYPE_STUDLYPHPNAME => array('id' => 0, 'name' => 1, 'description' => 2, 'createDate' => 3, 'updateDate' => 4, 'status' => 5, ),
-        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID => 0, RoleTableMap::COL_NAME => 1, RoleTableMap::COL_DESCRIPTION => 2, RoleTableMap::COL_CREATE_DATE => 3, RoleTableMap::COL_UPDATE_DATE => 4, RoleTableMap::COL_STATUS => 5, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID' => 0, 'COL_NAME' => 1, 'COL_DESCRIPTION' => 2, 'COL_CREATE_DATE' => 3, 'COL_UPDATE_DATE' => 4, 'COL_STATUS' => 5, ),
+        self::TYPE_COLNAME       => array(RoleTableMap::ID => 0, RoleTableMap::NAME => 1, RoleTableMap::DESCRIPTION => 2, RoleTableMap::CREATE_DATE => 3, RoleTableMap::UPDATE_DATE => 4, RoleTableMap::STATUS => 5, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'NAME' => 1, 'DESCRIPTION' => 2, 'CREATE_DATE' => 3, 'UPDATE_DATE' => 4, 'STATUS' => 5, ),
         self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'create_date' => 3, 'update_date' => 4, 'status' => 5, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
@@ -146,7 +144,7 @@ class RoleTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('ROLE');
+        $this->setName('role');
         $this->setPhpName('Role');
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\Role');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
@@ -171,15 +169,15 @@ class RoleTableMap extends TableMap
         $this->addRelation('Permission', '\\Alchemy\\Component\\Cerberus\\Model\\Permission', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Permissions');
     } // buildRelations()
     /**
-     * Method to invalidate the instance pool of all tables related to ROLE     * by a foreign key with ON DELETE CASCADE
+     * Method to invalidate the instance pool of all tables related to role     * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
-        // Invalidate objects in related instance pools,
+        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        UserRoleTableMap::clearInstancePool();
-        RolePermissionTableMap::clearInstancePool();
-    }
+                UserRoleTableMap::clearInstancePool();
+                RolePermissionTableMap::clearInstancePool();
+            }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -191,8 +189,6 @@ class RoleTableMap extends TableMap
      * @param int    $offset    The 0-based offset for reading from the resultset row.
      * @param string $indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     *
-     * @return string The primary key hash of the row
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
@@ -218,11 +214,12 @@ class RoleTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return (int) $row[
-            $indexType == TableMap::TYPE_NUM
-                ? 0 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
-        ];
+
+            return (int) $row[
+                            $indexType == TableMap::TYPE_NUM
+                            ? 0 + $offset
+                            : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                        ];
     }
 
     /**
@@ -264,7 +261,6 @@ class RoleTableMap extends TableMap
             $col = $offset + RoleTableMap::NUM_HYDRATE_COLUMNS;
         } else {
             $cls = RoleTableMap::OM_CLASS;
-            /** @var Role $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
             RoleTableMap::addInstanceToPool($obj, $key);
@@ -297,7 +293,6 @@ class RoleTableMap extends TableMap
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Role $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
@@ -322,12 +317,12 @@ class RoleTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(RoleTableMap::COL_ID);
-            $criteria->addSelectColumn(RoleTableMap::COL_NAME);
-            $criteria->addSelectColumn(RoleTableMap::COL_DESCRIPTION);
-            $criteria->addSelectColumn(RoleTableMap::COL_CREATE_DATE);
-            $criteria->addSelectColumn(RoleTableMap::COL_UPDATE_DATE);
-            $criteria->addSelectColumn(RoleTableMap::COL_STATUS);
+            $criteria->addSelectColumn(RoleTableMap::ID);
+            $criteria->addSelectColumn(RoleTableMap::NAME);
+            $criteria->addSelectColumn(RoleTableMap::DESCRIPTION);
+            $criteria->addSelectColumn(RoleTableMap::CREATE_DATE);
+            $criteria->addSelectColumn(RoleTableMap::UPDATE_DATE);
+            $criteria->addSelectColumn(RoleTableMap::STATUS);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.NAME');
@@ -355,10 +350,10 @@ class RoleTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(RoleTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(RoleTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new RoleTableMap());
-        }
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(RoleTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(RoleTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new RoleTableMap());
+      }
     }
 
     /**
@@ -386,16 +381,14 @@ class RoleTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(RoleTableMap::DATABASE_NAME);
-            $criteria->add(RoleTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria->add(RoleTableMap::ID, (array) $values, Criteria::IN);
         }
 
         $query = RoleQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) {
-            RoleTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { RoleTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) {
-                RoleTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { RoleTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -403,7 +396,7 @@ class RoleTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the ROLE table.
+     * Deletes all rows from the role table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -434,19 +427,26 @@ class RoleTableMap extends TableMap
             $criteria = $criteria->buildCriteria(); // build Criteria from Role object
         }
 
-        if ($criteria->containsKey(RoleTableMap::COL_ID) && $criteria->keyContainsValue(RoleTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.RoleTableMap::COL_ID.')');
+        if ($criteria->containsKey(RoleTableMap::ID) && $criteria->keyContainsValue(RoleTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.RoleTableMap::ID.')');
         }
 
 
         // Set the correct dbName
         $query = RoleQuery::create()->mergeWith($criteria);
 
-        // use transaction because $criteria could contain info
-        // for more than one table (I guess, conceivably)
-        return $con->transaction(function () use ($con, $query) {
-            return $query->doInsert($con);
-        });
+        try {
+            // use transaction because $criteria could contain info
+            // for more than one table (I guess, conceivably)
+            $con->beginTransaction();
+            $pk = $query->doInsert($con);
+            $con->commit();
+        } catch (PropelException $e) {
+            $con->rollBack();
+            throw $e;
+        }
+
+        return $pk;
     }
 
 } // RoleTableMap

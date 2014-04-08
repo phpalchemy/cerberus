@@ -8,7 +8,6 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -16,7 +15,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'LOGIN_LOG' table.
+ * This class defines the structure of the 'login_log' table.
  *
  *
  *
@@ -30,7 +29,6 @@ class LoginLogTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
-
     /**
      * The (dot-path) name of this class
      */
@@ -44,7 +42,7 @@ class LoginLogTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'LOGIN_LOG';
+    const TABLE_NAME = 'login_log';
 
     /**
      * The related Propel class for this table
@@ -74,52 +72,52 @@ class LoginLogTableMap extends TableMap
     /**
      * the column name for the ID field
      */
-    const COL_ID = 'LOGIN_LOG.ID';
+    const ID = 'login_log.ID';
 
     /**
      * the column name for the TYPE field
      */
-    const COL_TYPE = 'LOGIN_LOG.TYPE';
+    const TYPE = 'login_log.TYPE';
 
     /**
      * the column name for the DATE_TIME field
      */
-    const COL_DATE_TIME = 'LOGIN_LOG.DATE_TIME';
+    const DATE_TIME = 'login_log.DATE_TIME';
 
     /**
      * the column name for the USER_ID field
      */
-    const COL_USER_ID = 'LOGIN_LOG.USER_ID';
+    const USER_ID = 'login_log.USER_ID';
 
     /**
      * the column name for the USERNAME field
      */
-    const COL_USERNAME = 'LOGIN_LOG.USERNAME';
+    const USERNAME = 'login_log.USERNAME';
 
     /**
      * the column name for the SESSION_ID field
      */
-    const COL_SESSION_ID = 'LOGIN_LOG.SESSION_ID';
+    const SESSION_ID = 'login_log.SESSION_ID';
 
     /**
      * the column name for the CLIENT_ADDRESS field
      */
-    const COL_CLIENT_ADDRESS = 'LOGIN_LOG.CLIENT_ADDRESS';
+    const CLIENT_ADDRESS = 'login_log.CLIENT_ADDRESS';
 
     /**
      * the column name for the CLIENT_IP field
      */
-    const COL_CLIENT_IP = 'LOGIN_LOG.CLIENT_IP';
+    const CLIENT_IP = 'login_log.CLIENT_IP';
 
     /**
      * the column name for the CLIENT_AGENT field
      */
-    const COL_CLIENT_AGENT = 'LOGIN_LOG.CLIENT_AGENT';
+    const CLIENT_AGENT = 'login_log.CLIENT_AGENT';
 
     /**
      * the column name for the CLIENT_PLATFORM field
      */
-    const COL_CLIENT_PLATFORM = 'LOGIN_LOG.CLIENT_PLATFORM';
+    const CLIENT_PLATFORM = 'login_log.CLIENT_PLATFORM';
 
     /**
      * The default string format for model objects of the related table
@@ -135,8 +133,8 @@ class LoginLogTableMap extends TableMap
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array('Id', 'Type', 'DateTime', 'UserId', 'Username', 'SessionId', 'ClientAddress', 'ClientIp', 'ClientAgent', 'ClientPlatform', ),
         self::TYPE_STUDLYPHPNAME => array('id', 'type', 'dateTime', 'userId', 'username', 'sessionId', 'clientAddress', 'clientIp', 'clientAgent', 'clientPlatform', ),
-        self::TYPE_COLNAME       => array(LoginLogTableMap::COL_ID, LoginLogTableMap::COL_TYPE, LoginLogTableMap::COL_DATE_TIME, LoginLogTableMap::COL_USER_ID, LoginLogTableMap::COL_USERNAME, LoginLogTableMap::COL_SESSION_ID, LoginLogTableMap::COL_CLIENT_ADDRESS, LoginLogTableMap::COL_CLIENT_IP, LoginLogTableMap::COL_CLIENT_AGENT, LoginLogTableMap::COL_CLIENT_PLATFORM, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID', 'COL_TYPE', 'COL_DATE_TIME', 'COL_USER_ID', 'COL_USERNAME', 'COL_SESSION_ID', 'COL_CLIENT_ADDRESS', 'COL_CLIENT_IP', 'COL_CLIENT_AGENT', 'COL_CLIENT_PLATFORM', ),
+        self::TYPE_COLNAME       => array(LoginLogTableMap::ID, LoginLogTableMap::TYPE, LoginLogTableMap::DATE_TIME, LoginLogTableMap::USER_ID, LoginLogTableMap::USERNAME, LoginLogTableMap::SESSION_ID, LoginLogTableMap::CLIENT_ADDRESS, LoginLogTableMap::CLIENT_IP, LoginLogTableMap::CLIENT_AGENT, LoginLogTableMap::CLIENT_PLATFORM, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'TYPE', 'DATE_TIME', 'USER_ID', 'USERNAME', 'SESSION_ID', 'CLIENT_ADDRESS', 'CLIENT_IP', 'CLIENT_AGENT', 'CLIENT_PLATFORM', ),
         self::TYPE_FIELDNAME     => array('id', 'type', 'date_time', 'user_id', 'username', 'session_id', 'client_address', 'client_ip', 'client_agent', 'client_platform', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
@@ -150,8 +148,8 @@ class LoginLogTableMap extends TableMap
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array('Id' => 0, 'Type' => 1, 'DateTime' => 2, 'UserId' => 3, 'Username' => 4, 'SessionId' => 5, 'ClientAddress' => 6, 'ClientIp' => 7, 'ClientAgent' => 8, 'ClientPlatform' => 9, ),
         self::TYPE_STUDLYPHPNAME => array('id' => 0, 'type' => 1, 'dateTime' => 2, 'userId' => 3, 'username' => 4, 'sessionId' => 5, 'clientAddress' => 6, 'clientIp' => 7, 'clientAgent' => 8, 'clientPlatform' => 9, ),
-        self::TYPE_COLNAME       => array(LoginLogTableMap::COL_ID => 0, LoginLogTableMap::COL_TYPE => 1, LoginLogTableMap::COL_DATE_TIME => 2, LoginLogTableMap::COL_USER_ID => 3, LoginLogTableMap::COL_USERNAME => 4, LoginLogTableMap::COL_SESSION_ID => 5, LoginLogTableMap::COL_CLIENT_ADDRESS => 6, LoginLogTableMap::COL_CLIENT_IP => 7, LoginLogTableMap::COL_CLIENT_AGENT => 8, LoginLogTableMap::COL_CLIENT_PLATFORM => 9, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID' => 0, 'COL_TYPE' => 1, 'COL_DATE_TIME' => 2, 'COL_USER_ID' => 3, 'COL_USERNAME' => 4, 'COL_SESSION_ID' => 5, 'COL_CLIENT_ADDRESS' => 6, 'COL_CLIENT_IP' => 7, 'COL_CLIENT_AGENT' => 8, 'COL_CLIENT_PLATFORM' => 9, ),
+        self::TYPE_COLNAME       => array(LoginLogTableMap::ID => 0, LoginLogTableMap::TYPE => 1, LoginLogTableMap::DATE_TIME => 2, LoginLogTableMap::USER_ID => 3, LoginLogTableMap::USERNAME => 4, LoginLogTableMap::SESSION_ID => 5, LoginLogTableMap::CLIENT_ADDRESS => 6, LoginLogTableMap::CLIENT_IP => 7, LoginLogTableMap::CLIENT_AGENT => 8, LoginLogTableMap::CLIENT_PLATFORM => 9, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'TYPE' => 1, 'DATE_TIME' => 2, 'USER_ID' => 3, 'USERNAME' => 4, 'SESSION_ID' => 5, 'CLIENT_ADDRESS' => 6, 'CLIENT_IP' => 7, 'CLIENT_AGENT' => 8, 'CLIENT_PLATFORM' => 9, ),
         self::TYPE_FIELDNAME     => array('id' => 0, 'type' => 1, 'date_time' => 2, 'user_id' => 3, 'username' => 4, 'session_id' => 5, 'client_address' => 6, 'client_ip' => 7, 'client_agent' => 8, 'client_platform' => 9, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
@@ -166,7 +164,7 @@ class LoginLogTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('LOGIN_LOG');
+        $this->setName('login_log');
         $this->setPhpName('LoginLog');
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\LoginLog');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
@@ -201,8 +199,6 @@ class LoginLogTableMap extends TableMap
      * @param int    $offset    The 0-based offset for reading from the resultset row.
      * @param string $indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     *
-     * @return string The primary key hash of the row
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
@@ -228,11 +224,12 @@ class LoginLogTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return (int) $row[
-            $indexType == TableMap::TYPE_NUM
-                ? 0 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
-        ];
+
+            return (int) $row[
+                            $indexType == TableMap::TYPE_NUM
+                            ? 0 + $offset
+                            : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                        ];
     }
 
     /**
@@ -274,7 +271,6 @@ class LoginLogTableMap extends TableMap
             $col = $offset + LoginLogTableMap::NUM_HYDRATE_COLUMNS;
         } else {
             $cls = LoginLogTableMap::OM_CLASS;
-            /** @var LoginLog $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
             LoginLogTableMap::addInstanceToPool($obj, $key);
@@ -307,7 +303,6 @@ class LoginLogTableMap extends TableMap
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var LoginLog $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
@@ -332,16 +327,16 @@ class LoginLogTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(LoginLogTableMap::COL_ID);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_TYPE);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_DATE_TIME);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_USERNAME);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_SESSION_ID);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_CLIENT_ADDRESS);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_CLIENT_IP);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_CLIENT_AGENT);
-            $criteria->addSelectColumn(LoginLogTableMap::COL_CLIENT_PLATFORM);
+            $criteria->addSelectColumn(LoginLogTableMap::ID);
+            $criteria->addSelectColumn(LoginLogTableMap::TYPE);
+            $criteria->addSelectColumn(LoginLogTableMap::DATE_TIME);
+            $criteria->addSelectColumn(LoginLogTableMap::USER_ID);
+            $criteria->addSelectColumn(LoginLogTableMap::USERNAME);
+            $criteria->addSelectColumn(LoginLogTableMap::SESSION_ID);
+            $criteria->addSelectColumn(LoginLogTableMap::CLIENT_ADDRESS);
+            $criteria->addSelectColumn(LoginLogTableMap::CLIENT_IP);
+            $criteria->addSelectColumn(LoginLogTableMap::CLIENT_AGENT);
+            $criteria->addSelectColumn(LoginLogTableMap::CLIENT_PLATFORM);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.TYPE');
@@ -373,10 +368,10 @@ class LoginLogTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(LoginLogTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(LoginLogTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new LoginLogTableMap());
-        }
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(LoginLogTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(LoginLogTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new LoginLogTableMap());
+      }
     }
 
     /**
@@ -404,16 +399,14 @@ class LoginLogTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(LoginLogTableMap::DATABASE_NAME);
-            $criteria->add(LoginLogTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria->add(LoginLogTableMap::ID, (array) $values, Criteria::IN);
         }
 
         $query = LoginLogQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) {
-            LoginLogTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { LoginLogTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) {
-                LoginLogTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { LoginLogTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -421,7 +414,7 @@ class LoginLogTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the LOGIN_LOG table.
+     * Deletes all rows from the login_log table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -452,19 +445,26 @@ class LoginLogTableMap extends TableMap
             $criteria = $criteria->buildCriteria(); // build Criteria from LoginLog object
         }
 
-        if ($criteria->containsKey(LoginLogTableMap::COL_ID) && $criteria->keyContainsValue(LoginLogTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.LoginLogTableMap::COL_ID.')');
+        if ($criteria->containsKey(LoginLogTableMap::ID) && $criteria->keyContainsValue(LoginLogTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.LoginLogTableMap::ID.')');
         }
 
 
         // Set the correct dbName
         $query = LoginLogQuery::create()->mergeWith($criteria);
 
-        // use transaction because $criteria could contain info
-        // for more than one table (I guess, conceivably)
-        return $con->transaction(function () use ($con, $query) {
-            return $query->doInsert($con);
-        });
+        try {
+            // use transaction because $criteria could contain info
+            // for more than one table (I guess, conceivably)
+            $con->beginTransaction();
+            $pk = $query->doInsert($con);
+            $con->commit();
+        } catch (PropelException $e) {
+            $con->rollBack();
+            throw $e;
+        }
+
+        return $pk;
     }
 
 } // LoginLogTableMap

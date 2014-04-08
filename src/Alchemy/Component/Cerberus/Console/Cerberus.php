@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Cerberus extends Application
 {
     protected $homeDir = "";
+    protected $vendorDir = "";
 
     public function __construct()
     {
@@ -41,12 +42,32 @@ class Cerberus extends Application
         return $this->homeDir;
     }
 
+    /**
+     * @param string $vendorDir
+     */
+    public function setVendorDir($vendorDir)
+    {
+        $this->vendorDir = $vendorDir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVendorDir()
+    {
+        return $this->vendorDir;
+    }
+
     protected function prepare()
     {
-        $config = array("home_dir" => $this->homeDir);
+        $config = array(
+            "home_dir" => $this->homeDir,
+            "vendor_dir" => $this->vendorDir,
+        );
         $helpers  = array();
         $commands = array(
-            new \Alchemy\Component\Cerberus\Console\Command\BuildCommand($config)
+            new \Alchemy\Component\Cerberus\Console\Command\BuildModelCommand($config),
+            new \Alchemy\Component\Cerberus\Console\Command\BuildDbCommand($config)
         );
 
         $helperSet = $this->getHelperSet();

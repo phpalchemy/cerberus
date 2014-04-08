@@ -94,7 +94,9 @@ class Cerberus
 
     public function init(array $config = array())
     {
-        $this->setConfig($config);
+        if (! empty($config)) {
+            $this->setConfig($config);
+        }
         $this->initLocale();
         $this->initPropel();
     }

@@ -4,12 +4,12 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ---------------------------------------------------------------------
--- USER
+-- user
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `USER`;
+DROP TABLE IF EXISTS `user`;
 
-CREATE TABLE `USER`
+CREATE TABLE `user`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(128) NOT NULL,
@@ -23,29 +23,12 @@ CREATE TABLE `USER`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- PERMISSION
+-- role
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `PERMISSION`;
+DROP TABLE IF EXISTS `role`;
 
-CREATE TABLE `PERMISSION`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(256) NOT NULL,
-    `create_date` DATETIME,
-    `description` VARCHAR(256) NOT NULL,
-    `update_date` DATETIME,
-    `status` VARCHAR(64) DEFAULT 'ACTIVE',
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
--- ROLE
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `ROLE`;
-
-CREATE TABLE `ROLE`
+CREATE TABLE `role`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(128) NOT NULL,
@@ -57,56 +40,73 @@ CREATE TABLE `ROLE`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- USER_ROLE
+-- permission
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `USER_ROLE`;
+DROP TABLE IF EXISTS `permission`;
 
-CREATE TABLE `USER_ROLE`
+CREATE TABLE `permission`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(256) NOT NULL,
+    `create_date` DATETIME,
+    `description` VARCHAR(256) NOT NULL,
+    `update_date` DATETIME,
+    `status` VARCHAR(64) DEFAULT 'ACTIVE',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- user_role
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_role`;
+
+CREATE TABLE `user_role`
 (
     `user_id` INTEGER NOT NULL,
     `role_id` INTEGER NOT NULL,
     PRIMARY KEY (`user_id`,`role_id`),
-    INDEX `USER_ROLE_FI_2` (`role_id`),
-    CONSTRAINT `USER_ROLE_FK_1`
+    INDEX `user_role_FI_2` (`role_id`),
+    CONSTRAINT `user_role_FK_1`
         FOREIGN KEY (`user_id`)
-        REFERENCES `USER` (`id`)
+        REFERENCES `user` (`id`)
         ON DELETE CASCADE,
-    CONSTRAINT `USER_ROLE_FK_2`
+    CONSTRAINT `user_role_FK_2`
         FOREIGN KEY (`role_id`)
-        REFERENCES `ROLE` (`id`)
+        REFERENCES `role` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- ROLE_PERMISSION
+-- role_permission
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `ROLE_PERMISSION`;
+DROP TABLE IF EXISTS `role_permission`;
 
-CREATE TABLE `ROLE_PERMISSION`
+CREATE TABLE `role_permission`
 (
     `role_id` INTEGER NOT NULL,
     `permission_id` INTEGER NOT NULL,
     PRIMARY KEY (`role_id`,`permission_id`),
-    INDEX `ROLE_PERMISSION_FI_2` (`permission_id`),
-    CONSTRAINT `ROLE_PERMISSION_FK_1`
+    INDEX `role_permission_FI_2` (`permission_id`),
+    CONSTRAINT `role_permission_FK_1`
         FOREIGN KEY (`role_id`)
-        REFERENCES `ROLE` (`id`)
+        REFERENCES `role` (`id`)
         ON DELETE CASCADE,
-    CONSTRAINT `ROLE_PERMISSION_FK_2`
+    CONSTRAINT `role_permission_FK_2`
         FOREIGN KEY (`permission_id`)
-        REFERENCES `PERMISSION` (`id`)
+        REFERENCES `permission` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- LOGIN_LOG
+-- login_log
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `LOGIN_LOG`;
+DROP TABLE IF EXISTS `login_log`;
 
-CREATE TABLE `LOGIN_LOG`
+CREATE TABLE `login_log`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `type` VARCHAR(32),

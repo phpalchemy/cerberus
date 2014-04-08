@@ -8,7 +8,6 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -16,7 +15,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'USER' table.
+ * This class defines the structure of the 'user' table.
  *
  *
  *
@@ -30,7 +29,6 @@ class UserTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
-
     /**
      * The (dot-path) name of this class
      */
@@ -44,7 +42,7 @@ class UserTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'USER';
+    const TABLE_NAME = 'user';
 
     /**
      * The related Propel class for this table
@@ -74,42 +72,42 @@ class UserTableMap extends TableMap
     /**
      * the column name for the ID field
      */
-    const COL_ID = 'USER.ID';
+    const ID = 'user.ID';
 
     /**
      * the column name for the USERNAME field
      */
-    const COL_USERNAME = 'USER.USERNAME';
+    const USERNAME = 'user.USERNAME';
 
     /**
      * the column name for the PASSWORD field
      */
-    const COL_PASSWORD = 'USER.PASSWORD';
+    const PASSWORD = 'user.PASSWORD';
 
     /**
      * the column name for the FIRST_NAME field
      */
-    const COL_FIRST_NAME = 'USER.FIRST_NAME';
+    const FIRST_NAME = 'user.FIRST_NAME';
 
     /**
      * the column name for the LAST_NAME field
      */
-    const COL_LAST_NAME = 'USER.LAST_NAME';
+    const LAST_NAME = 'user.LAST_NAME';
 
     /**
      * the column name for the CREATE_DATE field
      */
-    const COL_CREATE_DATE = 'USER.CREATE_DATE';
+    const CREATE_DATE = 'user.CREATE_DATE';
 
     /**
      * the column name for the UPDATE_DATE field
      */
-    const COL_UPDATE_DATE = 'USER.UPDATE_DATE';
+    const UPDATE_DATE = 'user.UPDATE_DATE';
 
     /**
      * the column name for the STATUS field
      */
-    const COL_STATUS = 'USER.STATUS';
+    const STATUS = 'user.STATUS';
 
     /**
      * The default string format for model objects of the related table
@@ -125,8 +123,8 @@ class UserTableMap extends TableMap
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array('Id', 'Username', 'Password', 'FirstName', 'LastName', 'CreateDate', 'UpdateDate', 'Status', ),
         self::TYPE_STUDLYPHPNAME => array('id', 'username', 'password', 'firstName', 'lastName', 'createDate', 'updateDate', 'status', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_FIRST_NAME, UserTableMap::COL_LAST_NAME, UserTableMap::COL_CREATE_DATE, UserTableMap::COL_UPDATE_DATE, UserTableMap::COL_STATUS, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID', 'COL_USERNAME', 'COL_PASSWORD', 'COL_FIRST_NAME', 'COL_LAST_NAME', 'COL_CREATE_DATE', 'COL_UPDATE_DATE', 'COL_STATUS', ),
+        self::TYPE_COLNAME       => array(UserTableMap::ID, UserTableMap::USERNAME, UserTableMap::PASSWORD, UserTableMap::FIRST_NAME, UserTableMap::LAST_NAME, UserTableMap::CREATE_DATE, UserTableMap::UPDATE_DATE, UserTableMap::STATUS, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'USERNAME', 'PASSWORD', 'FIRST_NAME', 'LAST_NAME', 'CREATE_DATE', 'UPDATE_DATE', 'STATUS', ),
         self::TYPE_FIELDNAME     => array('id', 'username', 'password', 'first_name', 'last_name', 'create_date', 'update_date', 'status', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
@@ -140,8 +138,8 @@ class UserTableMap extends TableMap
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Password' => 2, 'FirstName' => 3, 'LastName' => 4, 'CreateDate' => 5, 'UpdateDate' => 6, 'Status' => 7, ),
         self::TYPE_STUDLYPHPNAME => array('id' => 0, 'username' => 1, 'password' => 2, 'firstName' => 3, 'lastName' => 4, 'createDate' => 5, 'updateDate' => 6, 'status' => 7, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_PASSWORD => 2, UserTableMap::COL_FIRST_NAME => 3, UserTableMap::COL_LAST_NAME => 4, UserTableMap::COL_CREATE_DATE => 5, UserTableMap::COL_UPDATE_DATE => 6, UserTableMap::COL_STATUS => 7, ),
-        self::TYPE_RAW_COLNAME   => array('COL_ID' => 0, 'COL_USERNAME' => 1, 'COL_PASSWORD' => 2, 'COL_FIRST_NAME' => 3, 'COL_LAST_NAME' => 4, 'COL_CREATE_DATE' => 5, 'COL_UPDATE_DATE' => 6, 'COL_STATUS' => 7, ),
+        self::TYPE_COLNAME       => array(UserTableMap::ID => 0, UserTableMap::USERNAME => 1, UserTableMap::PASSWORD => 2, UserTableMap::FIRST_NAME => 3, UserTableMap::LAST_NAME => 4, UserTableMap::CREATE_DATE => 5, UserTableMap::UPDATE_DATE => 6, UserTableMap::STATUS => 7, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'USERNAME' => 1, 'PASSWORD' => 2, 'FIRST_NAME' => 3, 'LAST_NAME' => 4, 'CREATE_DATE' => 5, 'UPDATE_DATE' => 6, 'STATUS' => 7, ),
         self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'first_name' => 3, 'last_name' => 4, 'create_date' => 5, 'update_date' => 6, 'status' => 7, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
@@ -156,7 +154,7 @@ class UserTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('USER');
+        $this->setName('user');
         $this->setPhpName('User');
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\User');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
@@ -181,14 +179,14 @@ class UserTableMap extends TableMap
         $this->addRelation('Role', '\\Alchemy\\Component\\Cerberus\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
     } // buildRelations()
     /**
-     * Method to invalidate the instance pool of all tables related to USER     * by a foreign key with ON DELETE CASCADE
+     * Method to invalidate the instance pool of all tables related to user     * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
-        // Invalidate objects in related instance pools,
+        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        UserRoleTableMap::clearInstancePool();
-    }
+                UserRoleTableMap::clearInstancePool();
+            }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -200,8 +198,6 @@ class UserTableMap extends TableMap
      * @param int    $offset    The 0-based offset for reading from the resultset row.
      * @param string $indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     *
-     * @return string The primary key hash of the row
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
@@ -227,11 +223,12 @@ class UserTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return (int) $row[
-            $indexType == TableMap::TYPE_NUM
-                ? 0 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
-        ];
+
+            return (int) $row[
+                            $indexType == TableMap::TYPE_NUM
+                            ? 0 + $offset
+                            : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                        ];
     }
 
     /**
@@ -273,7 +270,6 @@ class UserTableMap extends TableMap
             $col = $offset + UserTableMap::NUM_HYDRATE_COLUMNS;
         } else {
             $cls = UserTableMap::OM_CLASS;
-            /** @var User $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
             UserTableMap::addInstanceToPool($obj, $key);
@@ -306,7 +302,6 @@ class UserTableMap extends TableMap
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var User $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
@@ -331,14 +326,14 @@ class UserTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserTableMap::COL_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_USERNAME);
-            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD);
-            $criteria->addSelectColumn(UserTableMap::COL_FIRST_NAME);
-            $criteria->addSelectColumn(UserTableMap::COL_LAST_NAME);
-            $criteria->addSelectColumn(UserTableMap::COL_CREATE_DATE);
-            $criteria->addSelectColumn(UserTableMap::COL_UPDATE_DATE);
-            $criteria->addSelectColumn(UserTableMap::COL_STATUS);
+            $criteria->addSelectColumn(UserTableMap::ID);
+            $criteria->addSelectColumn(UserTableMap::USERNAME);
+            $criteria->addSelectColumn(UserTableMap::PASSWORD);
+            $criteria->addSelectColumn(UserTableMap::FIRST_NAME);
+            $criteria->addSelectColumn(UserTableMap::LAST_NAME);
+            $criteria->addSelectColumn(UserTableMap::CREATE_DATE);
+            $criteria->addSelectColumn(UserTableMap::UPDATE_DATE);
+            $criteria->addSelectColumn(UserTableMap::STATUS);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.USERNAME');
@@ -368,10 +363,10 @@ class UserTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(UserTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new UserTableMap());
-        }
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(UserTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new UserTableMap());
+      }
     }
 
     /**
@@ -399,16 +394,14 @@ class UserTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(UserTableMap::DATABASE_NAME);
-            $criteria->add(UserTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria->add(UserTableMap::ID, (array) $values, Criteria::IN);
         }
 
         $query = UserQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) {
-            UserTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { UserTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) {
-                UserTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { UserTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -416,7 +409,7 @@ class UserTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the USER table.
+     * Deletes all rows from the user table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -447,19 +440,26 @@ class UserTableMap extends TableMap
             $criteria = $criteria->buildCriteria(); // build Criteria from User object
         }
 
-        if ($criteria->containsKey(UserTableMap::COL_ID) && $criteria->keyContainsValue(UserTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserTableMap::COL_ID.')');
+        if ($criteria->containsKey(UserTableMap::ID) && $criteria->keyContainsValue(UserTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserTableMap::ID.')');
         }
 
 
         // Set the correct dbName
         $query = UserQuery::create()->mergeWith($criteria);
 
-        // use transaction because $criteria could contain info
-        // for more than one table (I guess, conceivably)
-        return $con->transaction(function () use ($con, $query) {
-            return $query->doInsert($con);
-        });
+        try {
+            // use transaction because $criteria could contain info
+            // for more than one table (I guess, conceivably)
+            $con->beginTransaction();
+            $pk = $query->doInsert($con);
+            $con->commit();
+        } catch (PropelException $e) {
+            $con->rollBack();
+            throw $e;
+        }
+
+        return $pk;
     }
 
 } // UserTableMap
