@@ -3,6 +3,7 @@
 namespace Alchemy\Component\Cerberus\Model;
 
 use Alchemy\Component\Cerberus\Model\Base\User as BaseUser;
+use \Propel\Runtime\Map\TableMap;
 
 class User extends BaseUser
 {
@@ -65,5 +66,10 @@ class User extends BaseUser
         // we need sanitize the value of $password param
         $password = crypt($password, '$2a$'.$this->passwordCryptCost.'$'.$this->passwordCryptSalt.'$');
         return ($this->getPassword() == $password);
+    }
+
+    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_FIELDNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    {
+        parent::toArray($keyColumn, $usePrefix, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
     }
 }

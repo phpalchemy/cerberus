@@ -3,6 +3,7 @@
 namespace Alchemy\Component\Cerberus\Model;
 
 use Alchemy\Component\Cerberus\Model\Base\Role as BaseRole;
+use \Propel\Runtime\Map\TableMap;
 
 class Role extends BaseRole
 {
@@ -15,5 +16,10 @@ class Role extends BaseRole
         }
 
         parent::save();
+    }
+
+    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_FIELDNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    {
+        parent::toArray($keyColumn, $usePrefix, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
     }
 }
