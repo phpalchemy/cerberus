@@ -8,7 +8,7 @@ Cerberus Authentication & RBAC Manager Component
 Cerberus is a PHP Authentication and RBAC (see [RBAC](http://en.wikipedia.org/wiki/Role-based_access_control)) Manager Component
 
 ## Authors and contributors
-* [Klaus Silveira](http://www.klaussilveira.com) (Creator, developer)
+* [Erik Amaru Ortiz](http://github.com/eriknyk) (Creator, developer)
 
 ## License
 [New MIT license](http://www.opensource.org/licenses/mit-license.php)
