@@ -70,6 +70,6 @@ class User extends BaseUser
 
     public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_FIELDNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
-        parent::toArray($keyColumn, $usePrefix, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+        return parent::toArray($keyColumn, $usePrefix, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
     }
 }
