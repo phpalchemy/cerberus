@@ -68,8 +68,8 @@ class User extends BaseUser
         return ($this->getPassword() == $password);
     }
 
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_FIELDNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_FIELDNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        return parent::toArray($keyColumn, $usePrefix, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+        return parent::toArray(TableMap::TYPE_FIELDNAME, $includeLazyLoadColumns, $alreadyDumpedObjects, $includeForeignObjects);
     }
 }
