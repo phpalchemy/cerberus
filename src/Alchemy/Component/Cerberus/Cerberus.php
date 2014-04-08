@@ -235,7 +235,7 @@ class Cerberus
         }
         $log->save();
 
-        return true;
+        return $user;
     }
 
     public function initUserSession(User $user)
