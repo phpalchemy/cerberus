@@ -40,7 +40,7 @@ class User extends BaseUser
         parent::setPassword($password);
     }
 
-    public function save(ConnectionInterface $con = null)
+    public function save(\Propel\Runtime\Connection\ConnectionInterface $con = null)
     {
         if ($this->getId()) {
             $this->setUpdateDate(date("Y-m-d H:i:s"));
