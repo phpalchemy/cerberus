@@ -6,7 +6,7 @@ use Alchemy\Component\Cerberus\Model\Base\Permission as BasePermission;
 
 class Permission extends BasePermission
 {
-    public function save()
+    public function save(ConnectionInterface $con = null)
     {
         if ($this->getId()) {
             $this->setUpdateDate(date("Y-m-d H:i:s"));
