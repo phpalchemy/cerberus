@@ -64,6 +64,7 @@ class Cerberus
     public function __construct(array $config = array())
     {
         $this->homeDir = realpath(__DIR__."/../../../../");
+        $this->session = new Session\PhpNativeSession();
 
         if (! empty($config)) {
             $this->setConfig($config);
@@ -240,8 +241,6 @@ class Cerberus
 
     public function initUserSession(User $user)
     {
-        $this->session = new Session\PhpNativeSession();
-        $this->session->init();
         $this->session->set("user", $user);
         $this->session->set("user_id", $user->getId());
 
@@ -269,6 +268,12 @@ class Cerberus
         $this->session->set("user.permissions_list", $permissionsList);
     }
 
+    public function isUserSessionOpen()
+    {
+        $user = $this->session->get("user", null);
+        return !is_null($user) && get_class($user) == 'Alchemy\Component\Cerberus\Model\User';
+    }
+
     public function userCanAccess($permissionName)
     {
         if (is_subclass_of($this->session, 'Alchemy\Component\Cerberus\Session\Session')) {
@@ -286,6 +291,11 @@ class Cerberus
     public function getUserPermissions()
     {
         return $this->session->get("user.permissions");
+    }
+
+    public function getSession()
+    {
+        return $this->session;
     }
 
     public static function getBrowser()

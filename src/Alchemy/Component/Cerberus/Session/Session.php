@@ -14,4 +14,6 @@ abstract class Session
     {
         return isset($this->data[$name])? $this->data[$name]: $default;
     }
+
+    public abstract function isOpen();
 }
