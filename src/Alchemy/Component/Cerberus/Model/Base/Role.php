@@ -469,7 +469,7 @@ abstract class Role implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreateDate($format = 'Y-m-d H:i:s')
+    public function getCreateDate($format = NULL)
     {
         if ($format === null) {
             return $this->create_date;
@@ -489,7 +489,7 @@ abstract class Role implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getUpdateDate($format = 'Y-m-d H:i:s')
+    public function getUpdateDate($format = NULL)
     {
         if ($format === null) {
             return $this->update_date;

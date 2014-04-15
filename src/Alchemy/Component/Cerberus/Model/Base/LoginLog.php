@@ -412,7 +412,7 @@ abstract class LoginLog implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDateTime($format = 'Y-m-d H:i:s')
+    public function getDateTime($format = NULL)
     {
         if ($format === null) {
             return $this->date_time;
