@@ -27,6 +27,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPermissionQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     ChildPermissionQuery orderByUpdateDate($order = Criteria::ASC) Order by the update_date column
  * @method     ChildPermissionQuery orderByStatus($order = Criteria::ASC) Order by the status column
+ * @method     ChildPermissionQuery orderByParentId($order = Criteria::ASC) Order by the parent_id column
  *
  * @method     ChildPermissionQuery groupById() Group by the id column
  * @method     ChildPermissionQuery groupByName() Group by the name column
@@ -34,10 +35,19 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPermissionQuery groupByDescription() Group by the description column
  * @method     ChildPermissionQuery groupByUpdateDate() Group by the update_date column
  * @method     ChildPermissionQuery groupByStatus() Group by the status column
+ * @method     ChildPermissionQuery groupByParentId() Group by the parent_id column
  *
  * @method     ChildPermissionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildPermissionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildPermissionQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     ChildPermissionQuery leftJoinPermissionRelatedByParentId($relationAlias = null) Adds a LEFT JOIN clause to the query using the PermissionRelatedByParentId relation
+ * @method     ChildPermissionQuery rightJoinPermissionRelatedByParentId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PermissionRelatedByParentId relation
+ * @method     ChildPermissionQuery innerJoinPermissionRelatedByParentId($relationAlias = null) Adds a INNER JOIN clause to the query using the PermissionRelatedByParentId relation
+ *
+ * @method     ChildPermissionQuery leftJoinPermissionRelatedById($relationAlias = null) Adds a LEFT JOIN clause to the query using the PermissionRelatedById relation
+ * @method     ChildPermissionQuery rightJoinPermissionRelatedById($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PermissionRelatedById relation
+ * @method     ChildPermissionQuery innerJoinPermissionRelatedById($relationAlias = null) Adds a INNER JOIN clause to the query using the PermissionRelatedById relation
  *
  * @method     ChildPermissionQuery leftJoinRolePermission($relationAlias = null) Adds a LEFT JOIN clause to the query using the RolePermission relation
  * @method     ChildPermissionQuery rightJoinRolePermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RolePermission relation
@@ -52,6 +62,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPermission findOneByDescription(string $description) Return the first ChildPermission filtered by the description column
  * @method     ChildPermission findOneByUpdateDate(string $update_date) Return the first ChildPermission filtered by the update_date column
  * @method     ChildPermission findOneByStatus(string $status) Return the first ChildPermission filtered by the status column
+ * @method     ChildPermission findOneByParentId(int $parent_id) Return the first ChildPermission filtered by the parent_id column
  *
  * @method     array findById(int $id) Return ChildPermission objects filtered by the id column
  * @method     array findByName(string $name) Return ChildPermission objects filtered by the name column
@@ -59,6 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     array findByDescription(string $description) Return ChildPermission objects filtered by the description column
  * @method     array findByUpdateDate(string $update_date) Return ChildPermission objects filtered by the update_date column
  * @method     array findByStatus(string $status) Return ChildPermission objects filtered by the status column
+ * @method     array findByParentId(int $parent_id) Return ChildPermission objects filtered by the parent_id column
  *
  */
 abstract class PermissionQuery extends ModelCriteria
@@ -147,7 +159,7 @@ abstract class PermissionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, NAME, CREATE_DATE, DESCRIPTION, UPDATE_DATE, STATUS FROM permission WHERE ID = :p0';
+        $sql = 'SELECT ID, NAME, CREATE_DATE, DESCRIPTION, UPDATE_DATE, STATUS, PARENT_ID FROM permission WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -448,6 +460,197 @@ abstract class PermissionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(PermissionTableMap::STATUS, $status, $comparison);
+    }
+
+    /**
+     * Filter the query on the parent_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByParentId(1234); // WHERE parent_id = 1234
+     * $query->filterByParentId(array(12, 34)); // WHERE parent_id IN (12, 34)
+     * $query->filterByParentId(array('min' => 12)); // WHERE parent_id > 12
+     * </code>
+     *
+     * @see       filterByPermissionRelatedByParentId()
+     *
+     * @param     mixed $parentId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildPermissionQuery The current query, for fluid interface
+     */
+    public function filterByParentId($parentId = null, $comparison = null)
+    {
+        if (is_array($parentId)) {
+            $useMinMax = false;
+            if (isset($parentId['min'])) {
+                $this->addUsingAlias(PermissionTableMap::PARENT_ID, $parentId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($parentId['max'])) {
+                $this->addUsingAlias(PermissionTableMap::PARENT_ID, $parentId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(PermissionTableMap::PARENT_ID, $parentId, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Alchemy\Component\Cerberus\Model\Permission object
+     *
+     * @param \Alchemy\Component\Cerberus\Model\Permission|ObjectCollection $permission The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildPermissionQuery The current query, for fluid interface
+     */
+    public function filterByPermissionRelatedByParentId($permission, $comparison = null)
+    {
+        if ($permission instanceof \Alchemy\Component\Cerberus\Model\Permission) {
+            return $this
+                ->addUsingAlias(PermissionTableMap::PARENT_ID, $permission->getId(), $comparison);
+        } elseif ($permission instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(PermissionTableMap::PARENT_ID, $permission->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByPermissionRelatedByParentId() only accepts arguments of type \Alchemy\Component\Cerberus\Model\Permission or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the PermissionRelatedByParentId relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildPermissionQuery The current query, for fluid interface
+     */
+    public function joinPermissionRelatedByParentId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('PermissionRelatedByParentId');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'PermissionRelatedByParentId');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the PermissionRelatedByParentId relation Permission object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Alchemy\Component\Cerberus\Model\PermissionQuery A secondary query class using the current class as primary query
+     */
+    public function usePermissionRelatedByParentIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinPermissionRelatedByParentId($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'PermissionRelatedByParentId', '\Alchemy\Component\Cerberus\Model\PermissionQuery');
+    }
+
+    /**
+     * Filter the query by a related \Alchemy\Component\Cerberus\Model\Permission object
+     *
+     * @param \Alchemy\Component\Cerberus\Model\Permission|ObjectCollection $permission  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildPermissionQuery The current query, for fluid interface
+     */
+    public function filterByPermissionRelatedById($permission, $comparison = null)
+    {
+        if ($permission instanceof \Alchemy\Component\Cerberus\Model\Permission) {
+            return $this
+                ->addUsingAlias(PermissionTableMap::ID, $permission->getParentId(), $comparison);
+        } elseif ($permission instanceof ObjectCollection) {
+            return $this
+                ->usePermissionRelatedByIdQuery()
+                ->filterByPrimaryKeys($permission->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByPermissionRelatedById() only accepts arguments of type \Alchemy\Component\Cerberus\Model\Permission or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the PermissionRelatedById relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildPermissionQuery The current query, for fluid interface
+     */
+    public function joinPermissionRelatedById($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('PermissionRelatedById');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'PermissionRelatedById');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the PermissionRelatedById relation Permission object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Alchemy\Component\Cerberus\Model\PermissionQuery A secondary query class using the current class as primary query
+     */
+    public function usePermissionRelatedByIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinPermissionRelatedById($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'PermissionRelatedById', '\Alchemy\Component\Cerberus\Model\PermissionQuery');
     }
 
     /**

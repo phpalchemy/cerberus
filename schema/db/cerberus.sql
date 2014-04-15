@@ -53,7 +53,13 @@ CREATE TABLE `permission`
     `description` VARCHAR(256) NOT NULL,
     `update_date` DATETIME,
     `status` VARCHAR(64) DEFAULT 'ACTIVE',
-    PRIMARY KEY (`id`)
+    `parent_id` INTEGER,
+    PRIMARY KEY (`id`),
+    INDEX `permission_FI_1` (`parent_id`),
+    CONSTRAINT `permission_FK_1`
+        FOREIGN KEY (`parent_id`)
+        REFERENCES `permission` (`id`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

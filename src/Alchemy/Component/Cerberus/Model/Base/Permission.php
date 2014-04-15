@@ -97,6 +97,23 @@ abstract class Permission implements ActiveRecordInterface
     protected $status;
 
     /**
+     * The value for the parent_id field.
+     * @var        int
+     */
+    protected $parent_id;
+
+    /**
+     * @var        Permission
+     */
+    protected $aPermissionRelatedByParentId;
+
+    /**
+     * @var        ObjectCollection|ChildPermission[] Collection to store aggregation of ChildPermission objects.
+     */
+    protected $collPermissionsRelatedById;
+    protected $collPermissionsRelatedByIdPartial;
+
+    /**
      * @var        ObjectCollection|ChildRolePermission[] Collection to store aggregation of ChildRolePermission objects.
      */
     protected $collRolePermissions;
@@ -120,6 +137,12 @@ abstract class Permission implements ActiveRecordInterface
      * @var ObjectCollection
      */
     protected $rolesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection
+     */
+    protected $permissionsRelatedByIdScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -483,6 +506,17 @@ abstract class Permission implements ActiveRecordInterface
     }
 
     /**
+     * Get the [parent_id] column value.
+     *
+     * @return   int
+     */
+    public function getParentId()
+    {
+
+        return $this->parent_id;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -609,6 +643,31 @@ abstract class Permission implements ActiveRecordInterface
     } // setStatus()
 
     /**
+     * Set the value of [parent_id] column.
+     *
+     * @param      int $v new value
+     * @return   \Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
+     */
+    public function setParentId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->parent_id !== $v) {
+            $this->parent_id = $v;
+            $this->modifiedColumns[] = PermissionTableMap::PARENT_ID;
+        }
+
+        if ($this->aPermissionRelatedByParentId !== null && $this->aPermissionRelatedByParentId->getId() !== $v) {
+            $this->aPermissionRelatedByParentId = null;
+        }
+
+
+        return $this;
+    } // setParentId()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -672,6 +731,9 @@ abstract class Permission implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PermissionTableMap::translateFieldName('Status', TableMap::TYPE_PHPNAME, $indexType)];
             $this->status = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : PermissionTableMap::translateFieldName('ParentId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->parent_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -680,7 +742,7 @@ abstract class Permission implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = PermissionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = PermissionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Alchemy\Component\Cerberus\Model\Permission object", 0, $e);
@@ -702,6 +764,9 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aPermissionRelatedByParentId !== null && $this->parent_id !== $this->aPermissionRelatedByParentId->getId()) {
+            $this->aPermissionRelatedByParentId = null;
+        }
     } // ensureConsistency
 
     /**
@@ -740,6 +805,9 @@ abstract class Permission implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->aPermissionRelatedByParentId = null;
+            $this->collPermissionsRelatedById = null;
 
             $this->collRolePermissions = null;
 
@@ -855,6 +923,18 @@ abstract class Permission implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aPermissionRelatedByParentId !== null) {
+                if ($this->aPermissionRelatedByParentId->isModified() || $this->aPermissionRelatedByParentId->isNew()) {
+                    $affectedRows += $this->aPermissionRelatedByParentId->save($con);
+                }
+                $this->setPermissionRelatedByParentId($this->aPermissionRelatedByParentId);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -889,6 +969,23 @@ abstract class Permission implements ActiveRecordInterface
                 foreach ($this->collRoles as $role) {
                     if ($role->isModified()) {
                         $role->save($con);
+                    }
+                }
+            }
+
+            if ($this->permissionsRelatedByIdScheduledForDeletion !== null) {
+                if (!$this->permissionsRelatedByIdScheduledForDeletion->isEmpty()) {
+                    \Alchemy\Component\Cerberus\Model\PermissionQuery::create()
+                        ->filterByPrimaryKeys($this->permissionsRelatedByIdScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->permissionsRelatedByIdScheduledForDeletion = null;
+                }
+            }
+
+                if ($this->collPermissionsRelatedById !== null) {
+            foreach ($this->collPermissionsRelatedById as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
                     }
                 }
             }
@@ -954,6 +1051,9 @@ abstract class Permission implements ActiveRecordInterface
         if ($this->isColumnModified(PermissionTableMap::STATUS)) {
             $modifiedColumns[':p' . $index++]  = 'STATUS';
         }
+        if ($this->isColumnModified(PermissionTableMap::PARENT_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'PARENT_ID';
+        }
 
         $sql = sprintf(
             'INSERT INTO permission (%s) VALUES (%s)',
@@ -982,6 +1082,9 @@ abstract class Permission implements ActiveRecordInterface
                         break;
                     case 'STATUS':
                         $stmt->bindValue($identifier, $this->status, PDO::PARAM_STR);
+                        break;
+                    case 'PARENT_ID':
+                        $stmt->bindValue($identifier, $this->parent_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1063,6 +1166,9 @@ abstract class Permission implements ActiveRecordInterface
             case 5:
                 return $this->getStatus();
                 break;
+            case 6:
+                return $this->getParentId();
+                break;
             default:
                 return null;
                 break;
@@ -1098,6 +1204,7 @@ abstract class Permission implements ActiveRecordInterface
             $keys[3] => $this->getDescription(),
             $keys[4] => $this->getUpdateDate(),
             $keys[5] => $this->getStatus(),
+            $keys[6] => $this->getParentId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1105,6 +1212,12 @@ abstract class Permission implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->aPermissionRelatedByParentId) {
+                $result['PermissionRelatedByParentId'] = $this->aPermissionRelatedByParentId->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collPermissionsRelatedById) {
+                $result['PermissionsRelatedById'] = $this->collPermissionsRelatedById->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collRolePermissions) {
                 $result['RolePermissions'] = $this->collRolePermissions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1160,6 +1273,9 @@ abstract class Permission implements ActiveRecordInterface
             case 5:
                 $this->setStatus($value);
                 break;
+            case 6:
+                $this->setParentId($value);
+                break;
         } // switch()
     }
 
@@ -1190,6 +1306,7 @@ abstract class Permission implements ActiveRecordInterface
         if (array_key_exists($keys[3], $arr)) $this->setDescription($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setUpdateDate($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setStatus($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setParentId($arr[$keys[6]]);
     }
 
     /**
@@ -1207,6 +1324,7 @@ abstract class Permission implements ActiveRecordInterface
         if ($this->isColumnModified(PermissionTableMap::DESCRIPTION)) $criteria->add(PermissionTableMap::DESCRIPTION, $this->description);
         if ($this->isColumnModified(PermissionTableMap::UPDATE_DATE)) $criteria->add(PermissionTableMap::UPDATE_DATE, $this->update_date);
         if ($this->isColumnModified(PermissionTableMap::STATUS)) $criteria->add(PermissionTableMap::STATUS, $this->status);
+        if ($this->isColumnModified(PermissionTableMap::PARENT_ID)) $criteria->add(PermissionTableMap::PARENT_ID, $this->parent_id);
 
         return $criteria;
     }
@@ -1275,11 +1393,18 @@ abstract class Permission implements ActiveRecordInterface
         $copyObj->setDescription($this->getDescription());
         $copyObj->setUpdateDate($this->getUpdateDate());
         $copyObj->setStatus($this->getStatus());
+        $copyObj->setParentId($this->getParentId());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
+
+            foreach ($this->getPermissionsRelatedById() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addPermissionRelatedById($relObj->copy($deepCopy));
+                }
+            }
 
             foreach ($this->getRolePermissions() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1317,6 +1442,57 @@ abstract class Permission implements ActiveRecordInterface
         return $copyObj;
     }
 
+    /**
+     * Declares an association between this object and a ChildPermission object.
+     *
+     * @param                  ChildPermission $v
+     * @return                 \Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setPermissionRelatedByParentId(ChildPermission $v = null)
+    {
+        if ($v === null) {
+            $this->setParentId(NULL);
+        } else {
+            $this->setParentId($v->getId());
+        }
+
+        $this->aPermissionRelatedByParentId = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildPermission object, it will not be re-added.
+        if ($v !== null) {
+            $v->addPermissionRelatedById($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildPermission object
+     *
+     * @param      ConnectionInterface $con Optional Connection object.
+     * @return                 ChildPermission The associated ChildPermission object.
+     * @throws PropelException
+     */
+    public function getPermissionRelatedByParentId(ConnectionInterface $con = null)
+    {
+        if ($this->aPermissionRelatedByParentId === null && ($this->parent_id !== null)) {
+            $this->aPermissionRelatedByParentId = ChildPermissionQuery::create()->findPk($this->parent_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aPermissionRelatedByParentId->addPermissionsRelatedById($this);
+             */
+        }
+
+        return $this->aPermissionRelatedByParentId;
+    }
+
 
     /**
      * Initializes a collection based on the name of a relation.
@@ -1328,9 +1504,230 @@ abstract class Permission implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('PermissionRelatedById' == $relationName) {
+            return $this->initPermissionsRelatedById();
+        }
         if ('RolePermission' == $relationName) {
             return $this->initRolePermissions();
         }
+    }
+
+    /**
+     * Clears out the collPermissionsRelatedById collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addPermissionsRelatedById()
+     */
+    public function clearPermissionsRelatedById()
+    {
+        $this->collPermissionsRelatedById = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collPermissionsRelatedById collection loaded partially.
+     */
+    public function resetPartialPermissionsRelatedById($v = true)
+    {
+        $this->collPermissionsRelatedByIdPartial = $v;
+    }
+
+    /**
+     * Initializes the collPermissionsRelatedById collection.
+     *
+     * By default this just sets the collPermissionsRelatedById collection to an empty array (like clearcollPermissionsRelatedById());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initPermissionsRelatedById($overrideExisting = true)
+    {
+        if (null !== $this->collPermissionsRelatedById && !$overrideExisting) {
+            return;
+        }
+        $this->collPermissionsRelatedById = new ObjectCollection();
+        $this->collPermissionsRelatedById->setModel('\Alchemy\Component\Cerberus\Model\Permission');
+    }
+
+    /**
+     * Gets an array of ChildPermission objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildPermission is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|ChildPermission[] List of ChildPermission objects
+     * @throws PropelException
+     */
+    public function getPermissionsRelatedById($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPermissionsRelatedByIdPartial && !$this->isNew();
+        if (null === $this->collPermissionsRelatedById || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collPermissionsRelatedById) {
+                // return empty collection
+                $this->initPermissionsRelatedById();
+            } else {
+                $collPermissionsRelatedById = ChildPermissionQuery::create(null, $criteria)
+                    ->filterByPermissionRelatedByParentId($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collPermissionsRelatedByIdPartial && count($collPermissionsRelatedById)) {
+                        $this->initPermissionsRelatedById(false);
+
+                        foreach ($collPermissionsRelatedById as $obj) {
+                            if (false == $this->collPermissionsRelatedById->contains($obj)) {
+                                $this->collPermissionsRelatedById->append($obj);
+                            }
+                        }
+
+                        $this->collPermissionsRelatedByIdPartial = true;
+                    }
+
+                    $collPermissionsRelatedById->getInternalIterator()->rewind();
+
+                    return $collPermissionsRelatedById;
+                }
+
+                if ($partial && $this->collPermissionsRelatedById) {
+                    foreach ($this->collPermissionsRelatedById as $obj) {
+                        if ($obj->isNew()) {
+                            $collPermissionsRelatedById[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPermissionsRelatedById = $collPermissionsRelatedById;
+                $this->collPermissionsRelatedByIdPartial = false;
+            }
+        }
+
+        return $this->collPermissionsRelatedById;
+    }
+
+    /**
+     * Sets a collection of PermissionRelatedById objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $permissionsRelatedById A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return   ChildPermission The current object (for fluent API support)
+     */
+    public function setPermissionsRelatedById(Collection $permissionsRelatedById, ConnectionInterface $con = null)
+    {
+        $permissionsRelatedByIdToDelete = $this->getPermissionsRelatedById(new Criteria(), $con)->diff($permissionsRelatedById);
+
+
+        $this->permissionsRelatedByIdScheduledForDeletion = $permissionsRelatedByIdToDelete;
+
+        foreach ($permissionsRelatedByIdToDelete as $permissionRelatedByIdRemoved) {
+            $permissionRelatedByIdRemoved->setPermissionRelatedByParentId(null);
+        }
+
+        $this->collPermissionsRelatedById = null;
+        foreach ($permissionsRelatedById as $permissionRelatedById) {
+            $this->addPermissionRelatedById($permissionRelatedById);
+        }
+
+        $this->collPermissionsRelatedById = $permissionsRelatedById;
+        $this->collPermissionsRelatedByIdPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Permission objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Permission objects.
+     * @throws PropelException
+     */
+    public function countPermissionsRelatedById(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPermissionsRelatedByIdPartial && !$this->isNew();
+        if (null === $this->collPermissionsRelatedById || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPermissionsRelatedById) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getPermissionsRelatedById());
+            }
+
+            $query = ChildPermissionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByPermissionRelatedByParentId($this)
+                ->count($con);
+        }
+
+        return count($this->collPermissionsRelatedById);
+    }
+
+    /**
+     * Method called to associate a ChildPermission object to this object
+     * through the ChildPermission foreign key attribute.
+     *
+     * @param    ChildPermission $l ChildPermission
+     * @return   \Alchemy\Component\Cerberus\Model\Permission The current object (for fluent API support)
+     */
+    public function addPermissionRelatedById(ChildPermission $l)
+    {
+        if ($this->collPermissionsRelatedById === null) {
+            $this->initPermissionsRelatedById();
+            $this->collPermissionsRelatedByIdPartial = true;
+        }
+
+        if (!in_array($l, $this->collPermissionsRelatedById->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddPermissionRelatedById($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param PermissionRelatedById $permissionRelatedById The permissionRelatedById object to add.
+     */
+    protected function doAddPermissionRelatedById($permissionRelatedById)
+    {
+        $this->collPermissionsRelatedById[]= $permissionRelatedById;
+        $permissionRelatedById->setPermissionRelatedByParentId($this);
+    }
+
+    /**
+     * @param  PermissionRelatedById $permissionRelatedById The permissionRelatedById object to remove.
+     * @return ChildPermission The current object (for fluent API support)
+     */
+    public function removePermissionRelatedById($permissionRelatedById)
+    {
+        if ($this->getPermissionsRelatedById()->contains($permissionRelatedById)) {
+            $this->collPermissionsRelatedById->remove($this->collPermissionsRelatedById->search($permissionRelatedById));
+            if (null === $this->permissionsRelatedByIdScheduledForDeletion) {
+                $this->permissionsRelatedByIdScheduledForDeletion = clone $this->collPermissionsRelatedById;
+                $this->permissionsRelatedByIdScheduledForDeletion->clear();
+            }
+            $this->permissionsRelatedByIdScheduledForDeletion[]= $permissionRelatedById;
+            $permissionRelatedById->setPermissionRelatedByParentId(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -1773,6 +2170,7 @@ abstract class Permission implements ActiveRecordInterface
         $this->description = null;
         $this->update_date = null;
         $this->status = null;
+        $this->parent_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -1793,6 +2191,11 @@ abstract class Permission implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collPermissionsRelatedById) {
+                foreach ($this->collPermissionsRelatedById as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collRolePermissions) {
                 foreach ($this->collRolePermissions as $o) {
                     $o->clearAllReferences($deep);
@@ -1805,6 +2208,10 @@ abstract class Permission implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        if ($this->collPermissionsRelatedById instanceof Collection) {
+            $this->collPermissionsRelatedById->clearIterator();
+        }
+        $this->collPermissionsRelatedById = null;
         if ($this->collRolePermissions instanceof Collection) {
             $this->collRolePermissions->clearIterator();
         }
@@ -1813,6 +2220,7 @@ abstract class Permission implements ActiveRecordInterface
             $this->collRoles->clearIterator();
         }
         $this->collRoles = null;
+        $this->aPermissionRelatedByParentId = null;
     }
 
     /**

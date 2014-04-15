@@ -19,13 +19,17 @@
         <column name="update_date" type="timestamp"/>
         <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
-    <table name="permission">
+    <table name="permission" isCrossRef="true">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="256" required="true"/>
         <column name="create_date" type="timestamp"/>
         <column name="description" type="varchar" size="256" required="true"/>
         <column name="update_date" type="timestamp"/>
         <column name="status" type="varchar" size="64" default="ACTIVE"/>
+        <column name="parent_id" type="integer"/>
+        <foreign-key foreignTable="permission" onDelete="cascade">
+            <reference local="parent_id" foreign="id" />
+        </foreign-key>
     </table>
     <table name="user_role" isCrossRef="true">
         <column name="user_id" type="integer" required="true" primaryKey="true"/>

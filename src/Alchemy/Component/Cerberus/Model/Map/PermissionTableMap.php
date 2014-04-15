@@ -57,7 +57,7 @@ class PermissionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -67,7 +67,7 @@ class PermissionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the ID field
@@ -100,6 +100,11 @@ class PermissionTableMap extends TableMap
     const STATUS = 'permission.STATUS';
 
     /**
+     * the column name for the PARENT_ID field
+     */
+    const PARENT_ID = 'permission.PARENT_ID';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -111,12 +116,12 @@ class PermissionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'CreateDate', 'Description', 'UpdateDate', 'Status', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'name', 'createDate', 'description', 'updateDate', 'status', ),
-        self::TYPE_COLNAME       => array(PermissionTableMap::ID, PermissionTableMap::NAME, PermissionTableMap::CREATE_DATE, PermissionTableMap::DESCRIPTION, PermissionTableMap::UPDATE_DATE, PermissionTableMap::STATUS, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'NAME', 'CREATE_DATE', 'DESCRIPTION', 'UPDATE_DATE', 'STATUS', ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'create_date', 'description', 'update_date', 'status', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'CreateDate', 'Description', 'UpdateDate', 'Status', 'ParentId', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'name', 'createDate', 'description', 'updateDate', 'status', 'parentId', ),
+        self::TYPE_COLNAME       => array(PermissionTableMap::ID, PermissionTableMap::NAME, PermissionTableMap::CREATE_DATE, PermissionTableMap::DESCRIPTION, PermissionTableMap::UPDATE_DATE, PermissionTableMap::STATUS, PermissionTableMap::PARENT_ID, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'NAME', 'CREATE_DATE', 'DESCRIPTION', 'UPDATE_DATE', 'STATUS', 'PARENT_ID', ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'create_date', 'description', 'update_date', 'status', 'parent_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -126,12 +131,12 @@ class PermissionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'CreateDate' => 2, 'Description' => 3, 'UpdateDate' => 4, 'Status' => 5, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'name' => 1, 'createDate' => 2, 'description' => 3, 'updateDate' => 4, 'status' => 5, ),
-        self::TYPE_COLNAME       => array(PermissionTableMap::ID => 0, PermissionTableMap::NAME => 1, PermissionTableMap::CREATE_DATE => 2, PermissionTableMap::DESCRIPTION => 3, PermissionTableMap::UPDATE_DATE => 4, PermissionTableMap::STATUS => 5, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'NAME' => 1, 'CREATE_DATE' => 2, 'DESCRIPTION' => 3, 'UPDATE_DATE' => 4, 'STATUS' => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'create_date' => 2, 'description' => 3, 'update_date' => 4, 'status' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'CreateDate' => 2, 'Description' => 3, 'UpdateDate' => 4, 'Status' => 5, 'ParentId' => 6, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'name' => 1, 'createDate' => 2, 'description' => 3, 'updateDate' => 4, 'status' => 5, 'parentId' => 6, ),
+        self::TYPE_COLNAME       => array(PermissionTableMap::ID => 0, PermissionTableMap::NAME => 1, PermissionTableMap::CREATE_DATE => 2, PermissionTableMap::DESCRIPTION => 3, PermissionTableMap::UPDATE_DATE => 4, PermissionTableMap::STATUS => 5, PermissionTableMap::PARENT_ID => 6, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'NAME' => 1, 'CREATE_DATE' => 2, 'DESCRIPTION' => 3, 'UPDATE_DATE' => 4, 'STATUS' => 5, 'PARENT_ID' => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'create_date' => 2, 'description' => 3, 'update_date' => 4, 'status' => 5, 'parent_id' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -149,6 +154,7 @@ class PermissionTableMap extends TableMap
         $this->setClassName('\\Alchemy\\Component\\Cerberus\\Model\\Permission');
         $this->setPackage('Alchemy.Component.Cerberus.Model');
         $this->setUseIdGenerator(true);
+        $this->setIsCrossRef(true);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('NAME', 'Name', 'VARCHAR', true, 256, null);
@@ -156,6 +162,7 @@ class PermissionTableMap extends TableMap
         $this->addColumn('DESCRIPTION', 'Description', 'VARCHAR', true, 256, null);
         $this->addColumn('UPDATE_DATE', 'UpdateDate', 'TIMESTAMP', false, null, null);
         $this->addColumn('STATUS', 'Status', 'VARCHAR', false, 64, 'ACTIVE');
+        $this->addForeignKey('PARENT_ID', 'ParentId', 'INTEGER', 'permission', 'ID', false, null, null);
     } // initialize()
 
     /**
@@ -163,6 +170,8 @@ class PermissionTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('PermissionRelatedByParentId', '\\Alchemy\\Component\\Cerberus\\Model\\Permission', RelationMap::MANY_TO_ONE, array('parent_id' => 'id', ), 'CASCADE', null);
+        $this->addRelation('PermissionRelatedById', '\\Alchemy\\Component\\Cerberus\\Model\\Permission', RelationMap::ONE_TO_MANY, array('id' => 'parent_id', ), 'CASCADE', null, 'PermissionsRelatedById');
         $this->addRelation('RolePermission', '\\Alchemy\\Component\\Cerberus\\Model\\RolePermission', RelationMap::ONE_TO_MANY, array('id' => 'permission_id', ), 'CASCADE', null, 'RolePermissions');
         $this->addRelation('Role', '\\Alchemy\\Component\\Cerberus\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
     } // buildRelations()
@@ -173,6 +182,7 @@ class PermissionTableMap extends TableMap
     {
         // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+                PermissionTableMap::clearInstancePool();
                 RolePermissionTableMap::clearInstancePool();
             }
 
@@ -320,6 +330,7 @@ class PermissionTableMap extends TableMap
             $criteria->addSelectColumn(PermissionTableMap::DESCRIPTION);
             $criteria->addSelectColumn(PermissionTableMap::UPDATE_DATE);
             $criteria->addSelectColumn(PermissionTableMap::STATUS);
+            $criteria->addSelectColumn(PermissionTableMap::PARENT_ID);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.NAME');
@@ -327,6 +338,7 @@ class PermissionTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.DESCRIPTION');
             $criteria->addSelectColumn($alias . '.UPDATE_DATE');
             $criteria->addSelectColumn($alias . '.STATUS');
+            $criteria->addSelectColumn($alias . '.PARENT_ID');
         }
     }
 
