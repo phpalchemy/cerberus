@@ -55,8 +55,8 @@ CREATE TABLE `permission`
     `status` VARCHAR(64) DEFAULT 'ACTIVE',
     `parent_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `permission_FI_1` (`parent_id`),
-    CONSTRAINT `permission_FK_1`
+    INDEX `permission_fi_6457b6` (`parent_id`),
+    CONSTRAINT `permission_fk_6457b6`
         FOREIGN KEY (`parent_id`)
         REFERENCES `permission` (`id`)
         ON DELETE CASCADE
@@ -73,12 +73,12 @@ CREATE TABLE `user_role`
     `user_id` INTEGER NOT NULL,
     `role_id` INTEGER NOT NULL,
     PRIMARY KEY (`user_id`,`role_id`),
-    INDEX `user_role_FI_2` (`role_id`),
-    CONSTRAINT `user_role_FK_1`
+    INDEX `user_role_fi_1ff99e` (`role_id`),
+    CONSTRAINT `user_role_fk_29554a`
         FOREIGN KEY (`user_id`)
         REFERENCES `user` (`id`)
         ON DELETE CASCADE,
-    CONSTRAINT `user_role_FK_2`
+    CONSTRAINT `user_role_fk_1ff99e`
         FOREIGN KEY (`role_id`)
         REFERENCES `role` (`id`)
         ON DELETE CASCADE
@@ -95,12 +95,12 @@ CREATE TABLE `role_permission`
     `role_id` INTEGER NOT NULL,
     `permission_id` INTEGER NOT NULL,
     PRIMARY KEY (`role_id`,`permission_id`),
-    INDEX `role_permission_FI_2` (`permission_id`),
-    CONSTRAINT `role_permission_FK_1`
+    INDEX `role_permission_fi_2b894c` (`permission_id`),
+    CONSTRAINT `role_permission_fk_1ff99e`
         FOREIGN KEY (`role_id`)
         REFERENCES `role` (`id`)
         ON DELETE CASCADE,
-    CONSTRAINT `role_permission_FK_2`
+    CONSTRAINT `role_permission_fk_2b894c`
         FOREIGN KEY (`permission_id`)
         REFERENCES `permission` (`id`)
         ON DELETE CASCADE

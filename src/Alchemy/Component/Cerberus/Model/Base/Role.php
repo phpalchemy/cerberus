@@ -24,6 +24,7 @@ use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
@@ -83,13 +84,13 @@ abstract class Role implements ActiveRecordInterface
 
     /**
      * The value for the create_date field.
-     * @var        string
+     * @var        \DateTime
      */
     protected $create_date;
 
     /**
      * The value for the update_date field.
-     * @var        string
+     * @var        \DateTime
      */
     protected $update_date;
 
@@ -113,14 +114,24 @@ abstract class Role implements ActiveRecordInterface
     protected $collRolePermissionsPartial;
 
     /**
-     * @var        ChildUser[] Collection to store aggregation of ChildUser objects.
+     * @var        ObjectCollection|ChildUser[] Cross Collection to store aggregation of ChildUser objects.
      */
     protected $collUsers;
 
     /**
-     * @var        ChildPermission[] Collection to store aggregation of ChildPermission objects.
+     * @var bool
+     */
+    protected $collUsersPartial;
+
+    /**
+     * @var        ObjectCollection|ChildPermission[] Cross Collection to store aggregation of ChildPermission objects.
      */
     protected $collPermissions;
+
+    /**
+     * @var bool
+     */
+    protected $collPermissionsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -132,25 +143,25 @@ abstract class Role implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection
+     * @var ObjectCollection|ChildUser[]
      */
     protected $usersScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection
+     * @var ObjectCollection|ChildPermission[]
      */
     protected $permissionsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection
+     * @var ObjectCollection|ChildUserRole[]
      */
     protected $userRolesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection
+     * @var ObjectCollection|ChildRolePermission[]
      */
     protected $rolePermissionsScheduledForDeletion = null;
 
@@ -181,7 +192,7 @@ abstract class Role implements ActiveRecordInterface
      */
     public function isModified()
     {
-        return !empty($this->modifiedColumns);
+        return !!$this->modifiedColumns;
     }
 
     /**
@@ -192,7 +203,7 @@ abstract class Role implements ActiveRecordInterface
      */
     public function isColumnModified($col)
     {
-        return in_array($col, $this->modifiedColumns);
+        return $this->modifiedColumns && isset($this->modifiedColumns[$col]);
     }
 
     /**
@@ -201,7 +212,7 @@ abstract class Role implements ActiveRecordInterface
      */
     public function getModifiedColumns()
     {
-        return array_unique($this->modifiedColumns);
+        return $this->modifiedColumns ? array_keys($this->modifiedColumns) : [];
     }
 
     /**
@@ -224,7 +235,7 @@ abstract class Role implements ActiveRecordInterface
      */
     public function setNew($b)
     {
-        $this->new = (Boolean) $b;
+        $this->new = (boolean) $b;
     }
 
     /**
@@ -243,7 +254,7 @@ abstract class Role implements ActiveRecordInterface
      */
     public function setDeleted($b)
     {
-        $this->deleted = (Boolean) $b;
+        $this->deleted = (boolean) $b;
     }
 
     /**
@@ -254,8 +265,8 @@ abstract class Role implements ActiveRecordInterface
     public function resetModified($col = null)
     {
         if (null !== $col) {
-            while (false !== ($offset = array_search($col, $this->modifiedColumns))) {
-                array_splice($this->modifiedColumns, $offset, 1);
+            if (isset($this->modifiedColumns[$col])) {
+                unset($this->modifiedColumns[$col]);
             }
         } else {
             $this->modifiedColumns = array();
@@ -272,8 +283,7 @@ abstract class Role implements ActiveRecordInterface
      */
     public function equals($obj)
     {
-        $thisclazz = get_class($this);
-        if (!is_object($obj) || !($obj instanceof $thisclazz)) {
+        if (!$obj instanceof static) {
             return false;
         }
 
@@ -281,27 +291,11 @@ abstract class Role implements ActiveRecordInterface
             return true;
         }
 
-        if (null === $this->getPrimaryKey()
-            || null === $obj->getPrimaryKey())  {
+        if (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey()) {
             return false;
         }
 
         return $this->getPrimaryKey() === $obj->getPrimaryKey();
-    }
-
-    /**
-     * If the primary key is not null, return the hashcode of the
-     * primary key. Otherwise, return the hash code of the object.
-     *
-     * @return int Hashcode
-     */
-    public function hashCode()
-    {
-        if (null !== $this->getPrimaryKey()) {
-            return crc32(serialize($this->getPrimaryKey()));
-        }
-
-        return crc32(serialize(clone $this));
     }
 
     /**
@@ -348,7 +342,7 @@ abstract class Role implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return Role The current object, for fluid interface
+     * @return $this|Role The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -367,30 +361,6 @@ abstract class Role implements ActiveRecordInterface
     protected function log($msg, $priority = Propel::LOG_INFO)
     {
         return Propel::log(get_class($this) . ': ' . $msg, $priority);
-    }
-
-    /**
-     * Populate the current object from a string, using a given parser format
-     * <code>
-     * $book = new Book();
-     * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
-     * </code>
-     *
-     * @param mixed $parser A AbstractParser instance,
-     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param string $data The source data to import from
-     *
-     * @return Role The current object, for fluid interface
-     */
-    public function importFrom($parser, $data)
-    {
-        if (!$parser instanceof AbstractParser) {
-            $parser = AbstractParser::getParser($parser);
-        }
-
-        $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
-
-        return $this;
     }
 
     /**
@@ -428,33 +398,30 @@ abstract class Role implements ActiveRecordInterface
     /**
      * Get the [id] column value.
      *
-     * @return   int
+     * @return int
      */
     public function getId()
     {
-
         return $this->id;
     }
 
     /**
      * Get the [name] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getName()
     {
-
         return $this->name;
     }
 
     /**
      * Get the [description] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getDescription()
     {
-
         return $this->description;
     }
 
@@ -465,7 +432,7 @@ abstract class Role implements ActiveRecordInterface
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw \DateTime object will be returned.
      *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     * @return string|\DateTime Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
@@ -485,7 +452,7 @@ abstract class Role implements ActiveRecordInterface
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw \DateTime object will be returned.
      *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     * @return string|\DateTime Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
@@ -501,139 +468,12 @@ abstract class Role implements ActiveRecordInterface
     /**
      * Get the [status] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getStatus()
     {
-
         return $this->status;
     }
-
-    /**
-     * Set the value of [id] column.
-     *
-     * @param      int $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
-     */
-    public function setId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->id !== $v) {
-            $this->id = $v;
-            $this->modifiedColumns[] = RoleTableMap::ID;
-        }
-
-
-        return $this;
-    } // setId()
-
-    /**
-     * Set the value of [name] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
-     */
-    public function setName($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[] = RoleTableMap::NAME;
-        }
-
-
-        return $this;
-    } // setName()
-
-    /**
-     * Set the value of [description] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
-     */
-    public function setDescription($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->description !== $v) {
-            $this->description = $v;
-            $this->modifiedColumns[] = RoleTableMap::DESCRIPTION;
-        }
-
-
-        return $this;
-    } // setDescription()
-
-    /**
-     * Sets the value of [create_date] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
-     */
-    public function setCreateDate($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->create_date !== null || $dt !== null) {
-            if ($dt !== $this->create_date) {
-                $this->create_date = $dt;
-                $this->modifiedColumns[] = RoleTableMap::CREATE_DATE;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setCreateDate()
-
-    /**
-     * Sets the value of [update_date] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
-     */
-    public function setUpdateDate($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->update_date !== null || $dt !== null) {
-            if ($dt !== $this->update_date) {
-                $this->update_date = $dt;
-                $this->modifiedColumns[] = RoleTableMap::UPDATE_DATE;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setUpdateDate()
-
-    /**
-     * Set the value of [status] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
-     */
-    public function setStatus($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->status !== $v) {
-            $this->status = $v;
-            $this->modifiedColumns[] = RoleTableMap::STATUS;
-        }
-
-
-        return $this;
-    } // setStatus()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -675,7 +515,6 @@ abstract class Role implements ActiveRecordInterface
     {
         try {
 
-
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : RoleTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
@@ -710,7 +549,7 @@ abstract class Role implements ActiveRecordInterface
             return $startcol + 6; // 6 = RoleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating \Alchemy\Component\Cerberus\Model\Role object", 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Alchemy\\Component\\Cerberus\\Model\\Role'), 0, $e);
         }
     }
 
@@ -730,6 +569,126 @@ abstract class Role implements ActiveRecordInterface
     public function ensureConsistency()
     {
     } // ensureConsistency
+
+    /**
+     * Set the value of [id] column.
+     *
+     * @param  int $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     */
+    public function setId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->id !== $v) {
+            $this->id = $v;
+            $this->modifiedColumns[RoleTableMap::COL_ID] = true;
+        }
+
+        return $this;
+    } // setId()
+
+    /**
+     * Set the value of [name] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     */
+    public function setName($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[RoleTableMap::COL_NAME] = true;
+        }
+
+        return $this;
+    } // setName()
+
+    /**
+     * Set the value of [description] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     */
+    public function setDescription($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->description !== $v) {
+            $this->description = $v;
+            $this->modifiedColumns[RoleTableMap::COL_DESCRIPTION] = true;
+        }
+
+        return $this;
+    } // setDescription()
+
+    /**
+     * Sets the value of [create_date] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     */
+    public function setCreateDate($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
+        if ($this->create_date !== null || $dt !== null) {
+            if ($dt !== $this->create_date) {
+                $this->create_date = $dt;
+                $this->modifiedColumns[RoleTableMap::COL_CREATE_DATE] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setCreateDate()
+
+    /**
+     * Sets the value of [update_date] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     */
+    public function setUpdateDate($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
+        if ($this->update_date !== null || $dt !== null) {
+            if ($dt !== $this->update_date) {
+                $this->update_date = $dt;
+                $this->modifiedColumns[RoleTableMap::COL_UPDATE_DATE] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setUpdateDate()
+
+    /**
+     * Set the value of [status] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     */
+    public function setStatus($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->status !== $v) {
+            $this->status = $v;
+            $this->modifiedColumns[RoleTableMap::COL_STATUS] = true;
+        }
+
+        return $this;
+    } // setStatus()
 
     /**
      * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
@@ -796,23 +755,16 @@ abstract class Role implements ActiveRecordInterface
             $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
         }
 
-        $con->beginTransaction();
-        try {
+        $con->transaction(function () use ($con) {
             $deleteQuery = ChildRoleQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
                 $deleteQuery->delete($con);
                 $this->postDelete($con);
-                $con->commit();
                 $this->setDeleted(true);
-            } else {
-                $con->commit();
             }
-        } catch (Exception $e) {
-            $con->rollBack();
-            throw $e;
-        }
+        });
     }
 
     /**
@@ -838,9 +790,8 @@ abstract class Role implements ActiveRecordInterface
             $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
         }
 
-        $con->beginTransaction();
-        $isInsert = $this->isNew();
-        try {
+        return $con->transaction(function () use ($con) {
+            $isInsert = $this->isNew();
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
@@ -859,13 +810,9 @@ abstract class Role implements ActiveRecordInterface
             } else {
                 $affectedRows = 0;
             }
-            $con->commit();
 
             return $affectedRows;
-        } catch (Exception $e) {
-            $con->rollBack();
-            throw $e;
-        }
+        });
     }
 
     /**
@@ -899,56 +846,60 @@ abstract class Role implements ActiveRecordInterface
             if ($this->usersScheduledForDeletion !== null) {
                 if (!$this->usersScheduledForDeletion->isEmpty()) {
                     $pks = array();
-                    $pk  = $this->getPrimaryKey();
-                    foreach ($this->usersScheduledForDeletion->getPrimaryKeys(false) as $remotePk) {
-                        $pks[] = array($remotePk, $pk);
+                    foreach ($this->usersScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
                     }
 
-                    UserRoleQuery::create()
+                    \Alchemy\Component\Cerberus\Model\UserRoleQuery::create()
                         ->filterByPrimaryKeys($pks)
                         ->delete($con);
+
                     $this->usersScheduledForDeletion = null;
                 }
 
-                foreach ($this->getUsers() as $user) {
-                    if ($user->isModified()) {
-                        $user->save($con);
-                    }
-                }
-            } elseif ($this->collUsers) {
+            }
+
+            if ($this->collUsers) {
                 foreach ($this->collUsers as $user) {
-                    if ($user->isModified()) {
+                    if (!$user->isDeleted() && ($user->isNew() || $user->isModified())) {
                         $user->save($con);
                     }
                 }
             }
+
 
             if ($this->permissionsScheduledForDeletion !== null) {
                 if (!$this->permissionsScheduledForDeletion->isEmpty()) {
                     $pks = array();
-                    $pk  = $this->getPrimaryKey();
-                    foreach ($this->permissionsScheduledForDeletion->getPrimaryKeys(false) as $remotePk) {
-                        $pks[] = array($pk, $remotePk);
+                    foreach ($this->permissionsScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getId();
+                        $pks[] = $entryPk;
                     }
 
-                    RolePermissionQuery::create()
+                    \Alchemy\Component\Cerberus\Model\RolePermissionQuery::create()
                         ->filterByPrimaryKeys($pks)
                         ->delete($con);
+
                     $this->permissionsScheduledForDeletion = null;
                 }
 
-                foreach ($this->getPermissions() as $permission) {
-                    if ($permission->isModified()) {
-                        $permission->save($con);
-                    }
-                }
-            } elseif ($this->collPermissions) {
+            }
+
+            if ($this->collPermissions) {
                 foreach ($this->collPermissions as $permission) {
-                    if ($permission->isModified()) {
+                    if (!$permission->isDeleted() && ($permission->isNew() || $permission->isModified())) {
                         $permission->save($con);
                     }
                 }
             }
+
 
             if ($this->userRolesScheduledForDeletion !== null) {
                 if (!$this->userRolesScheduledForDeletion->isEmpty()) {
@@ -959,8 +910,8 @@ abstract class Role implements ActiveRecordInterface
                 }
             }
 
-                if ($this->collUserRoles !== null) {
-            foreach ($this->collUserRoles as $referrerFK) {
+            if ($this->collUserRoles !== null) {
+                foreach ($this->collUserRoles as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -976,8 +927,8 @@ abstract class Role implements ActiveRecordInterface
                 }
             }
 
-                if ($this->collRolePermissions !== null) {
-            foreach ($this->collRolePermissions as $referrerFK) {
+            if ($this->collRolePermissions !== null) {
+                foreach ($this->collRolePermissions as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1004,28 +955,28 @@ abstract class Role implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = RoleTableMap::ID;
+        $this->modifiedColumns[RoleTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . RoleTableMap::ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . RoleTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(RoleTableMap::ID)) {
+        if ($this->isColumnModified(RoleTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(RoleTableMap::NAME)) {
+        if ($this->isColumnModified(RoleTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'NAME';
         }
-        if ($this->isColumnModified(RoleTableMap::DESCRIPTION)) {
+        if ($this->isColumnModified(RoleTableMap::COL_DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'DESCRIPTION';
         }
-        if ($this->isColumnModified(RoleTableMap::CREATE_DATE)) {
+        if ($this->isColumnModified(RoleTableMap::COL_CREATE_DATE)) {
             $modifiedColumns[':p' . $index++]  = 'CREATE_DATE';
         }
-        if ($this->isColumnModified(RoleTableMap::UPDATE_DATE)) {
+        if ($this->isColumnModified(RoleTableMap::COL_UPDATE_DATE)) {
             $modifiedColumns[':p' . $index++]  = 'UPDATE_DATE';
         }
-        if ($this->isColumnModified(RoleTableMap::STATUS)) {
+        if ($this->isColumnModified(RoleTableMap::COL_STATUS)) {
             $modifiedColumns[':p' . $index++]  = 'STATUS';
         }
 
@@ -1193,13 +1144,13 @@ abstract class Role implements ActiveRecordInterface
     /**
      * Sets a field from the object by name passed in as a string.
      *
-     * @param      string $name
-     * @param      mixed  $value field value
-     * @param      string $type The type of fieldname the $name is of:
-     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
-     *                     Defaults to TableMap::TYPE_PHPNAME.
-     * @return void
+     * @param  string $name
+     * @param  mixed  $value field value
+     * @param  string $type The type of fieldname the $name is of:
+     *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                Defaults to TableMap::TYPE_PHPNAME.
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
@@ -1212,9 +1163,9 @@ abstract class Role implements ActiveRecordInterface
      * Sets a field from the object by Position as specified in the xml schema.
      * Zero-based.
      *
-     * @param      int $pos position in xml schema
-     * @param      mixed $value field value
-     * @return void
+     * @param  int $pos position in xml schema
+     * @param  mixed $value field value
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role
      */
     public function setByPosition($pos, $value)
     {
@@ -1238,6 +1189,8 @@ abstract class Role implements ActiveRecordInterface
                 $this->setStatus($value);
                 break;
         } // switch()
+
+        return $this;
     }
 
     /**
@@ -1261,12 +1214,48 @@ abstract class Role implements ActiveRecordInterface
     {
         $keys = RoleTableMap::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setName($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setDescription($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setCreateDate($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setUpdateDate($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setStatus($arr[$keys[5]]);
+        if (array_key_exists($keys[0], $arr)) {
+            $this->setId($arr[$keys[0]]);
+        }
+        if (array_key_exists($keys[1], $arr)) {
+            $this->setName($arr[$keys[1]]);
+        }
+        if (array_key_exists($keys[2], $arr)) {
+            $this->setDescription($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setCreateDate($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setUpdateDate($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setStatus($arr[$keys[5]]);
+        }
+    }
+
+     /**
+     * Populate the current object from a string, using a given parser format
+     * <code>
+     * $book = new Book();
+     * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
+     * </code>
+     *
+     * @param mixed $parser A AbstractParser instance,
+     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string $data The source data to import from
+     *
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object, for fluid interface
+     */
+    public function importFrom($parser, $data)
+    {
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
+        }
+
+        $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
+
+        return $this;
     }
 
     /**
@@ -1278,12 +1267,24 @@ abstract class Role implements ActiveRecordInterface
     {
         $criteria = new Criteria(RoleTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(RoleTableMap::ID)) $criteria->add(RoleTableMap::ID, $this->id);
-        if ($this->isColumnModified(RoleTableMap::NAME)) $criteria->add(RoleTableMap::NAME, $this->name);
-        if ($this->isColumnModified(RoleTableMap::DESCRIPTION)) $criteria->add(RoleTableMap::DESCRIPTION, $this->description);
-        if ($this->isColumnModified(RoleTableMap::CREATE_DATE)) $criteria->add(RoleTableMap::CREATE_DATE, $this->create_date);
-        if ($this->isColumnModified(RoleTableMap::UPDATE_DATE)) $criteria->add(RoleTableMap::UPDATE_DATE, $this->update_date);
-        if ($this->isColumnModified(RoleTableMap::STATUS)) $criteria->add(RoleTableMap::STATUS, $this->status);
+        if ($this->isColumnModified(RoleTableMap::COL_ID)) {
+            $criteria->add(RoleTableMap::COL_ID, $this->id);
+        }
+        if ($this->isColumnModified(RoleTableMap::COL_NAME)) {
+            $criteria->add(RoleTableMap::COL_NAME, $this->name);
+        }
+        if ($this->isColumnModified(RoleTableMap::COL_DESCRIPTION)) {
+            $criteria->add(RoleTableMap::COL_DESCRIPTION, $this->description);
+        }
+        if ($this->isColumnModified(RoleTableMap::COL_CREATE_DATE)) {
+            $criteria->add(RoleTableMap::COL_CREATE_DATE, $this->create_date);
+        }
+        if ($this->isColumnModified(RoleTableMap::COL_UPDATE_DATE)) {
+            $criteria->add(RoleTableMap::COL_UPDATE_DATE, $this->update_date);
+        }
+        if ($this->isColumnModified(RoleTableMap::COL_STATUS)) {
+            $criteria->add(RoleTableMap::COL_STATUS, $this->status);
+        }
 
         return $criteria;
     }
@@ -1294,19 +1295,43 @@ abstract class Role implements ActiveRecordInterface
      * Unlike buildCriteria() this method includes the primary key values regardless
      * of whether or not they have been modified.
      *
+     * @throws LogicException if no primary key is defined
+     *
      * @return Criteria The Criteria object containing value(s) for primary key(s).
      */
     public function buildPkeyCriteria()
     {
         $criteria = new Criteria(RoleTableMap::DATABASE_NAME);
-        $criteria->add(RoleTableMap::ID, $this->id);
+        $criteria->add(RoleTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
 
     /**
+     * If the primary key is not null, return the hashcode of the
+     * primary key. Otherwise, return the hash code of the object.
+     *
+     * @return int Hashcode
+     */
+    public function hashCode()
+    {
+        $validPk = null !== $this->getId();
+
+        $validPrimaryKeyFKs = 0;
+        $primaryKeyFKs = [];
+
+        if ($validPk) {
+            return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
+        } elseif ($validPrimaryKeyFKs) {
+            return crc32(json_encode($primaryKeyFKs, JSON_UNESCAPED_UNICODE));
+        }
+
+        return spl_object_hash($this);
+    }
+
+    /**
      * Returns the primary key for this object (row).
-     * @return   int
+     * @return int
      */
     public function getPrimaryKey()
     {
@@ -1330,7 +1355,6 @@ abstract class Role implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-
         return null === $this->getId();
     }
 
@@ -1386,8 +1410,8 @@ abstract class Role implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \Alchemy\Component\Cerberus\Model\Role Clone of current object.
+     * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+     * @return \Alchemy\Component\Cerberus\Model\Role Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1473,10 +1497,10 @@ abstract class Role implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildUserRole[] List of ChildUserRole objects
+     * @return ObjectCollection|ChildUserRole[] List of ChildUserRole objects
      * @throws PropelException
      */
-    public function getUserRoles($criteria = null, ConnectionInterface $con = null)
+    public function getUserRoles(Criteria $criteria = null, ConnectionInterface $con = null)
     {
         $partial = $this->collUserRolesPartial && !$this->isNew();
         if (null === $this->collUserRoles || null !== $criteria  || $partial) {
@@ -1501,8 +1525,6 @@ abstract class Role implements ActiveRecordInterface
                         $this->collUserRolesPartial = true;
                     }
 
-                    $collUserRoles->getInternalIterator()->rewind();
-
                     return $collUserRoles;
                 }
 
@@ -1523,17 +1545,18 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * Sets a collection of UserRole objects related by a one-to-many relationship
+     * Sets a collection of ChildUserRole objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
      * @param      Collection $userRoles A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildRole The current object (for fluent API support)
+     * @return $this|ChildRole The current object (for fluent API support)
      */
     public function setUserRoles(Collection $userRoles, ConnectionInterface $con = null)
     {
+        /** @var ChildUserRole[] $userRolesToDelete */
         $userRolesToDelete = $this->getUserRoles(new Criteria(), $con)->diff($userRoles);
 
 
@@ -1595,8 +1618,8 @@ abstract class Role implements ActiveRecordInterface
      * Method called to associate a ChildUserRole object to this object
      * through the ChildUserRole foreign key attribute.
      *
-     * @param    ChildUserRole $l ChildUserRole
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     * @param  ChildUserRole $l ChildUserRole
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
      */
     public function addUserRole(ChildUserRole $l)
     {
@@ -1605,7 +1628,7 @@ abstract class Role implements ActiveRecordInterface
             $this->collUserRolesPartial = true;
         }
 
-        if (!in_array($l, $this->collUserRoles->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+        if (!$this->collUserRoles->contains($l)) {
             $this->doAddUserRole($l);
         }
 
@@ -1613,22 +1636,23 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * @param UserRole $userRole The userRole object to add.
+     * @param ChildUserRole $userRole The ChildUserRole object to add.
      */
-    protected function doAddUserRole($userRole)
+    protected function doAddUserRole(ChildUserRole $userRole)
     {
         $this->collUserRoles[]= $userRole;
         $userRole->setRole($this);
     }
 
     /**
-     * @param  UserRole $userRole The userRole object to remove.
-     * @return ChildRole The current object (for fluent API support)
+     * @param  ChildUserRole $userRole The ChildUserRole object to remove.
+     * @return $this|ChildRole The current object (for fluent API support)
      */
-    public function removeUserRole($userRole)
+    public function removeUserRole(ChildUserRole $userRole)
     {
         if ($this->getUserRoles()->contains($userRole)) {
-            $this->collUserRoles->remove($this->collUserRoles->search($userRole));
+            $pos = $this->collUserRoles->search($userRole);
+            $this->collUserRoles->remove($pos);
             if (null === $this->userRolesScheduledForDeletion) {
                 $this->userRolesScheduledForDeletion = clone $this->collUserRoles;
                 $this->userRolesScheduledForDeletion->clear();
@@ -1655,9 +1679,9 @@ abstract class Role implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return Collection|ChildUserRole[] List of ChildUserRole objects
+     * @return ObjectCollection|ChildUserRole[] List of ChildUserRole objects
      */
-    public function getUserRolesJoinUser($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getUserRolesJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
         $query = ChildUserRoleQuery::create(null, $criteria);
         $query->joinWith('User', $joinBehavior);
@@ -1719,10 +1743,10 @@ abstract class Role implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildRolePermission[] List of ChildRolePermission objects
+     * @return ObjectCollection|ChildRolePermission[] List of ChildRolePermission objects
      * @throws PropelException
      */
-    public function getRolePermissions($criteria = null, ConnectionInterface $con = null)
+    public function getRolePermissions(Criteria $criteria = null, ConnectionInterface $con = null)
     {
         $partial = $this->collRolePermissionsPartial && !$this->isNew();
         if (null === $this->collRolePermissions || null !== $criteria  || $partial) {
@@ -1747,8 +1771,6 @@ abstract class Role implements ActiveRecordInterface
                         $this->collRolePermissionsPartial = true;
                     }
 
-                    $collRolePermissions->getInternalIterator()->rewind();
-
                     return $collRolePermissions;
                 }
 
@@ -1769,17 +1791,18 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * Sets a collection of RolePermission objects related by a one-to-many relationship
+     * Sets a collection of ChildRolePermission objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
      * @param      Collection $rolePermissions A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildRole The current object (for fluent API support)
+     * @return $this|ChildRole The current object (for fluent API support)
      */
     public function setRolePermissions(Collection $rolePermissions, ConnectionInterface $con = null)
     {
+        /** @var ChildRolePermission[] $rolePermissionsToDelete */
         $rolePermissionsToDelete = $this->getRolePermissions(new Criteria(), $con)->diff($rolePermissions);
 
 
@@ -1841,8 +1864,8 @@ abstract class Role implements ActiveRecordInterface
      * Method called to associate a ChildRolePermission object to this object
      * through the ChildRolePermission foreign key attribute.
      *
-     * @param    ChildRolePermission $l ChildRolePermission
-     * @return   \Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
+     * @param  ChildRolePermission $l ChildRolePermission
+     * @return $this|\Alchemy\Component\Cerberus\Model\Role The current object (for fluent API support)
      */
     public function addRolePermission(ChildRolePermission $l)
     {
@@ -1851,7 +1874,7 @@ abstract class Role implements ActiveRecordInterface
             $this->collRolePermissionsPartial = true;
         }
 
-        if (!in_array($l, $this->collRolePermissions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+        if (!$this->collRolePermissions->contains($l)) {
             $this->doAddRolePermission($l);
         }
 
@@ -1859,22 +1882,23 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * @param RolePermission $rolePermission The rolePermission object to add.
+     * @param ChildRolePermission $rolePermission The ChildRolePermission object to add.
      */
-    protected function doAddRolePermission($rolePermission)
+    protected function doAddRolePermission(ChildRolePermission $rolePermission)
     {
         $this->collRolePermissions[]= $rolePermission;
         $rolePermission->setRole($this);
     }
 
     /**
-     * @param  RolePermission $rolePermission The rolePermission object to remove.
-     * @return ChildRole The current object (for fluent API support)
+     * @param  ChildRolePermission $rolePermission The ChildRolePermission object to remove.
+     * @return $this|ChildRole The current object (for fluent API support)
      */
-    public function removeRolePermission($rolePermission)
+    public function removeRolePermission(ChildRolePermission $rolePermission)
     {
         if ($this->getRolePermissions()->contains($rolePermission)) {
-            $this->collRolePermissions->remove($this->collRolePermissions->search($rolePermission));
+            $pos = $this->collRolePermissions->search($rolePermission);
+            $this->collRolePermissions->remove($pos);
             if (null === $this->rolePermissionsScheduledForDeletion) {
                 $this->rolePermissionsScheduledForDeletion = clone $this->collRolePermissions;
                 $this->rolePermissionsScheduledForDeletion->clear();
@@ -1901,9 +1925,9 @@ abstract class Role implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return Collection|ChildRolePermission[] List of ChildRolePermission objects
+     * @return ObjectCollection|ChildRolePermission[] List of ChildRolePermission objects
      */
-    public function getRolePermissionsJoinPermission($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getRolePermissionsJoinPermission(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
         $query = ChildRolePermissionQuery::create(null, $criteria);
         $query->joinWith('Permission', $joinBehavior);
@@ -1923,7 +1947,6 @@ abstract class Role implements ActiveRecordInterface
     public function clearUsers()
     {
         $this->collUsers = null; // important to set this to NULL since that means it is uninitialized
-        $this->collUsersPartial = null;
     }
 
     /**
@@ -1938,7 +1961,19 @@ abstract class Role implements ActiveRecordInterface
     public function initUsers()
     {
         $this->collUsers = new ObjectCollection();
+        $this->collUsersPartial = true;
+
         $this->collUsers->setModel('\Alchemy\Component\Cerberus\Model\User');
+    }
+
+    /**
+     * Checks if the collUsers collection is loaded.
+     *
+     * @return bool
+     */
+    public function isUsersLoaded()
+    {
+        return null !== $this->collUsers;
     }
 
     /**
@@ -1956,20 +1991,35 @@ abstract class Role implements ActiveRecordInterface
      *
      * @return ObjectCollection|ChildUser[] List of ChildUser objects
      */
-    public function getUsers($criteria = null, ConnectionInterface $con = null)
+    public function getUsers(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        if (null === $this->collUsers || null !== $criteria) {
-            if ($this->isNew() && null === $this->collUsers) {
+        $partial = $this->collUsersPartial && !$this->isNew();
+        if (null === $this->collUsers || null !== $criteria || $partial) {
+            if ($this->isNew()) {
                 // return empty collection
-                $this->initUsers();
+                if (null === $this->collUsers) {
+                    $this->initUsers();
+                }
             } else {
-                $collUsers = ChildUserQuery::create(null, $criteria)
-                    ->filterByRole($this)
-                    ->find($con);
+
+                $query = ChildUserQuery::create(null, $criteria)
+                    ->filterByRole($this);
+                $collUsers = $query->find($con);
                 if (null !== $criteria) {
                     return $collUsers;
                 }
+
+                if ($partial && $this->collUsers) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collUsers as $obj) {
+                        if (!$collUsers->contains($obj)) {
+                            $collUsers[] = $obj;
+                        }
+                    }
+                }
+
                 $this->collUsers = $collUsers;
+                $this->collUsersPartial = false;
             }
         }
 
@@ -1984,14 +2034,18 @@ abstract class Role implements ActiveRecordInterface
      *
      * @param  Collection $users A Propel collection.
      * @param  ConnectionInterface $con Optional connection object
-     * @return ChildRole The current object (for fluent API support)
+     * @return $this|ChildRole The current object (for fluent API support)
      */
     public function setUsers(Collection $users, ConnectionInterface $con = null)
     {
         $this->clearUsers();
         $currentUsers = $this->getUsers();
 
-        $this->usersScheduledForDeletion = $currentUsers->diff($users);
+        $usersScheduledForDeletion = $currentUsers->diff($users);
+
+        foreach ($usersScheduledForDeletion as $toDelete) {
+            $this->removeUser($toDelete);
+        }
 
         foreach ($users as $user) {
             if (!$currentUsers->contains($user)) {
@@ -1999,27 +2053,34 @@ abstract class Role implements ActiveRecordInterface
             }
         }
 
+        $this->collUsersPartial = false;
         $this->collUsers = $users;
 
         return $this;
     }
 
     /**
-     * Gets the number of ChildUser objects related by a many-to-many relationship
+     * Gets the number of User objects related by a many-to-many relationship
      * to the current object by way of the user_role cross-reference table.
      *
      * @param      Criteria $criteria Optional query object to filter the query
      * @param      boolean $distinct Set to true to force count distinct
      * @param      ConnectionInterface $con Optional connection object
      *
-     * @return int the number of related ChildUser objects
+     * @return int the number of related User objects
      */
-    public function countUsers($criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countUsers(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        if (null === $this->collUsers || null !== $criteria) {
+        $partial = $this->collUsersPartial && !$this->isNew();
+        if (null === $this->collUsers || null !== $criteria || $partial) {
             if ($this->isNew() && null === $this->collUsers) {
                 return 0;
             } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getUsers());
+                }
+
                 $query = ChildUserQuery::create(null, $criteria);
                 if ($distinct) {
                     $query->distinct();
@@ -2035,10 +2096,10 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * Associate a ChildUser object to this object
+     * Associate a ChildUser to this object
      * through the user_role cross reference table.
      *
-     * @param  ChildUser $user The ChildUserRole object to relate
+     * @param ChildUser $user
      * @return ChildRole The current object (for fluent API support)
      */
     public function addUser(ChildUser $user)
@@ -2047,40 +2108,61 @@ abstract class Role implements ActiveRecordInterface
             $this->initUsers();
         }
 
-        if (!$this->collUsers->contains($user)) { // only add it if the **same** object is not already associated
+        if (!$this->getUsers()->contains($user)) {
+            // only add it if the **same** object is not already associated
+            $this->collUsers->push($user);
             $this->doAddUser($user);
-            $this->collUsers[] = $user;
         }
 
         return $this;
     }
 
     /**
-     * @param    User $user The user object to add.
+     *
+     * @param ChildUser $user
      */
-    protected function doAddUser($user)
+    protected function doAddUser(ChildUser $user)
     {
         $userRole = new ChildUserRole();
+
         $userRole->setUser($user);
+
+        $userRole->setRole($this);
+
         $this->addUserRole($userRole);
+
         // set the back reference to this object directly as using provided method either results
         // in endless loop or in multiple relations
-        if (!$user->getRoles()->contains($this)) {
-            $foreignCollection   = $user->getRoles();
-            $foreignCollection[] = $this;
+        if (!$user->isRolesLoaded()) {
+            $user->initRoles();
+            $user->getRoles()->push($this);
+        } elseif (!$user->getRoles()->contains($this)) {
+            $user->getRoles()->push($this);
         }
+
     }
 
     /**
-     * Remove a ChildUser object to this object
+     * Remove user of this object
      * through the user_role cross reference table.
      *
-     * @param ChildUser $user The ChildUserRole object to relate
+     * @param ChildUser $user
      * @return ChildRole The current object (for fluent API support)
      */
     public function removeUser(ChildUser $user)
     {
-        if ($this->getUsers()->contains($user)) {
+        if ($this->getUsers()->contains($user)) { $userRole = new ChildUserRole();
+
+            $userRole->setUser($user);
+            if ($user->isRolesLoaded()) {
+                //remove the back reference if available
+                $user->getRoles()->removeObject($this);
+            }
+
+            $userRole->setRole($this);
+            $this->removeUserRole(clone $userRole);
+            $userRole->clear();
+
             $this->collUsers->remove($this->collUsers->search($user));
 
             if (null === $this->usersScheduledForDeletion) {
@@ -2088,8 +2170,9 @@ abstract class Role implements ActiveRecordInterface
                 $this->usersScheduledForDeletion->clear();
             }
 
-            $this->usersScheduledForDeletion[] = $user;
+            $this->usersScheduledForDeletion->push($user);
         }
+
 
         return $this;
     }
@@ -2106,7 +2189,6 @@ abstract class Role implements ActiveRecordInterface
     public function clearPermissions()
     {
         $this->collPermissions = null; // important to set this to NULL since that means it is uninitialized
-        $this->collPermissionsPartial = null;
     }
 
     /**
@@ -2121,7 +2203,19 @@ abstract class Role implements ActiveRecordInterface
     public function initPermissions()
     {
         $this->collPermissions = new ObjectCollection();
+        $this->collPermissionsPartial = true;
+
         $this->collPermissions->setModel('\Alchemy\Component\Cerberus\Model\Permission');
+    }
+
+    /**
+     * Checks if the collPermissions collection is loaded.
+     *
+     * @return bool
+     */
+    public function isPermissionsLoaded()
+    {
+        return null !== $this->collPermissions;
     }
 
     /**
@@ -2139,20 +2233,35 @@ abstract class Role implements ActiveRecordInterface
      *
      * @return ObjectCollection|ChildPermission[] List of ChildPermission objects
      */
-    public function getPermissions($criteria = null, ConnectionInterface $con = null)
+    public function getPermissions(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        if (null === $this->collPermissions || null !== $criteria) {
-            if ($this->isNew() && null === $this->collPermissions) {
+        $partial = $this->collPermissionsPartial && !$this->isNew();
+        if (null === $this->collPermissions || null !== $criteria || $partial) {
+            if ($this->isNew()) {
                 // return empty collection
-                $this->initPermissions();
+                if (null === $this->collPermissions) {
+                    $this->initPermissions();
+                }
             } else {
-                $collPermissions = ChildPermissionQuery::create(null, $criteria)
-                    ->filterByRole($this)
-                    ->find($con);
+
+                $query = ChildPermissionQuery::create(null, $criteria)
+                    ->filterByRole($this);
+                $collPermissions = $query->find($con);
                 if (null !== $criteria) {
                     return $collPermissions;
                 }
+
+                if ($partial && $this->collPermissions) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collPermissions as $obj) {
+                        if (!$collPermissions->contains($obj)) {
+                            $collPermissions[] = $obj;
+                        }
+                    }
+                }
+
                 $this->collPermissions = $collPermissions;
+                $this->collPermissionsPartial = false;
             }
         }
 
@@ -2167,14 +2276,18 @@ abstract class Role implements ActiveRecordInterface
      *
      * @param  Collection $permissions A Propel collection.
      * @param  ConnectionInterface $con Optional connection object
-     * @return ChildRole The current object (for fluent API support)
+     * @return $this|ChildRole The current object (for fluent API support)
      */
     public function setPermissions(Collection $permissions, ConnectionInterface $con = null)
     {
         $this->clearPermissions();
         $currentPermissions = $this->getPermissions();
 
-        $this->permissionsScheduledForDeletion = $currentPermissions->diff($permissions);
+        $permissionsScheduledForDeletion = $currentPermissions->diff($permissions);
+
+        foreach ($permissionsScheduledForDeletion as $toDelete) {
+            $this->removePermission($toDelete);
+        }
 
         foreach ($permissions as $permission) {
             if (!$currentPermissions->contains($permission)) {
@@ -2182,27 +2295,34 @@ abstract class Role implements ActiveRecordInterface
             }
         }
 
+        $this->collPermissionsPartial = false;
         $this->collPermissions = $permissions;
 
         return $this;
     }
 
     /**
-     * Gets the number of ChildPermission objects related by a many-to-many relationship
+     * Gets the number of Permission objects related by a many-to-many relationship
      * to the current object by way of the role_permission cross-reference table.
      *
      * @param      Criteria $criteria Optional query object to filter the query
      * @param      boolean $distinct Set to true to force count distinct
      * @param      ConnectionInterface $con Optional connection object
      *
-     * @return int the number of related ChildPermission objects
+     * @return int the number of related Permission objects
      */
-    public function countPermissions($criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countPermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        if (null === $this->collPermissions || null !== $criteria) {
+        $partial = $this->collPermissionsPartial && !$this->isNew();
+        if (null === $this->collPermissions || null !== $criteria || $partial) {
             if ($this->isNew() && null === $this->collPermissions) {
                 return 0;
             } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getPermissions());
+                }
+
                 $query = ChildPermissionQuery::create(null, $criteria);
                 if ($distinct) {
                     $query->distinct();
@@ -2218,10 +2338,10 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * Associate a ChildPermission object to this object
+     * Associate a ChildPermission to this object
      * through the role_permission cross reference table.
      *
-     * @param  ChildPermission $permission The ChildRolePermission object to relate
+     * @param ChildPermission $permission
      * @return ChildRole The current object (for fluent API support)
      */
     public function addPermission(ChildPermission $permission)
@@ -2230,40 +2350,61 @@ abstract class Role implements ActiveRecordInterface
             $this->initPermissions();
         }
 
-        if (!$this->collPermissions->contains($permission)) { // only add it if the **same** object is not already associated
+        if (!$this->getPermissions()->contains($permission)) {
+            // only add it if the **same** object is not already associated
+            $this->collPermissions->push($permission);
             $this->doAddPermission($permission);
-            $this->collPermissions[] = $permission;
         }
 
         return $this;
     }
 
     /**
-     * @param    Permission $permission The permission object to add.
+     *
+     * @param ChildPermission $permission
      */
-    protected function doAddPermission($permission)
+    protected function doAddPermission(ChildPermission $permission)
     {
         $rolePermission = new ChildRolePermission();
+
         $rolePermission->setPermission($permission);
+
+        $rolePermission->setRole($this);
+
         $this->addRolePermission($rolePermission);
+
         // set the back reference to this object directly as using provided method either results
         // in endless loop or in multiple relations
-        if (!$permission->getRoles()->contains($this)) {
-            $foreignCollection   = $permission->getRoles();
-            $foreignCollection[] = $this;
+        if (!$permission->isRolesLoaded()) {
+            $permission->initRoles();
+            $permission->getRoles()->push($this);
+        } elseif (!$permission->getRoles()->contains($this)) {
+            $permission->getRoles()->push($this);
         }
+
     }
 
     /**
-     * Remove a ChildPermission object to this object
+     * Remove permission of this object
      * through the role_permission cross reference table.
      *
-     * @param ChildPermission $permission The ChildRolePermission object to relate
+     * @param ChildPermission $permission
      * @return ChildRole The current object (for fluent API support)
      */
     public function removePermission(ChildPermission $permission)
     {
-        if ($this->getPermissions()->contains($permission)) {
+        if ($this->getPermissions()->contains($permission)) { $rolePermission = new ChildRolePermission();
+
+            $rolePermission->setPermission($permission);
+            if ($permission->isRolesLoaded()) {
+                //remove the back reference if available
+                $permission->getRoles()->removeObject($this);
+            }
+
+            $rolePermission->setRole($this);
+            $this->removeRolePermission(clone $rolePermission);
+            $rolePermission->clear();
+
             $this->collPermissions->remove($this->collPermissions->search($permission));
 
             if (null === $this->permissionsScheduledForDeletion) {
@@ -2271,14 +2412,17 @@ abstract class Role implements ActiveRecordInterface
                 $this->permissionsScheduledForDeletion->clear();
             }
 
-            $this->permissionsScheduledForDeletion[] = $permission;
+            $this->permissionsScheduledForDeletion->push($permission);
         }
+
 
         return $this;
     }
 
     /**
-     * Clears the current object and sets all attributes to their default values
+     * Clears the current object, sets all attributes to their default values and removes
+     * outgoing references as well as back-references (from other objects to this one. Results probably in a database
+     * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
@@ -2297,11 +2441,10 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * Resets all references to other model objects or collections of model objects.
+     * Resets all references and back-references to other model objects or collections of model objects.
      *
-     * This method is a user-space workaround for PHP's inability to garbage collect
-     * objects with circular references (even in PHP 5.3). This is currently necessary
-     * when using Propel in certain daemon or large-volume/high-memory operations.
+     * This method is used to reset all php object references (not the actual reference in the database).
+     * Necessary for object serialisation.
      *
      * @param      boolean $deep Whether to also clear the references on all referrer objects.
      */
@@ -2330,21 +2473,9 @@ abstract class Role implements ActiveRecordInterface
             }
         } // if ($deep)
 
-        if ($this->collUserRoles instanceof Collection) {
-            $this->collUserRoles->clearIterator();
-        }
         $this->collUserRoles = null;
-        if ($this->collRolePermissions instanceof Collection) {
-            $this->collRolePermissions->clearIterator();
-        }
         $this->collRolePermissions = null;
-        if ($this->collUsers instanceof Collection) {
-            $this->collUsers->clearIterator();
-        }
         $this->collUsers = null;
-        if ($this->collPermissions instanceof Collection) {
-            $this->collPermissions->clearIterator();
-        }
         $this->collPermissions = null;
     }
 

@@ -10,6 +10,7 @@ use Alchemy\Component\Cerberus\Model\Map\LoginLogTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
@@ -58,16 +59,18 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildLoginLog findOneByClientAgent(string $client_agent) Return the first ChildLoginLog filtered by the client_agent column
  * @method     ChildLoginLog findOneByClientPlatform(string $client_platform) Return the first ChildLoginLog filtered by the client_platform column
  *
- * @method     array findById(int $id) Return ChildLoginLog objects filtered by the id column
- * @method     array findByType(string $type) Return ChildLoginLog objects filtered by the type column
- * @method     array findByDateTime(string $date_time) Return ChildLoginLog objects filtered by the date_time column
- * @method     array findByUserId(string $user_id) Return ChildLoginLog objects filtered by the user_id column
- * @method     array findByUsername(string $username) Return ChildLoginLog objects filtered by the username column
- * @method     array findBySessionId(string $session_id) Return ChildLoginLog objects filtered by the session_id column
- * @method     array findByClientAddress(string $client_address) Return ChildLoginLog objects filtered by the client_address column
- * @method     array findByClientIp(string $client_ip) Return ChildLoginLog objects filtered by the client_ip column
- * @method     array findByClientAgent(string $client_agent) Return ChildLoginLog objects filtered by the client_agent column
- * @method     array findByClientPlatform(string $client_platform) Return ChildLoginLog objects filtered by the client_platform column
+ * @method     ChildLoginLog[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildLoginLog objects based on current ModelCriteria
+ * @method     ChildLoginLog[]|ObjectCollection findById(int $id) Return ChildLoginLog objects filtered by the id column
+ * @method     ChildLoginLog[]|ObjectCollection findByType(string $type) Return ChildLoginLog objects filtered by the type column
+ * @method     ChildLoginLog[]|ObjectCollection findByDateTime(string $date_time) Return ChildLoginLog objects filtered by the date_time column
+ * @method     ChildLoginLog[]|ObjectCollection findByUserId(string $user_id) Return ChildLoginLog objects filtered by the user_id column
+ * @method     ChildLoginLog[]|ObjectCollection findByUsername(string $username) Return ChildLoginLog objects filtered by the username column
+ * @method     ChildLoginLog[]|ObjectCollection findBySessionId(string $session_id) Return ChildLoginLog objects filtered by the session_id column
+ * @method     ChildLoginLog[]|ObjectCollection findByClientAddress(string $client_address) Return ChildLoginLog objects filtered by the client_address column
+ * @method     ChildLoginLog[]|ObjectCollection findByClientIp(string $client_ip) Return ChildLoginLog objects filtered by the client_ip column
+ * @method     ChildLoginLog[]|ObjectCollection findByClientAgent(string $client_agent) Return ChildLoginLog objects filtered by the client_agent column
+ * @method     ChildLoginLog[]|ObjectCollection findByClientPlatform(string $client_platform) Return ChildLoginLog objects filtered by the client_platform column
+ * @method     ChildLoginLog[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
 abstract class LoginLogQuery extends ModelCriteria
@@ -93,12 +96,12 @@ abstract class LoginLogQuery extends ModelCriteria
      *
      * @return ChildLoginLogQuery
      */
-    public static function create($modelAlias = null, $criteria = null)
+    public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof \Alchemy\Component\Cerberus\Model\LoginLogQuery) {
+        if ($criteria instanceof ChildLoginLogQuery) {
             return $criteria;
         }
-        $query = new \Alchemy\Component\Cerberus\Model\LoginLogQuery();
+        $query = new ChildLoginLogQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -123,7 +126,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *
      * @return ChildLoginLog|array|mixed the result, formatted by the current formatter
      */
-    public function findPk($key, $con = null)
+    public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
@@ -152,9 +155,9 @@ abstract class LoginLogQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return   ChildLoginLog A model object, or null if the key is not found
+     * @return ChildLoginLog A model object, or null if the key is not found
      */
-    protected function findPkSimple($key, $con)
+    protected function findPkSimple($key, ConnectionInterface $con)
     {
         $sql = 'SELECT ID, TYPE, DATE_TIME, USER_ID, USERNAME, SESSION_ID, CLIENT_ADDRESS, CLIENT_IP, CLIENT_AGENT, CLIENT_PLATFORM FROM login_log WHERE ID = :p0';
         try {
@@ -167,6 +170,7 @@ abstract class LoginLogQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+            /** @var ChildLoginLog $obj */
             $obj = new ChildLoginLog();
             $obj->hydrate($row);
             LoginLogTableMap::addInstanceToPool($obj, (string) $key);
@@ -184,7 +188,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *
      * @return ChildLoginLog|array|mixed the result, formatted by the current formatter
      */
-    protected function findPkComplex($key, $con)
+    protected function findPkComplex($key, ConnectionInterface $con)
     {
         // As the query uses a PK condition, no limit(1) is necessary.
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -205,7 +209,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *
      * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
-    public function findPks($keys, $con = null)
+    public function findPks($keys, ConnectionInterface $con = null)
     {
         if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
@@ -224,12 +228,12 @@ abstract class LoginLogQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(LoginLogTableMap::ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(LoginLogTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -237,12 +241,12 @@ abstract class LoginLogQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(LoginLogTableMap::ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(LoginLogTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
@@ -261,18 +265,18 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterById($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(LoginLogTableMap::ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(LoginLogTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(LoginLogTableMap::ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(LoginLogTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -283,7 +287,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::ID, $id, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_ID, $id, $comparison);
     }
 
     /**
@@ -299,7 +303,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByType($type = null, $comparison = null)
     {
@@ -312,7 +316,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::TYPE, $type, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_TYPE, $type, $comparison);
     }
 
     /**
@@ -333,18 +337,18 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByDateTime($dateTime = null, $comparison = null)
     {
         if (is_array($dateTime)) {
             $useMinMax = false;
             if (isset($dateTime['min'])) {
-                $this->addUsingAlias(LoginLogTableMap::DATE_TIME, $dateTime['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(LoginLogTableMap::COL_DATE_TIME, $dateTime['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($dateTime['max'])) {
-                $this->addUsingAlias(LoginLogTableMap::DATE_TIME, $dateTime['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(LoginLogTableMap::COL_DATE_TIME, $dateTime['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -355,7 +359,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::DATE_TIME, $dateTime, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_DATE_TIME, $dateTime, $comparison);
     }
 
     /**
@@ -371,7 +375,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByUserId($userId = null, $comparison = null)
     {
@@ -384,7 +388,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::USER_ID, $userId, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_USER_ID, $userId, $comparison);
     }
 
     /**
@@ -400,7 +404,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByUsername($username = null, $comparison = null)
     {
@@ -413,7 +417,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::USERNAME, $username, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_USERNAME, $username, $comparison);
     }
 
     /**
@@ -429,7 +433,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterBySessionId($sessionId = null, $comparison = null)
     {
@@ -442,7 +446,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::SESSION_ID, $sessionId, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_SESSION_ID, $sessionId, $comparison);
     }
 
     /**
@@ -458,7 +462,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByClientAddress($clientAddress = null, $comparison = null)
     {
@@ -471,7 +475,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::CLIENT_ADDRESS, $clientAddress, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_CLIENT_ADDRESS, $clientAddress, $comparison);
     }
 
     /**
@@ -487,7 +491,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByClientIp($clientIp = null, $comparison = null)
     {
@@ -500,7 +504,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::CLIENT_IP, $clientIp, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_CLIENT_IP, $clientIp, $comparison);
     }
 
     /**
@@ -516,7 +520,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByClientAgent($clientAgent = null, $comparison = null)
     {
@@ -529,7 +533,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::CLIENT_AGENT, $clientAgent, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_CLIENT_AGENT, $clientAgent, $comparison);
     }
 
     /**
@@ -545,7 +549,7 @@ abstract class LoginLogQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function filterByClientPlatform($clientPlatform = null, $comparison = null)
     {
@@ -558,7 +562,7 @@ abstract class LoginLogQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(LoginLogTableMap::CLIENT_PLATFORM, $clientPlatform, $comparison);
+        return $this->addUsingAlias(LoginLogTableMap::COL_CLIENT_PLATFORM, $clientPlatform, $comparison);
     }
 
     /**
@@ -566,12 +570,12 @@ abstract class LoginLogQuery extends ModelCriteria
      *
      * @param   ChildLoginLog $loginLog Object to remove from the list of results
      *
-     * @return ChildLoginLogQuery The current query, for fluid interface
+     * @return $this|ChildLoginLogQuery The current query, for fluid interface
      */
     public function prune($loginLog = null)
     {
         if ($loginLog) {
-            $this->addUsingAlias(LoginLogTableMap::ID, $loginLog->getId(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(LoginLogTableMap::COL_ID, $loginLog->getId(), Criteria::NOT_EQUAL);
         }
 
         return $this;
@@ -588,11 +592,11 @@ abstract class LoginLogQuery extends ModelCriteria
         if (null === $con) {
             $con = Propel::getServiceContainer()->getWriteConnection(LoginLogTableMap::DATABASE_NAME);
         }
-        $affectedRows = 0; // initialize var to track total num of affected rows
-        try {
-            // use transaction because $criteria could contain info
-            // for more than one table or we could emulating ON DELETE CASCADE, etc.
-            $con->beginTransaction();
+
+        // use transaction because $criteria could contain info
+        // for more than one table or we could emulating ON DELETE CASCADE, etc.
+        return $con->transaction(function () use ($con) {
+            $affectedRows = 0; // initialize var to track total num of affected rows
             $affectedRows += parent::doDeleteAll($con);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
@@ -600,28 +604,21 @@ abstract class LoginLogQuery extends ModelCriteria
             LoginLogTableMap::clearInstancePool();
             LoginLogTableMap::clearRelatedInstancePool();
 
-            $con->commit();
-        } catch (PropelException $e) {
-            $con->rollBack();
-            throw $e;
-        }
-
-        return $affectedRows;
+            return $affectedRows;
+        });
     }
 
     /**
-     * Performs a DELETE on the database, given a ChildLoginLog or Criteria object OR a primary key value.
+     * Performs a DELETE on the database based on the current ModelCriteria
      *
-     * @param mixed               $values Criteria or ChildLoginLog object or primary key or array of primary keys
-     *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
-     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-     *                if supported by native driver or if emulated using Propel.
+     * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     *                         if supported by native driver or if emulated using Propel.
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     *                         rethrown wrapped into a PropelException.
      */
-     public function delete(ConnectionInterface $con = null)
-     {
+    public function delete(ConnectionInterface $con = null)
+    {
         if (null === $con) {
             $con = Propel::getServiceContainer()->getWriteConnection(LoginLogTableMap::DATABASE_NAME);
         }
@@ -631,25 +628,18 @@ abstract class LoginLogQuery extends ModelCriteria
         // Set the correct dbName
         $criteria->setDbName(LoginLogTableMap::DATABASE_NAME);
 
-        $affectedRows = 0; // initialize var to track total num of affected rows
+        // use transaction because $criteria could contain info
+        // for more than one table or we could emulating ON DELETE CASCADE, etc.
+        return $con->transaction(function () use ($con, $criteria) {
+            $affectedRows = 0; // initialize var to track total num of affected rows
 
-        try {
-            // use transaction because $criteria could contain info
-            // for more than one table or we could emulating ON DELETE CASCADE, etc.
-            $con->beginTransaction();
-
-
-        LoginLogTableMap::removeInstanceFromPool($criteria);
+            LoginLogTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
             LoginLogTableMap::clearRelatedInstancePool();
-            $con->commit();
 
             return $affectedRows;
-        } catch (PropelException $e) {
-            $con->rollBack();
-            throw $e;
-        }
+        });
     }
 
 } // LoginLogQuery

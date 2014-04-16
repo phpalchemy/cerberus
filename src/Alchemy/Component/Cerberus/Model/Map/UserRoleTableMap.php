@@ -8,6 +8,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -29,6 +30,7 @@ class UserRoleTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
+
     /**
      * The (dot-path) name of this class
      */
@@ -72,12 +74,12 @@ class UserRoleTableMap extends TableMap
     /**
      * the column name for the USER_ID field
      */
-    const USER_ID = 'user_role.USER_ID';
+    const COL_USER_ID = 'user_role.USER_ID';
 
     /**
      * the column name for the ROLE_ID field
      */
-    const ROLE_ID = 'user_role.ROLE_ID';
+    const COL_ROLE_ID = 'user_role.ROLE_ID';
 
     /**
      * The default string format for model objects of the related table
@@ -93,8 +95,8 @@ class UserRoleTableMap extends TableMap
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array('UserId', 'RoleId', ),
         self::TYPE_STUDLYPHPNAME => array('userId', 'roleId', ),
-        self::TYPE_COLNAME       => array(UserRoleTableMap::USER_ID, UserRoleTableMap::ROLE_ID, ),
-        self::TYPE_RAW_COLNAME   => array('USER_ID', 'ROLE_ID', ),
+        self::TYPE_COLNAME       => array(UserRoleTableMap::COL_USER_ID, UserRoleTableMap::COL_ROLE_ID, ),
+        self::TYPE_RAW_COLNAME   => array('COL_USER_ID', 'COL_ROLE_ID', ),
         self::TYPE_FIELDNAME     => array('user_id', 'role_id', ),
         self::TYPE_NUM           => array(0, 1, )
     );
@@ -108,8 +110,8 @@ class UserRoleTableMap extends TableMap
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array('UserId' => 0, 'RoleId' => 1, ),
         self::TYPE_STUDLYPHPNAME => array('userId' => 0, 'roleId' => 1, ),
-        self::TYPE_COLNAME       => array(UserRoleTableMap::USER_ID => 0, UserRoleTableMap::ROLE_ID => 1, ),
-        self::TYPE_RAW_COLNAME   => array('USER_ID' => 0, 'ROLE_ID' => 1, ),
+        self::TYPE_COLNAME       => array(UserRoleTableMap::COL_USER_ID => 0, UserRoleTableMap::COL_ROLE_ID => 1, ),
+        self::TYPE_RAW_COLNAME   => array('COL_USER_ID' => 0, 'COL_ROLE_ID' => 1, ),
         self::TYPE_FIELDNAME     => array('user_id' => 0, 'role_id' => 1, ),
         self::TYPE_NUM           => array(0, 1, )
     );
@@ -207,6 +209,8 @@ class UserRoleTableMap extends TableMap
      * @param int    $offset    The 0-based offset for reading from the resultset row.
      * @param string $indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     *
+     * @return string The primary key hash of the row
      */
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
@@ -232,8 +236,20 @@ class UserRoleTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
+            $pks = [];
 
-            return $pks;
+        $pks[] = (int) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 0 + $offset
+                : self::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)
+        ];
+        $pks[] = (int) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 1 + $offset
+                : self::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)
+        ];
+
+        return $pks;
     }
 
     /**
@@ -262,8 +278,8 @@ class UserRoleTableMap extends TableMap
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
-     * @return array (UserRole object, last column rank)
+     *                         rethrown wrapped into a PropelException.
+     * @return array           (UserRole object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
@@ -275,6 +291,7 @@ class UserRoleTableMap extends TableMap
             $col = $offset + UserRoleTableMap::NUM_HYDRATE_COLUMNS;
         } else {
             $cls = UserRoleTableMap::OM_CLASS;
+            /** @var UserRole $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
             UserRoleTableMap::addInstanceToPool($obj, $key);
@@ -290,7 +307,7 @@ class UserRoleTableMap extends TableMap
      * @param DataFetcherInterface $dataFetcher
      * @return array
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     *                         rethrown wrapped into a PropelException.
      */
     public static function populateObjects(DataFetcherInterface $dataFetcher)
     {
@@ -307,6 +324,7 @@ class UserRoleTableMap extends TableMap
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
+                /** @var UserRole $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
@@ -326,13 +344,13 @@ class UserRoleTableMap extends TableMap
      * @param Criteria $criteria object containing the columns to add.
      * @param string   $alias    optional table alias
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     *                         rethrown wrapped into a PropelException.
      */
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserRoleTableMap::USER_ID);
-            $criteria->addSelectColumn(UserRoleTableMap::ROLE_ID);
+            $criteria->addSelectColumn(UserRoleTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(UserRoleTableMap::COL_ROLE_ID);
         } else {
             $criteria->addSelectColumn($alias . '.USER_ID');
             $criteria->addSelectColumn($alias . '.ROLE_ID');
@@ -344,7 +362,7 @@ class UserRoleTableMap extends TableMap
      * This method is not needed for general use but a specific application could have a need.
      * @return TableMap
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     *                         rethrown wrapped into a PropelException.
      */
     public static function getTableMap()
     {
@@ -356,10 +374,10 @@ class UserRoleTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserRoleTableMap::DATABASE_NAME);
-      if (!$dbMap->hasTable(UserRoleTableMap::TABLE_NAME)) {
-        $dbMap->addTableObject(new UserRoleTableMap());
-      }
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserRoleTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(UserRoleTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new UserRoleTableMap());
+        }
     }
 
     /**
@@ -367,11 +385,11 @@ class UserRoleTableMap extends TableMap
      *
      * @param mixed               $values Criteria or UserRole object or primary key or array of primary keys
      *              which is used to create the DELETE statement
-     * @param ConnectionInterface $con the connection to use
-     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-     *                if supported by native driver or if emulated using Propel.
+     * @param  ConnectionInterface $con the connection to use
+     * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     *                         if supported by native driver or if emulated using Propel.
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     *                         rethrown wrapped into a PropelException.
      */
      public static function doDelete($values, ConnectionInterface $con = null)
      {
@@ -394,17 +412,19 @@ class UserRoleTableMap extends TableMap
                 $values = array($values);
             }
             foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(UserRoleTableMap::USER_ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(UserRoleTableMap::ROLE_ID, $value[1]));
+                $criterion = $criteria->getNewCriterion(UserRoleTableMap::COL_USER_ID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(UserRoleTableMap::COL_ROLE_ID, $value[1]));
                 $criteria->addOr($criterion);
             }
         }
 
         $query = UserRoleQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) { UserRoleTableMap::clearInstancePool();
+        if ($values instanceof Criteria) {
+            UserRoleTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) { UserRoleTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) {
+                UserRoleTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -429,7 +449,7 @@ class UserRoleTableMap extends TableMap
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     *                         rethrown wrapped into a PropelException.
      */
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
@@ -447,18 +467,11 @@ class UserRoleTableMap extends TableMap
         // Set the correct dbName
         $query = UserRoleQuery::create()->mergeWith($criteria);
 
-        try {
-            // use transaction because $criteria could contain info
-            // for more than one table (I guess, conceivably)
-            $con->beginTransaction();
-            $pk = $query->doInsert($con);
-            $con->commit();
-        } catch (PropelException $e) {
-            $con->rollBack();
-            throw $e;
-        }
-
-        return $pk;
+        // use transaction because $criteria could contain info
+        // for more than one table (I guess, conceivably)
+        return $con->transaction(function () use ($con, $query) {
+            return $query->doInsert($con);
+        });
     }
 
 } // UserRoleTableMap

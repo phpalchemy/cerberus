@@ -14,6 +14,7 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
@@ -67,7 +68,7 @@ abstract class LoginLog implements ActiveRecordInterface
 
     /**
      * The value for the date_time field.
-     * @var        string
+     * @var        \DateTime
      */
     protected $date_time;
 
@@ -135,7 +136,7 @@ abstract class LoginLog implements ActiveRecordInterface
      */
     public function isModified()
     {
-        return !empty($this->modifiedColumns);
+        return !!$this->modifiedColumns;
     }
 
     /**
@@ -146,7 +147,7 @@ abstract class LoginLog implements ActiveRecordInterface
      */
     public function isColumnModified($col)
     {
-        return in_array($col, $this->modifiedColumns);
+        return $this->modifiedColumns && isset($this->modifiedColumns[$col]);
     }
 
     /**
@@ -155,7 +156,7 @@ abstract class LoginLog implements ActiveRecordInterface
      */
     public function getModifiedColumns()
     {
-        return array_unique($this->modifiedColumns);
+        return $this->modifiedColumns ? array_keys($this->modifiedColumns) : [];
     }
 
     /**
@@ -178,7 +179,7 @@ abstract class LoginLog implements ActiveRecordInterface
      */
     public function setNew($b)
     {
-        $this->new = (Boolean) $b;
+        $this->new = (boolean) $b;
     }
 
     /**
@@ -197,7 +198,7 @@ abstract class LoginLog implements ActiveRecordInterface
      */
     public function setDeleted($b)
     {
-        $this->deleted = (Boolean) $b;
+        $this->deleted = (boolean) $b;
     }
 
     /**
@@ -208,8 +209,8 @@ abstract class LoginLog implements ActiveRecordInterface
     public function resetModified($col = null)
     {
         if (null !== $col) {
-            while (false !== ($offset = array_search($col, $this->modifiedColumns))) {
-                array_splice($this->modifiedColumns, $offset, 1);
+            if (isset($this->modifiedColumns[$col])) {
+                unset($this->modifiedColumns[$col]);
             }
         } else {
             $this->modifiedColumns = array();
@@ -226,8 +227,7 @@ abstract class LoginLog implements ActiveRecordInterface
      */
     public function equals($obj)
     {
-        $thisclazz = get_class($this);
-        if (!is_object($obj) || !($obj instanceof $thisclazz)) {
+        if (!$obj instanceof static) {
             return false;
         }
 
@@ -235,27 +235,11 @@ abstract class LoginLog implements ActiveRecordInterface
             return true;
         }
 
-        if (null === $this->getPrimaryKey()
-            || null === $obj->getPrimaryKey())  {
+        if (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey()) {
             return false;
         }
 
         return $this->getPrimaryKey() === $obj->getPrimaryKey();
-    }
-
-    /**
-     * If the primary key is not null, return the hashcode of the
-     * primary key. Otherwise, return the hash code of the object.
-     *
-     * @return int Hashcode
-     */
-    public function hashCode()
-    {
-        if (null !== $this->getPrimaryKey()) {
-            return crc32(serialize($this->getPrimaryKey()));
-        }
-
-        return crc32(serialize(clone $this));
     }
 
     /**
@@ -302,7 +286,7 @@ abstract class LoginLog implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return LoginLog The current object, for fluid interface
+     * @return $this|LoginLog The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -321,30 +305,6 @@ abstract class LoginLog implements ActiveRecordInterface
     protected function log($msg, $priority = Propel::LOG_INFO)
     {
         return Propel::log(get_class($this) . ': ' . $msg, $priority);
-    }
-
-    /**
-     * Populate the current object from a string, using a given parser format
-     * <code>
-     * $book = new Book();
-     * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
-     * </code>
-     *
-     * @param mixed $parser A AbstractParser instance,
-     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param string $data The source data to import from
-     *
-     * @return LoginLog The current object, for fluid interface
-     */
-    public function importFrom($parser, $data)
-    {
-        if (!$parser instanceof AbstractParser) {
-            $parser = AbstractParser::getParser($parser);
-        }
-
-        $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
-
-        return $this;
     }
 
     /**
@@ -382,22 +342,20 @@ abstract class LoginLog implements ActiveRecordInterface
     /**
      * Get the [id] column value.
      *
-     * @return   int
+     * @return int
      */
     public function getId()
     {
-
         return $this->id;
     }
 
     /**
      * Get the [type] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getType()
     {
-
         return $this->type;
     }
 
@@ -408,7 +366,7 @@ abstract class LoginLog implements ActiveRecordInterface
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw \DateTime object will be returned.
      *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     * @return string|\DateTime Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
@@ -424,289 +382,72 @@ abstract class LoginLog implements ActiveRecordInterface
     /**
      * Get the [user_id] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getUserId()
     {
-
         return $this->user_id;
     }
 
     /**
      * Get the [username] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getUsername()
     {
-
         return $this->username;
     }
 
     /**
      * Get the [session_id] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getSessionId()
     {
-
         return $this->session_id;
     }
 
     /**
      * Get the [client_address] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getClientAddress()
     {
-
         return $this->client_address;
     }
 
     /**
      * Get the [client_ip] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getClientIp()
     {
-
         return $this->client_ip;
     }
 
     /**
      * Get the [client_agent] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getClientAgent()
     {
-
         return $this->client_agent;
     }
 
     /**
      * Get the [client_platform] column value.
      *
-     * @return   string
+     * @return string
      */
     public function getClientPlatform()
     {
-
         return $this->client_platform;
     }
-
-    /**
-     * Set the value of [id] column.
-     *
-     * @param      int $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->id !== $v) {
-            $this->id = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::ID;
-        }
-
-
-        return $this;
-    } // setId()
-
-    /**
-     * Set the value of [type] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setType($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->type !== $v) {
-            $this->type = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::TYPE;
-        }
-
-
-        return $this;
-    } // setType()
-
-    /**
-     * Sets the value of [date_time] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setDateTime($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->date_time !== null || $dt !== null) {
-            if ($dt !== $this->date_time) {
-                $this->date_time = $dt;
-                $this->modifiedColumns[] = LoginLogTableMap::DATE_TIME;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setDateTime()
-
-    /**
-     * Set the value of [user_id] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setUserId($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->user_id !== $v) {
-            $this->user_id = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::USER_ID;
-        }
-
-
-        return $this;
-    } // setUserId()
-
-    /**
-     * Set the value of [username] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setUsername($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->username !== $v) {
-            $this->username = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::USERNAME;
-        }
-
-
-        return $this;
-    } // setUsername()
-
-    /**
-     * Set the value of [session_id] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setSessionId($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->session_id !== $v) {
-            $this->session_id = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::SESSION_ID;
-        }
-
-
-        return $this;
-    } // setSessionId()
-
-    /**
-     * Set the value of [client_address] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setClientAddress($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->client_address !== $v) {
-            $this->client_address = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::CLIENT_ADDRESS;
-        }
-
-
-        return $this;
-    } // setClientAddress()
-
-    /**
-     * Set the value of [client_ip] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setClientIp($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->client_ip !== $v) {
-            $this->client_ip = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::CLIENT_IP;
-        }
-
-
-        return $this;
-    } // setClientIp()
-
-    /**
-     * Set the value of [client_agent] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setClientAgent($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->client_agent !== $v) {
-            $this->client_agent = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::CLIENT_AGENT;
-        }
-
-
-        return $this;
-    } // setClientAgent()
-
-    /**
-     * Set the value of [client_platform] column.
-     *
-     * @param      string $v new value
-     * @return   \Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
-     */
-    public function setClientPlatform($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->client_platform !== $v) {
-            $this->client_platform = $v;
-            $this->modifiedColumns[] = LoginLogTableMap::CLIENT_PLATFORM;
-        }
-
-
-        return $this;
-    } // setClientPlatform()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -743,7 +484,6 @@ abstract class LoginLog implements ActiveRecordInterface
     public function hydrate($row, $startcol = 0, $rehydrate = false, $indexType = TableMap::TYPE_NUM)
     {
         try {
-
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : LoginLogTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
@@ -788,7 +528,7 @@ abstract class LoginLog implements ActiveRecordInterface
             return $startcol + 10; // 10 = LoginLogTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating \Alchemy\Component\Cerberus\Model\LoginLog object", 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Alchemy\\Component\\Cerberus\\Model\\LoginLog'), 0, $e);
         }
     }
 
@@ -808,6 +548,206 @@ abstract class LoginLog implements ActiveRecordInterface
     public function ensureConsistency()
     {
     } // ensureConsistency
+
+    /**
+     * Set the value of [id] column.
+     *
+     * @param  int $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->id !== $v) {
+            $this->id = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_ID] = true;
+        }
+
+        return $this;
+    } // setId()
+
+    /**
+     * Set the value of [type] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setType($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->type !== $v) {
+            $this->type = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_TYPE] = true;
+        }
+
+        return $this;
+    } // setType()
+
+    /**
+     * Sets the value of [date_time] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setDateTime($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
+        if ($this->date_time !== null || $dt !== null) {
+            if ($dt !== $this->date_time) {
+                $this->date_time = $dt;
+                $this->modifiedColumns[LoginLogTableMap::COL_DATE_TIME] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setDateTime()
+
+    /**
+     * Set the value of [user_id] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setUserId($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_USER_ID] = true;
+        }
+
+        return $this;
+    } // setUserId()
+
+    /**
+     * Set the value of [username] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setUsername($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->username !== $v) {
+            $this->username = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_USERNAME] = true;
+        }
+
+        return $this;
+    } // setUsername()
+
+    /**
+     * Set the value of [session_id] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setSessionId($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->session_id !== $v) {
+            $this->session_id = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_SESSION_ID] = true;
+        }
+
+        return $this;
+    } // setSessionId()
+
+    /**
+     * Set the value of [client_address] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setClientAddress($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->client_address !== $v) {
+            $this->client_address = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_CLIENT_ADDRESS] = true;
+        }
+
+        return $this;
+    } // setClientAddress()
+
+    /**
+     * Set the value of [client_ip] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setClientIp($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->client_ip !== $v) {
+            $this->client_ip = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_CLIENT_IP] = true;
+        }
+
+        return $this;
+    } // setClientIp()
+
+    /**
+     * Set the value of [client_agent] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setClientAgent($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->client_agent !== $v) {
+            $this->client_agent = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_CLIENT_AGENT] = true;
+        }
+
+        return $this;
+    } // setClientAgent()
+
+    /**
+     * Set the value of [client_platform] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object (for fluent API support)
+     */
+    public function setClientPlatform($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->client_platform !== $v) {
+            $this->client_platform = $v;
+            $this->modifiedColumns[LoginLogTableMap::COL_CLIENT_PLATFORM] = true;
+        }
+
+        return $this;
+    } // setClientPlatform()
 
     /**
      * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
@@ -868,23 +808,16 @@ abstract class LoginLog implements ActiveRecordInterface
             $con = Propel::getServiceContainer()->getWriteConnection(LoginLogTableMap::DATABASE_NAME);
         }
 
-        $con->beginTransaction();
-        try {
+        $con->transaction(function () use ($con) {
             $deleteQuery = ChildLoginLogQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
                 $deleteQuery->delete($con);
                 $this->postDelete($con);
-                $con->commit();
                 $this->setDeleted(true);
-            } else {
-                $con->commit();
             }
-        } catch (Exception $e) {
-            $con->rollBack();
-            throw $e;
-        }
+        });
     }
 
     /**
@@ -910,9 +843,8 @@ abstract class LoginLog implements ActiveRecordInterface
             $con = Propel::getServiceContainer()->getWriteConnection(LoginLogTableMap::DATABASE_NAME);
         }
 
-        $con->beginTransaction();
-        $isInsert = $this->isNew();
-        try {
+        return $con->transaction(function () use ($con) {
+            $isInsert = $this->isNew();
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
@@ -931,13 +863,9 @@ abstract class LoginLog implements ActiveRecordInterface
             } else {
                 $affectedRows = 0;
             }
-            $con->commit();
 
             return $affectedRows;
-        } catch (Exception $e) {
-            $con->rollBack();
-            throw $e;
-        }
+        });
     }
 
     /**
@@ -988,40 +916,40 @@ abstract class LoginLog implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[] = LoginLogTableMap::ID;
+        $this->modifiedColumns[LoginLogTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . LoginLogTableMap::ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . LoginLogTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(LoginLogTableMap::ID)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(LoginLogTableMap::TYPE)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_TYPE)) {
             $modifiedColumns[':p' . $index++]  = 'TYPE';
         }
-        if ($this->isColumnModified(LoginLogTableMap::DATE_TIME)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_DATE_TIME)) {
             $modifiedColumns[':p' . $index++]  = 'DATE_TIME';
         }
-        if ($this->isColumnModified(LoginLogTableMap::USER_ID)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'USER_ID';
         }
-        if ($this->isColumnModified(LoginLogTableMap::USERNAME)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_USERNAME)) {
             $modifiedColumns[':p' . $index++]  = 'USERNAME';
         }
-        if ($this->isColumnModified(LoginLogTableMap::SESSION_ID)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_SESSION_ID)) {
             $modifiedColumns[':p' . $index++]  = 'SESSION_ID';
         }
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_ADDRESS)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_ADDRESS)) {
             $modifiedColumns[':p' . $index++]  = 'CLIENT_ADDRESS';
         }
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_IP)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_IP)) {
             $modifiedColumns[':p' . $index++]  = 'CLIENT_IP';
         }
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_AGENT)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_AGENT)) {
             $modifiedColumns[':p' . $index++]  = 'CLIENT_AGENT';
         }
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_PLATFORM)) {
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_PLATFORM)) {
             $modifiedColumns[':p' . $index++]  = 'CLIENT_PLATFORM';
         }
 
@@ -1208,13 +1136,13 @@ abstract class LoginLog implements ActiveRecordInterface
     /**
      * Sets a field from the object by name passed in as a string.
      *
-     * @param      string $name
-     * @param      mixed  $value field value
-     * @param      string $type The type of fieldname the $name is of:
-     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
-     *                     Defaults to TableMap::TYPE_PHPNAME.
-     * @return void
+     * @param  string $name
+     * @param  mixed  $value field value
+     * @param  string $type The type of fieldname the $name is of:
+     *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                Defaults to TableMap::TYPE_PHPNAME.
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
@@ -1227,9 +1155,9 @@ abstract class LoginLog implements ActiveRecordInterface
      * Sets a field from the object by Position as specified in the xml schema.
      * Zero-based.
      *
-     * @param      int $pos position in xml schema
-     * @param      mixed $value field value
-     * @return void
+     * @param  int $pos position in xml schema
+     * @param  mixed $value field value
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog
      */
     public function setByPosition($pos, $value)
     {
@@ -1265,6 +1193,8 @@ abstract class LoginLog implements ActiveRecordInterface
                 $this->setClientPlatform($value);
                 break;
         } // switch()
+
+        return $this;
     }
 
     /**
@@ -1288,16 +1218,60 @@ abstract class LoginLog implements ActiveRecordInterface
     {
         $keys = LoginLogTableMap::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setType($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setDateTime($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setUserId($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setUsername($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setSessionId($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setClientAddress($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setClientIp($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setClientAgent($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setClientPlatform($arr[$keys[9]]);
+        if (array_key_exists($keys[0], $arr)) {
+            $this->setId($arr[$keys[0]]);
+        }
+        if (array_key_exists($keys[1], $arr)) {
+            $this->setType($arr[$keys[1]]);
+        }
+        if (array_key_exists($keys[2], $arr)) {
+            $this->setDateTime($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setUserId($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setUsername($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setSessionId($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setClientAddress($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setClientIp($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setClientAgent($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setClientPlatform($arr[$keys[9]]);
+        }
+    }
+
+     /**
+     * Populate the current object from a string, using a given parser format
+     * <code>
+     * $book = new Book();
+     * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
+     * </code>
+     *
+     * @param mixed $parser A AbstractParser instance,
+     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string $data The source data to import from
+     *
+     * @return $this|\Alchemy\Component\Cerberus\Model\LoginLog The current object, for fluid interface
+     */
+    public function importFrom($parser, $data)
+    {
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
+        }
+
+        $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
+
+        return $this;
     }
 
     /**
@@ -1309,16 +1283,36 @@ abstract class LoginLog implements ActiveRecordInterface
     {
         $criteria = new Criteria(LoginLogTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(LoginLogTableMap::ID)) $criteria->add(LoginLogTableMap::ID, $this->id);
-        if ($this->isColumnModified(LoginLogTableMap::TYPE)) $criteria->add(LoginLogTableMap::TYPE, $this->type);
-        if ($this->isColumnModified(LoginLogTableMap::DATE_TIME)) $criteria->add(LoginLogTableMap::DATE_TIME, $this->date_time);
-        if ($this->isColumnModified(LoginLogTableMap::USER_ID)) $criteria->add(LoginLogTableMap::USER_ID, $this->user_id);
-        if ($this->isColumnModified(LoginLogTableMap::USERNAME)) $criteria->add(LoginLogTableMap::USERNAME, $this->username);
-        if ($this->isColumnModified(LoginLogTableMap::SESSION_ID)) $criteria->add(LoginLogTableMap::SESSION_ID, $this->session_id);
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_ADDRESS)) $criteria->add(LoginLogTableMap::CLIENT_ADDRESS, $this->client_address);
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_IP)) $criteria->add(LoginLogTableMap::CLIENT_IP, $this->client_ip);
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_AGENT)) $criteria->add(LoginLogTableMap::CLIENT_AGENT, $this->client_agent);
-        if ($this->isColumnModified(LoginLogTableMap::CLIENT_PLATFORM)) $criteria->add(LoginLogTableMap::CLIENT_PLATFORM, $this->client_platform);
+        if ($this->isColumnModified(LoginLogTableMap::COL_ID)) {
+            $criteria->add(LoginLogTableMap::COL_ID, $this->id);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_TYPE)) {
+            $criteria->add(LoginLogTableMap::COL_TYPE, $this->type);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_DATE_TIME)) {
+            $criteria->add(LoginLogTableMap::COL_DATE_TIME, $this->date_time);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_USER_ID)) {
+            $criteria->add(LoginLogTableMap::COL_USER_ID, $this->user_id);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_USERNAME)) {
+            $criteria->add(LoginLogTableMap::COL_USERNAME, $this->username);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_SESSION_ID)) {
+            $criteria->add(LoginLogTableMap::COL_SESSION_ID, $this->session_id);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_ADDRESS)) {
+            $criteria->add(LoginLogTableMap::COL_CLIENT_ADDRESS, $this->client_address);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_IP)) {
+            $criteria->add(LoginLogTableMap::COL_CLIENT_IP, $this->client_ip);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_AGENT)) {
+            $criteria->add(LoginLogTableMap::COL_CLIENT_AGENT, $this->client_agent);
+        }
+        if ($this->isColumnModified(LoginLogTableMap::COL_CLIENT_PLATFORM)) {
+            $criteria->add(LoginLogTableMap::COL_CLIENT_PLATFORM, $this->client_platform);
+        }
 
         return $criteria;
     }
@@ -1329,19 +1323,43 @@ abstract class LoginLog implements ActiveRecordInterface
      * Unlike buildCriteria() this method includes the primary key values regardless
      * of whether or not they have been modified.
      *
+     * @throws LogicException if no primary key is defined
+     *
      * @return Criteria The Criteria object containing value(s) for primary key(s).
      */
     public function buildPkeyCriteria()
     {
         $criteria = new Criteria(LoginLogTableMap::DATABASE_NAME);
-        $criteria->add(LoginLogTableMap::ID, $this->id);
+        $criteria->add(LoginLogTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
 
     /**
+     * If the primary key is not null, return the hashcode of the
+     * primary key. Otherwise, return the hash code of the object.
+     *
+     * @return int Hashcode
+     */
+    public function hashCode()
+    {
+        $validPk = null !== $this->getId();
+
+        $validPrimaryKeyFKs = 0;
+        $primaryKeyFKs = [];
+
+        if ($validPk) {
+            return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
+        } elseif ($validPrimaryKeyFKs) {
+            return crc32(json_encode($primaryKeyFKs, JSON_UNESCAPED_UNICODE));
+        }
+
+        return spl_object_hash($this);
+    }
+
+    /**
      * Returns the primary key for this object (row).
-     * @return   int
+     * @return int
      */
     public function getPrimaryKey()
     {
@@ -1365,7 +1383,6 @@ abstract class LoginLog implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-
         return null === $this->getId();
     }
 
@@ -1405,8 +1422,8 @@ abstract class LoginLog implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \Alchemy\Component\Cerberus\Model\LoginLog Clone of current object.
+     * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+     * @return \Alchemy\Component\Cerberus\Model\LoginLog Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1420,7 +1437,9 @@ abstract class LoginLog implements ActiveRecordInterface
     }
 
     /**
-     * Clears the current object and sets all attributes to their default values
+     * Clears the current object, sets all attributes to their default values and removes
+     * outgoing references as well as back-references (from other objects to this one. Results probably in a database
+     * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
@@ -1442,11 +1461,10 @@ abstract class LoginLog implements ActiveRecordInterface
     }
 
     /**
-     * Resets all references to other model objects or collections of model objects.
+     * Resets all references and back-references to other model objects or collections of model objects.
      *
-     * This method is a user-space workaround for PHP's inability to garbage collect
-     * objects with circular references (even in PHP 5.3). This is currently necessary
-     * when using Propel in certain daemon or large-volume/high-memory operations.
+     * This method is used to reset all php object references (not the actual reference in the database).
+     * Necessary for object serialisation.
      *
      * @param      boolean $deep Whether to also clear the references on all referrer objects.
      */
