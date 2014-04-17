@@ -197,23 +197,31 @@ class Cerberus
     {
         $user = $this->getUser($username);
 
+        $log = new LoginLog();
+        $log->setDateTime(date("Y-m-d H:i:s"));
+        $log->setUsername($username);
+        $log->setUserId($user->getId());
+
         if (! is_object($user)) {
+            $log->setType("LOGIN_FAILED");
+            $log->setLogText("A login try of an unregistered user, user given: $username");
+            $log->save();
             throw new \Exception(sprintf(_("Invalid User, the user \"%s\" is not registered!"), $username));
         }
 
         if ($user->getStatus() !== "ACTIVE") {
+            $log->setLogText("A login try of an inactive user, user given: $username");
+            $log->save();
             throw new \Exception(sprintf(_("The user \"%s\" is not active."), $username));
         }
 
         if (! $user->authenticate($password)) {
+            $log->setLogText("A login try of an user with invalid password, user given: $username");
+            $log->save();
             throw new \Exception(_("Authentication failed."));
         }
 
-        $log = new LoginLog();
-        $log->setType("LOGIN");
-        $log->setDateTime(date("Y-m-d H:i:s"));
-        $log->setUsername($username);
-        $log->setUserId($user->getId());
+        $log->setType("LOGIN_SUCCESS");
 
         if (isset($_SERVER["HTTP_HOST"])) {
             $log->setClientAddress($_SERVER["HTTP_HOST"]);
@@ -283,14 +291,20 @@ class Cerberus
         return false;
     }
 
+    public function getUserLogged()
+    {
+        return $this->session->get("user.roles", null);
+    }
+
+
     public function getUserRoles()
     {
-        return $this->session->get("user.roles");
+        return $this->session->get("user.roles", null);
     }
 
     public function getUserPermissions()
     {
-        return $this->session->get("user.permissions");
+        return $this->session->get("user.permissions", null);
     }
 
     public function getSession()

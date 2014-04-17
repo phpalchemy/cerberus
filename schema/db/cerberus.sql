@@ -107,16 +107,17 @@ CREATE TABLE `role_permission`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- login_log
+-- log
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `login_log`;
+DROP TABLE IF EXISTS `log`;
 
-CREATE TABLE `login_log`
+CREATE TABLE `log`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `type` VARCHAR(32),
     `date_time` DATETIME,
+    `log_text` TEXT,
     `user_id` VARCHAR(256),
     `username` VARCHAR(128),
     `session_id` VARCHAR(64),

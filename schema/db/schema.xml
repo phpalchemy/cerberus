@@ -55,10 +55,11 @@
     </table>
 
     <!-- Other tables -->
-    <table name="login_log">
+    <table name="log">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="type" type="varchar" size="32"/>
         <column name="date_time" type="timestamp"/>
+        <column name="log_text" type="longvarchar"/>
         <column name="user_id" type="varchar" size="256"/>
         <column name="username" type="varchar" size="128"/>
         <column name="session_id" type="varchar" size="64"/>
