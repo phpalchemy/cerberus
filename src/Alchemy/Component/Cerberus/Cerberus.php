@@ -293,23 +293,46 @@ class Cerberus
 
     public function getUserLogged()
     {
-        return $this->session->get("user.roles", null);
+        return $this->session->get("user", null);
     }
 
 
-    public function getUserRoles()
+    public function getUserRoles($type = "object")
     {
-        return $this->session->get("user.roles", null);
+        if ($type == "object") {
+            return $this->session->get("user.roles", null);
+        } elseif ($type == "list") {
+            return $this->session->get("user.roles_list", array());
+        } elseif ($type == "array") {
+            $roles = $this->session->get("user.roles", null);
+            return $roles ? $roles->toArray(): array();
+        }
+
+        return null;
     }
 
-    public function getUserPermissions()
+    public function getUserPermissions($type = "object")
     {
-        return $this->session->get("user.permissions", null);
+        if ($type == "object") {
+            return $this->session->get("user.permissions", null);
+        } elseif ($type == "list") {
+            return $this->session->get("user.roles_list", array());
+        } elseif ($type == "array") {
+            $roles = $this->session->get("user.roles", null);
+            return $roles ? $roles->toArray(): array();
+        }
+
+        return null;
     }
 
     public function getSession()
     {
         return $this->session;
+    }
+
+    public function getSessionData($key, $default = null)
+    {
+        return $this->session->get($key, $default);
     }
 
     public static function getBrowser()
