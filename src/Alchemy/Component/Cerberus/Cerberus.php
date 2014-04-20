@@ -200,8 +200,23 @@ class Cerberus
 
         $log = new Log();
         $log->setDateTime(date("Y-m-d H:i:s"));
-        $log->setUsername($username);
-        $log->setUserId($user->getId());
+
+        if (isset($_SERVER["HTTP_HOST"])) {
+            $log->setClientAddress($_SERVER["HTTP_HOST"]);
+        }
+        if (isset($_SERVER["REMOTE_ADDR"])) {
+            $log->setClientIp($_SERVER["REMOTE_ADDR"]);
+        }
+        if (isset($_SERVER["HTTP_USER_AGENT"])) {
+            if(ini_get("browscap")) {
+                $browser = get_browser(null, true);
+            } else {
+                $browser = self::getBrowser();
+            }
+
+            $log->setClientAgent($browser["browser"]." (v".$browser["version"].")");
+            $log->setClientPlatform($browser["platform"]);
+        }
 
         if (! is_object($user)) {
             $log->setType("LOGIN_FAILED");
@@ -224,25 +239,13 @@ class Cerberus
 
         $log->setType("LOGIN_SUCCESS");
 
-        if (isset($_SERVER["HTTP_HOST"])) {
-            $log->setClientAddress($_SERVER["HTTP_HOST"]);
-        }
-        if (isset($_SERVER["REMOTE_ADDR"])) {
-            $log->setClientIp($_SERVER["REMOTE_ADDR"]);
-        }
-        if (isset($_SERVER["HTTP_USER_AGENT"])) {
-            if(ini_get("browscap")) {
-                $browser = get_browser(null, true);
-            } else {
-                $browser = self::getBrowser();
-            }
-
-            $log->setClientAgent($browser["browser"]." (v".$browser["version"].")");
-            $log->setClientPlatform($browser["platform"]);
-        }
         if (session_status() === PHP_SESSION_ACTIVE) {
             $log->setSessionId(session_id());
         }
+
+        $log->setUsername($username);
+        $log->setUserId($user->getId());
+
         $log->save();
 
         return $user;
