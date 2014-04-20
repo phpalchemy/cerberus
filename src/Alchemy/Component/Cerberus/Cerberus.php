@@ -13,8 +13,9 @@ use Alchemy\Component\Cerberus\Model\UserRole;
 use Alchemy\Component\Cerberus\Model\UserRoleQuery;
 use Alchemy\Component\Cerberus\Model\RolePermission;
 use Alchemy\Component\Cerberus\Model\RolePermissionQuery;
-use Alchemy\Component\Cerberus\Model\LoginLog;
-use Alchemy\Component\Cerberus\Model\LoginLogQuery;
+use Alchemy\Component\Cerberus\Model\Log;
+use Alchemy\Component\Cerberus\Model\LogQuery;
+
 
 use Alchemy\Component\Cerberus\Session;
 
@@ -197,7 +198,7 @@ class Cerberus
     {
         $user = $this->getUser($username);
 
-        $log = new LoginLog();
+        $log = new Log();
         $log->setDateTime(date("Y-m-d H:i:s"));
         $log->setUsername($username);
         $log->setUserId($user->getId());
