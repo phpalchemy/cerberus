@@ -37,8 +37,11 @@ class CerberusServiceProvider implements ServiceProviderInterface
                 throw new \RuntimeException("Database configuration is missing.");
             }
 
+            $regionalConfig = $app["config"]->getSection('regional');
+
             $config = self::configure($config);
             $cerberus = new Cerberus($config);
+            $cerberus->setLocale($regionalConfig);
             $cerberus->init();
 
             return $cerberus;

@@ -19,6 +19,8 @@ use Alchemy\Component\Cerberus\Model\LogQuery;
 
 use Alchemy\Component\Cerberus\Session;
 
+use Alchemy\Component\Cerberus\Common\Internationalize as i18n;
+
 /**
  * Cerberus class
  *
@@ -86,12 +88,7 @@ class Cerberus
     public function setLocale(array $localeConf)
     {
         $this->config["locale"] = $localeConf;
-    }
-
-    public static function translate($strId)
-    {
-        $me = self::getInstance();
-        return $me->translationsTable[$strId] ? $me->translationsTable[$strId] : $strId;
+        i18n::setLocale($this->config["locale"]);
     }
 
     public function init(array $config = array())
@@ -222,19 +219,20 @@ class Cerberus
             $log->setType("LOGIN_FAILED");
             $log->setLogText("A login try of an unregistered user, user given: $username");
             $log->save();
-            throw new \Exception(sprintf(_("Invalid User, the user \"%s\" is not registered!"), $username));
+            throw new \Exception(i18n::translate("Invalid User, the user \"%s\" is not registered!", $username));
         }
 
         if ($user->getStatus() !== "ACTIVE") {
             $log->setLogText("A login try of an inactive user, user given: $username");
             $log->save();
-            throw new \Exception(sprintf(_("The user \"%s\" is not active."), $username));
+
+            throw new \Exception(i18n::translate("The user \"%s\" is not active.", $username));
         }
 
         if (! $user->authenticate($password)) {
             $log->setLogText("A login try of an user with invalid password, user given: $username");
             $log->save();
-            throw new \Exception(_("Authentication failed."));
+            throw new \Exception(i18n::translate("Authentication failed."));
         }
 
         $log->setType("LOGIN_SUCCESS");
