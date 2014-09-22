@@ -2,6 +2,11 @@
 <database name="cerberus" defaultIdMethod="native" namespace="Alchemy\Component\Cerberus\Model">
     <!-- Cerberus Tables -->
     <table name="user">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="username" type="varchar" size="128" required="true"/>
         <column name="password" type="varchar" size="255" required="true"/>
@@ -12,6 +17,11 @@
         <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
     <table name="role">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="128" required="true"/>
         <column name="description" type="varchar" size="256" required="true"/>
@@ -20,6 +30,11 @@
         <column name="status" type="varchar" size="64" default="ACTIVE"/>
     </table>
     <table name="permission" isCrossRef="true">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="256" required="true"/>
         <column name="create_date" type="timestamp"/>
@@ -32,6 +47,11 @@
         </foreign-key>
     </table>
     <table name="user_role" isCrossRef="true">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+
         <column name="user_id" type="integer" required="true" primaryKey="true"/>
         <column name="role_id" type="integer" required="true" primaryKey="true"/>
 
@@ -43,6 +63,11 @@
         </foreign-key>
     </table>
     <table name="role_permission" isCrossRef="true">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+
         <column name="role_id" type="integer" required="true" primaryKey="true"/>
         <column name="permission_id" type="integer" required="true" primaryKey="true"/>
 
@@ -56,6 +81,11 @@
 
     <!-- Other tables -->
     <table name="log">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Charset" value="utf8"/>
+        </vendor>
+
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="type" type="varchar" size="32"/>
         <column name="date_time" type="timestamp"/>
